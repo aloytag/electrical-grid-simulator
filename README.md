@@ -23,9 +23,9 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 
 
 ## How it works
-Every time the user inserts and connects an element to the network, the application replicates the addition in a **pandapower network**. Thus, the parameters of a component are updated in the ```pandapower``` network when they are modified from the graphical interface.
+Every time the user inserts and connects an element to the network, the application replicates the addition in a ```pandapower``` network. Thus, the parameters of a component are updated in the ```pandapower``` network when they are modified from the graphical interface.
 
-The network configured from the interface is designated as **Graph**, while the corresponding pandapower model is denoted as **Data model**. This synchronization works in the **Graph -> Data model** direction, i.e. changes in the **Graph** are automatically registered into the **Data model**, and not the other way around. However, the contents of the **Data model** can be consulted at any time. 
+The network configured from the interface is designated as **Graph**, while the corresponding ```pandapower``` model is denoted as **Data model**. This synchronization works in the **Graph -> Data model** direction, i.e. changes in the **Graph** are automatically registered into the **Data model**, and not the other way around. However, the contents of the **Data model** can be consulted at any time. 
 
 According to the structure proposed by the ```pandapower``` library, the **Data model** consists of a set of tables ([pandas DataFrame type objects](https://en.wikipedia.org/wiki/Pandas_(software))). Each table (**DataFrame**) contains the parameters of a certain type of component. The types of components supported by ```pandapower``` are those indicated in [this documentation link](https://pandapower.readthedocs.io/en/latest/). At this moment, most of these components are also supported by EGS.
 
@@ -45,7 +45,7 @@ The EGS main window is organized as follows:
 
 *  The main work area can display either the **Graph** or the **Data model**.
 * The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
-* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save **.egs** files, export the **Data model** to JSON, or simply delete the network and start a new one. The "play" icon opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
+* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* icon opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
 * The status bar at the bottom will notify when the grid has been modified and has not been saved.
 * The menu bar includes the same options as the toolbars.
 
