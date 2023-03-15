@@ -1,24 +1,106 @@
 # Electrical Grid Simulator (EGS)
 The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user interface for simulating electrical networks based on the [pandapower](https://www.pandapower.org/) library. The main objective is to allow the creation of mathematical models for steady-state electrical grids from a user-friendly graphical interface.
 
+<p align = "center">
 <img src="./img/app_icon.png" alt="EGS logo" width="200">
+</p>
 
+<span style="color:red">
+<b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs.</b>
+</span>
+</br></br>
+
+EGS is developed at the *National Technological University, Santa Fe Regional Faculty* ([UTN-FRSF](https://www.frsf.utn.edu.ar/)), at the *Center for Research and Development in Electrical Engineering and Energy Systems* ([CIESE](https://www.frsf.utn.edu.ar/investigacion-y-vinculacion/investigacion-y-vinculacion/centros-y-grupos/ciese)), Argentina.
+
+<p align = "center">
+<img src="./img/Logo_CIESE_2021 y UTN_Sta_Fe.png" alt="" width="450">
+</p>
 
 ## Goals
-- Providing a minimalist, modern and good-looking interface.
+- Providing a minimalistic, modern and good-looking interface.
 - Multiplatform: GNU/Linux, MS Windows and Apple MacOS (not tested on MacOS).
 - Providing an extension system to expand its capabilities (WIP, not available yet).
 
 
 ## How it works
-Every time the user inserts and connects an element to the network, the application replicates the addition in a **pandapower network**. Thus, the parameters of a component are updated in the pandapower network when they are modified from the graphical interface.
+Every time the user inserts and connects an element to the network, the application replicates the addition in a **pandapower network**. Thus, the parameters of a component are updated in the ```pandapower``` network when they are modified from the graphical interface.
 
 The network configured from the interface is designated as **Graph**, while the corresponding pandapower model is denoted as **Data model**. This synchronization works in the **Graph -> Data model** direction, i.e. changes in the **Graph** are automatically registered into the **Data model**, and not the other way around. However, the contents of the **Data model** can be consulted at any time. 
 
-According to the structure proposed by the pandapower library, the **Data model** consists of a set of tables ([pandas DataFrame type objects](https://en.wikipedia.org/wiki/Pandas_(software))). Each table (**DataFrame**) contains the parameters of a certain type of component. The types of components supported by pandapower are those indicated in [this documentation link](https://pandapower.readthedocs.io/en/latest/). At this moment, most of these components are also supported by EGS.
+According to the structure proposed by the ```pandapower``` library, the **Data model** consists of a set of tables ([pandas DataFrame type objects](https://en.wikipedia.org/wiki/Pandas_(software))). Each table (**DataFrame**) contains the parameters of a certain type of component. The types of components supported by ```pandapower``` are those indicated in [this documentation link](https://pandapower.readthedocs.io/en/latest/). At this moment, most of these components are also supported by EGS.
 
 ![Main window: Graph view](img/1_Main_Window.png)
+<p align = "center">
+<i>Main window: Graph view</i>
+</p>
 
+
+![Main window: Data model view](img/4_Pandapower_DataFrames.png)
+<p align = "center">
+<i>Main window: Data model view - Tables arranged in tabs</i>
+</p>
+</br></br>
+
+The EGS main window is organized as follows:
+
+*  The main work area can display either the **Graph** or the **Data model**.
+* The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
+* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save **.egs** files, export the **Data model** to JSON, or simply delete the network and start a new one. The "play" icon opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
+* The status bar at the bottom will notify when the grid has been modified and has not been saved.
+* The menu bar includes the same options as the toolbars.
 
 ## Main features
 
+### Nodes and ports
+A **node** element is a component added to the **Graph**. A **node** should not be mistaken for a network **bus**. Any component of the grid is represented by a **node** in the **Graph**. For this reason, there is a *node type* for each type of component supported by EGS.
+
+<p align = "center">
+<img src="./img/3_Widgets.png" alt="Symmetric load node" width="300">
+</p>
+<p align = "center">
+<i>Node element (example: symmetric load with an input port)</i>
+</p>
+</br></br>
+
+Some nodes provide widgets that work as shortcuts for some of their main features. For example, a symmetric load node has three widgets (as shown above) to set the real and reactive demands, and a scale factor. However, all the node parameters are accessed from a dialog after double clicking on the node, as shown below. Additionally, the node name can be modified after double clicking on it.
+
+![Node dialog](img/2_Dialogs.png)
+<p align = "center">
+<i>Node dialog (example for a symmetric load node)</i>
+</p>
+</br></br>
+
+Node types (component types) are distinguished by color. For example, a line is represented by a different color than the one used for a transformer. Two- and three-winding transformers have nodes with the same color, but differs in the number of connections.
+
+Nodes can have input and output ports. Connections are made by linking an output port on one node with an input port on another node. For example, to connect a generator to a bus, you can link the output port of the generator to the input port of the bus.
+
+When a node is displayed in horizontal layout, input ports are placed on the left and output ports on the right. In the vertical layout, input ports are placed at the top and output ports at the bottom. By default, nodes are inserted in horizontal layout, but this can be changed. For convenience, nodes with a single port can be flipped, so that an input port becomes an output port, or vice versa.
+
+The distinction between input and output ports has another use in certain components. For example, in a two-winding transformer, the input port represents the *high voltage side* (hv), while the output port corresponds to the *low voltage side* (lv). In this case, to make it easier to distinguish, these ports have different shapes. In an AC line, input and output ports refer to the *"from bus"* and *"to bus"* sides, respectively. On the contrary, there is no distinction between input and output ports in a bus, which correspond to the same point.
+
+<p align = "center">
+<img src="./img/6_Line_and_transformer_nodes.png" alt="AC line and two-winding transformer nodes" width="350">
+</p>
+<p align = "center">
+<i>AC line and two-winding transformer nodes</i>
+</p>
+</br></br>
+
+When a bus node is added to the **Graph**, it is immediately inserted also into the **Data model**. But this is not the case with other components, which are included in the **Data model** only when they are connected. This behavior is due to the fact that ```pandapower``` requires the connection points to insert a new element into the grid (with the only exception of the bus component). But this has an advantage: you can disconnect an element and connect it again in a different place, without losing the parameters configured in the node, which remain stored in the **Graph**. EGS will take care of maintaining the synchronization with the **Data model**.
+
+### Simulations and calculations
+With EGS you can build and set up the model of an electrical grid in a graphical way. The application also allows you to perform *AC balanced power flow* calculations (other calculations supported by ```pandapower``` may be added in the future). For other types of simulations and calculations, you can proceed according to two alternatives:
+
+1. Export the **Data model** and the last power flow results to a JSON format file ready to be imported from a Python script through ```pandapower```. Then, any calculation or processing can be done from the script. The export is done from the graphical interface, while the subsequent import is done as indicated [in the pandapower documentation](https://pandapower.readthedocs.io/en/latest/file_io.html#pandapower.from_json), using the ```pandapower.from_json()``` function.
+
+2. Incorporate the required calculation functionality from an extension developed in Python. This way, the calculation is executed from within EGS. **Note that this feature is one of the main goals of EGS, but is not yet available in this early stage of development.**
+
+Models generated by EGS can be saved in a file containing both the **Graph** and the **Data model** (**.egs** file extension). You can then reopen the file whenever you need it and retrieve even the results of the last power flow run.
+
+
+### Running an AC balanced power flow
+
+
+# License
+
+This project uses the [MIT license](https://github.com/aloytag/electrical-grid-simulator/blob/main/LICENSE).
