@@ -32,7 +32,10 @@ EGS is built in Python and entirely from open source and free software. The main
 * The [matplotlib](https://matplotlib.org/) package for plotting calculation results.
 * Other scientific Python packages, mainly [NumPy](https://numpy.org/) and [pandas](https://pandas.pydata.org/).
 
-EGS is implemented as a Python package uploaded to the PyPI repository. ```pandapower``` and other packages listed above are set as requirements.
+EGS is implemented as a Python package uploaded to the [PyPI repository](https://pypi.org/). ```pandapower``` and other packages listed above are set as dependencies.
+
+> __Info__
+The ```NodeGraphQt``` is not available in PyPI. Hence, a copy of it is included within the EGS package.
 
 
 ## How it works
@@ -170,6 +173,7 @@ On MS Windows:
 python -m pip uninstall electricalsim
 ```
 
+Note that shortcuts added with the ```egs-create-shortcut``` command are not removed. So you must delete them manually.
 
 # License
 
