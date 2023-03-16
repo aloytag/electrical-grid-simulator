@@ -183,6 +183,22 @@ Settings are classified into four categories:
 </p>
 </br>
 
+![EGS with dark theme](img/1_Main_Window_dark.png)
+<p align = "center">
+<i>EGS with dark theme</i>
+</p>
+</br>
+
+<p align = "center">
+<img src="./img/5_Connections_angle_b.png" alt="Connections in angle style" width="450">
+<img src="./img/5_Connections_curved_b.png" alt="Connections in curved style" width="450">
+<img src="./img/5_Connections_straight_b.png" alt="Connections in straight style" width="450">
+</p>
+<p align = "center">
+<i>Connection style: angle, curved and straight</i>
+</p>
+</br></br>
+
 ### Shorcuts
 
 # Installation
