@@ -5,8 +5,9 @@ The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user int
 <img src="./img/app_icon.png" alt="EGS logo" width="200">
 </p>
 
+> __Warning__
 <span style="color:red">
-<b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs.</b>
+<b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. It is also possible that new changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
 </span>
 </br></br>
 
@@ -45,7 +46,7 @@ The EGS main window is organized as follows:
 
 *  The main work area can display either the **Graph** or the **Data model**.
 * The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
-* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* icon opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
+* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
 * The status bar at the bottom will notify when the grid has been modified and has not been saved.
 * The menu bar includes the same options as the toolbars.
 
