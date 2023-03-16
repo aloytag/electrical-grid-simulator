@@ -1,5 +1,5 @@
 # Electrical Grid Simulator (EGS)
-The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user interface for simulating electrical networks based on the [pandapower](https://www.pandapower.org/) library. The main objective is to allow the creation of mathematical models for steady-state electrical grids from a user-friendly graphical interface.
+The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user interface application for simulating electrical networks based on the [pandapower](https://www.pandapower.org/) library. The main objective is to allow the creation of mathematical models for steady-state electrical grids from a user-friendly interface.
 
 <p align = "center">
 <img src="./img/app_icon.png" alt="EGS logo" width="200">
@@ -153,10 +153,35 @@ In bar voltage charts, the magnitud level is distinguished with different colors
 <p align = "center">
 <i>Power flow dialog - Third tab (plot results) - AC line loading</i>
 </p>
-</br></br>
+</br>
 
+After closing the power flow dialog and returning to the *graph view*, you can place the cursor on a particular node and get a tooltip with the main results (see the screenshot below). For example, an AC line shows the loading percentage, and the real and reactive power transmitted (at the *"from bus"* and *"to bus"*). Most of the nodes show this information.
+
+![Tooltip - Power flow results](img/11_PF_tooltips.png)
+<p align = "center">
+<i>Tooltip - Power flow results</i>
+</p>
+</br>
 
 ### Application settings
+
+The application settings are saved in a ```config.ini``` file outside the installation directory. This way, your settings are maintained after updating the program. However, you can change them from a dialog window.
+
+Settings are classified into four categories:
+
+* **General:** Includes the theme, the background grid visibility, the connection style and a default working directory.
+
+* **Network:** Defaults grid name, power system base and rated frequency.
+
+* **Power flow**: Mainly the default settings for the power flow solver.
+
+* **Default component parameters:** The defaults settings for every node type.
+
+![Settings dialog](img/12_App_settings.png)
+<p align = "center">
+<i>Settings dialog</i>
+</p>
+</br>
 
 ### Shorcuts
 
