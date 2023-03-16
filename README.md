@@ -11,7 +11,7 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 <img src="./img/Logo_CIESE_2021 y UTN_Sta_Fe.png" alt="" width="450">
 </p>
 
-> __Warning__
+> __Warning__ <br>
 > <span style="color:red">
 <b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. It is also possible that new changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
 </span>
@@ -34,7 +34,7 @@ EGS is built in Python and entirely from open source and free software. The main
 
 EGS is implemented as a Python package uploaded to the [PyPI repository](https://pypi.org/). ```pandapower``` and other packages listed above are set as dependencies.
 
-> __Note__
+> __Note__ <br>
 > The ```NodeGraphQt``` is not available in PyPI. Hence, a copy of it is included within the EGS package.
 
 
