@@ -5,17 +5,17 @@ The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user int
 <img src="./img/app_icon.png" alt="EGS logo" width="200">
 </p>
 
-> __Warning__
-<span style="color:red">
-<b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. It is also possible that new changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
-</span>
-</br></br>
-
 EGS is developed at the *National Technological University, Santa Fe Regional Faculty* ([UTN-FRSF](https://www.frsf.utn.edu.ar/)), at the *Center for Research and Development in Electrical Engineering and Energy Systems* ([CIESE](https://www.frsf.utn.edu.ar/investigacion-y-vinculacion/investigacion-y-vinculacion/centros-y-grupos/ciese)), Argentina.
 
 <p align = "center">
 <img src="./img/Logo_CIESE_2021 y UTN_Sta_Fe.png" alt="" width="450">
 </p>
+
+> __Warning__
+<span style="color:red">
+<b>IMPORTANT NOTE: This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. It is also possible that new changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
+</span>
+</br></br>
 
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
