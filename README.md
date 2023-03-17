@@ -15,7 +15,6 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 > <span style="color:red">
 <b>This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. New changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
 </span>
-</br></br>
 
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
