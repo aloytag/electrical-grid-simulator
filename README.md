@@ -199,7 +199,52 @@ Settings are classified into four categories:
 </p>
 </br></br>
 
-### Shorcuts
+### Shortcuts
+
+| Shortcut | Description |
+| -------- | ----------- |
+| ```Ctrl+N``` | Create a new session |
+| ```Ctrl+O``` | Open session from a **.egs** file |
+| ```Ctrl+S``` | Save session to a **.egs** file |
+| ```Ctrl+Shift+S``` | Save session as... |
+| ```Ctrl+E``` | Export **Data model** to a JSON file |
+| ```Ctrl+Z``` | Undo |
+| ```Ctrl+Shift+Z``` | Redo |
+| ```Del``` | Delete selected components in the **Graph** |
+| ```Ctrl+A``` | Select all the nodes in the **Graph** |
+| ```Ctrl+Shift+A``` | Unselect what is selected |
+| ```D``` | Disable the selected nodes |
+| ```R``` | Flip the selected nodes (works only with nodes that have only one port) |
+| ```Ctrl++``` | Zoom in |
+| ```Ctrl+-``` | Zoom out |
+| ```=``` | Reset zoom |
+| ```F``` | Adjust the zoom level according to the selection |
+| ```V``` | Change selected nodes to the vertical layout |
+| ```H``` | Change selected nodes to the horizontal layout |
+
+> __Note__ <br>
+> * ```Undo``` and ```Redo``` only work for simple actions.
+> * Pressing ```F``` without selected nodes will adjust the zoom level to show all the grid.
+> * Pressing ```D``` will change the bool value for the ```in_service``` parameter in the **Data model**. This works for every component, except for switches.
+> * For selecting nodes in the **Graph** you can use the left mouse button (```LMB```). Just click with the ```LMB```, hold and drag to mark the selection area.
+> * Clicking with the ```LMB``` on the background will unselect all.
+> * The mouse scroll wheel can be used to zoom in and out.
+> * Use the medium mouse button (```MMB```) to scroll over the **Graph**. Just click with the ```MMB```, hold and move.
+
+If you prefer to use the mouse instead of keyboard shortcuts, just right click on the **Graph** and access a context menu that complements the upper toolbar and the menu bar.
+
+<p align = "center">
+<img src="./img/13_Disabling_nodes.png" alt="Disabling nodes" width="450">
+<p align = "center">
+<i>Disabling nodes</i>
+</p>
+</br>
+
+![EGS with dark theme](img/14_Context_menu.png)
+<p align = "center">
+<i>Context menu</i>
+</p>
+</br>
 
 # Installation
 EGS is installed using ```pip```, the official Python package manager.
