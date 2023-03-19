@@ -38,7 +38,7 @@ EGS is implemented as a Python package uploaded to the [PyPI repository](https:/
 
 
 ## How it works
-Every time the user inserts and connects an element to the network, the application replicates the addition in a ```pandapower``` network. Thus, the parameters of a component are updated in the ```pandapower``` network when they are modified from the graphical interface.
+Every time the user inserts and connects an element to the grid, the application replicates the addition in a ```pandapower``` network. Thus, the parameters of a component are updated in the ```pandapower``` network when they are modified from the graphical interface.
 
 The network configured from the interface is designated as **Graph**, while the corresponding ```pandapower``` model is denoted as **Data model**. This synchronization works in the **Graph -> Data model** direction, i.e. changes in the **Graph** are automatically registered into the **Data model**, and not the other way around. However, the contents of the **Data model** can be consulted at any time. 
 
