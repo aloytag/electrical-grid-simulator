@@ -228,6 +228,7 @@ Settings are classified into four categories:
 > * Pressing ```D``` will change the bool value for the ```in_service``` parameter in the **Data model**. This works for every component, except for switches.
 > * For selecting nodes in the **Graph** you can use the left mouse button (```LMB```). Just click with the ```LMB```, hold and drag to mark the selection area.
 > * Clicking with the ```LMB``` on the background will unselect all.
+> * You can use ```Shift+LMB``` on a node in order to add it to the selection.
 > * The mouse scroll wheel can be used to zoom in and out.
 > * Use the medium mouse button (```MMB```) to scroll over the **Graph**. Just click with the ```MMB```, hold and move.
 
