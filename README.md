@@ -60,6 +60,7 @@ The EGS main window is organized as follows:
 
 *  The main work area can display either the **Graph** or the **Data model**. The **Data model** is shown as a set of tables arranged in tabs. For more information about this data (including the meaning of column names), see the [pandapower documentation](https://pandapower.readthedocs.io/).
 * The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
+Switches work in a different way. According to ```pandapower```, switches can be added between two buses or between a bus and a line (AC line) or transformer. Thus, if you want to do the first, just select two buses and then click the switch button. On the contrary, if you want to add a switch next to a line (or transformer), select only the corresponding element and then click the switch button. In this case, a new dialog will allow you to select the bus.
 * The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
 * The status bar at the bottom will notify when the grid has been modified and has not been saved.
 * The menu bar includes the same options as the toolbars.
@@ -148,13 +149,13 @@ In bar voltage charts, the magnitud level is distinguished with different colors
 </br>
 
 
-![Power flow dialog - Third tab (plot results) - Voltages](img/10_PF4.png)
+![Power flow dialog - Third tab (plot results) - AC line loading](img/10_PF4.png)
 <p align = "center">
 <i>Power flow dialog - Third tab (plot results) - AC line loading</i>
 </p>
 </br>
 
-After closing the power flow dialog and returning to the *graph view*, you can place the cursor on a particular node and get a tooltip with the main results (see the screenshot below). For example, an AC line shows the loading percentage, and the real and reactive power transmitted (at the *"from bus"* and *"to bus"*). Most of the nodes show this information.
+After closing the power flow dialog and returning to the *graph view*, you can place the cursor on a particular node and get a tooltip with the main results (see the screenshot below). For example, an AC line shows the loading percentage, and the real and reactive power transmitted (at the *"from bus"* and *"to bus"*). Most of the nodes show this kind of information.
 
 ![Tooltip - Power flow results](img/11_PF_tooltips.png)
 <p align = "center">
@@ -282,7 +283,7 @@ If you prefer to run the program in a more practical way, just execute this comm
 egs-create-shortcut
 ```
 
-This will add a shortcut launcher to your desktop and to your application menu.
+This will add a shortcut launcher to your desktop and to your application menu. Note that this launcher will not work if you are installing the application into a Python virtual environment.
 
 
 ## Uninstalling
