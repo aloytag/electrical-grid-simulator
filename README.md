@@ -221,6 +221,8 @@ Settings are classified into four categories:
 | ```F``` | Adjust the zoom level according to the selection |
 | ```V``` | Change selected nodes to the vertical layout |
 | ```H``` | Change selected nodes to the horizontal layout |
+| ```Shift+V``` | Apply a vertical alignment to selected nodes |
+| ```Shift+H``` | Apply a horizontal alignment to selected nodes |
 
 > __Note__ <br>
 > * ```Undo``` and ```Redo``` only work for simple actions.
