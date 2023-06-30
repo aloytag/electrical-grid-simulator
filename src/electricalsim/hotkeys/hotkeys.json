@@ -111,6 +111,23 @@
         "file":"./hotkeys/hotkey_functions.py",
         "function_name":"horizontal_layout",
         "shortcut":"H"
+      },
+      {
+        "type":"separator"
+      },
+      {
+        "type":"command",
+        "label":"Vertical alignment",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"vertical_alignment",
+        "shortcut":"Shift+V"
+      },
+      {
+        "type":"command",
+        "label":"Horizontal alignment",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"horizontal_alignment",
+        "shortcut":"Shift+H"
       }
     ]
   }

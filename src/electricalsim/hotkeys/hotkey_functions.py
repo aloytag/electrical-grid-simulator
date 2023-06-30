@@ -210,3 +210,27 @@ def flip_nodes(graph):
     selected = graph.selected_nodes()
     for node in selected:
         node.flip()
+
+
+def horizontal_alignment(graph):
+    """
+    Apply a horizontal alignment to selected nodes.
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        last_node = selected[-1]
+        pos = last_node.y_pos()
+        for node in selected[:-1]:
+            node.set_y_pos(pos)
+
+
+def vertical_alignment(graph):
+    """
+    Apply a vertical alignment to selected nodes.
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        last_node = selected[-1]
+        pos = last_node.x_pos()
+        for node in selected[:-1]:
+            node.set_x_pos(pos)
