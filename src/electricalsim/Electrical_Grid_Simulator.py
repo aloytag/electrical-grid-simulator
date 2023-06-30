@@ -3,6 +3,7 @@
 
 import sys
 import os
+import importlib
 
 from Qt import QtWidgets, QtCompat, QtGui, QtCore
 import qdarktheme  # Always import after Qt
@@ -12,6 +13,11 @@ from lib.electricalGraph import ElectricalGraph
 from lib.table_widget import TableWidget
 from lib.auxiliary import QVLine, QMainWindow2, return_config
 from lib.calculations import Run_PF
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 
 def main():
@@ -36,8 +42,17 @@ def main():
     icon_path = os.path.join(directory, 'icons', 'app_icon.png')
     main_window.setWindowIcon(QtGui.QIcon(icon_path))
     main_window.setWindowTitle('Electrical Grid Simulator')
+
+    # Loading extensions:
+    extensions = entry_points(group='electricalsim.extensions')
+    extensions_dict = dict()
+    for ex in extensions:
+        extension_module = importlib.import_module(f'electricalsim_{ex.name}.extension')
+        extensions_dict[ex.name] = extension_module
     
-    graph = ElectricalGraph(config, config_file_path, main_window=main_window)
+    graph = ElectricalGraph(config, config_file_path,
+                            main_window=main_window,
+                            extensions_dict=extensions_dict)
     
     # Toolbar settings------------------------------
     addBus_action = QtWidgets.QAction('addBus')
@@ -232,6 +247,23 @@ def main():
     run_pf_btn.setIcon(qta.icon('mdi6.play-outline'))
     main_window.layout_upper_toolbar.addWidget(run_pf_btn)
     run_pf_btn.clicked.connect(Run_PF(graph))
+
+    main_window.layout_upper_toolbar.addStretch()
+
+    extensions_label = QtWidgets.QLabel(main_window)
+    extensions_label.setText('Extensions:')
+    extensions_combobox = QtWidgets.QComboBox(main_window)
+    extensions_combobox.setObjectName('extension_selector')
+    extensions_combobox.setMinimumSize(250, 0)
+    extension_run_btn = QtWidgets.QToolButton(main_window)
+    extension_run_btn.setObjectName('extension_run_btn')
+    extension_run_btn.setToolTip('Execute the selected extension')
+    extension_run_btn.setIconSize(icon_size)
+    extension_run_btn.setIcon(qta.icon('mdi6.puzzle-outline'))
+    main_window.layout_upper_toolbar.addWidget(extensions_label)
+    main_window.layout_upper_toolbar.addWidget(extensions_combobox)
+    main_window.layout_upper_toolbar.addWidget(extension_run_btn)
+    extension_run_btn.clicked.connect(graph.execute_extension)
     
     main_window.layout_upper_toolbar.addStretch()
     
@@ -437,11 +469,15 @@ def main():
             
     main_window.toolBox.currentChanged.connect(page_changed_on_toolbox)
     graph.page_changed_on_toolbox = page_changed_on_toolbox
-    
+
+    # Update the extensions list in the UI (combobox selector):
+    graph.update_extensions_list()
+
     # Show main window:
     main_window.show()
+
     app.exec_()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()
