@@ -5,12 +5,13 @@ import warnings
 from math import isnan, nan
 import pickle
 
-from Qt import QtGui, QtWidgets
+from Qt import QtGui, QtWidgets, QtCore
 
 from NodeGraphQt import NodeGraph, errors
 from NodeGraphQt.constants import PortTypeEnum, PipeLayoutEnum
 import pandapower as pp
-from pandapower.toolbox import drop_from_groups
+# from pandapower.toolbox import drop_from_groups
+from pandapower.toolbox import drop_elements
 import numpy as np
 
 from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
@@ -21,7 +22,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  WardNode, XWardNode, StorageNode,
                                  SwitchNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,
-                     simulate_ESC_key)  # , show_WIP)
+                           simulate_ESC_key)  # , show_WIP)
 from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         stdline_dialog,
                         dcline_dialog, impedance_dialog,
@@ -35,6 +36,7 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
                         network_settings_dialog, Settings_Dialog)
+from extensions.extension_classes import ExtensionWorker
 
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -124,10 +126,8 @@ class ElectricalGraph(NodeGraph):
 
         self.saved_file_path = None  # None if the session was never saved
 
-        if 'main_window' in kwargs:
-            self.main_window = kwargs['main_window']
-        else:
-            self.main_window = None  # QMainWindow2 reference to the main window
+        self.main_window = kwargs.get('main_window')  # QMainWindow2 reference to the main window
+        self.extensions_dict = kwargs.get('extensions_dict', dict())
 
         # When something in the graph changed:
         self.property_changed.connect(self.session_change_warning)
@@ -374,14 +374,25 @@ class ElectricalGraph(NodeGraph):
                 layout_vert = node.get_property('layout_vert')
                 if layout_vert is not None and layout_vert is True:
                     node.set_layout_direction(1)
-                    if self.config['general']['theme']=='light':
-                        node.model.set_property('text_color', (0, 0, 0, 255))  # black
-                    else:
-                        node.model.set_property('text_color', (255, 255, 255, 180))  # default color
-                    node.update()
+                    
+                #     if self.config['general']['theme']=='light':
+                #         node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                #     else:
+                #         node.model.set_property('text_color', (255, 255, 255, 180))  # default color
+                #     node.update()
+            
+            # for node in self.all_nodes():
+            #     layout_vert = node.get_property('layout_vert')
+            #     if layout_vert is not None and layout_vert is True:
+            #         node.set_selected()
+            # horizontal_layout(self)
+            # vertical_layout(self)
+            # self.clear_selection()
             
             if self.main_window.toolBox.currentIndex()==1:
                 self.page_changed_on_toolbox(index=1)
+                
+            
 
         simulate_ESC_key()
 
@@ -3553,10 +3564,11 @@ class ElectricalGraph(NodeGraph):
         if not line_row.empty:
             line_index = line_row.index[0]
             lines = [line_index]
-            drop_from_groups(self.net, "dcline", lines)
-            self.net["dcline"].drop(lines, inplace=True)
-            res_dclines = self.net.res_dcline.index.intersection(lines)
-            self.net["res_dcline"].drop(res_dclines, inplace=True)
+            # drop_from_groups(self.net, "dcline", lines)
+            drop_elements(self.net, "dcline", lines)
+            # self.net["dcline"].drop(lines, inplace=True)
+            # res_dclines = self.net.res_dcline.index.intersection(lines)
+            # self.net["res_dcline"].drop(res_dclines, inplace=True)
 
     def remove_impedance(self, node):
         """
@@ -3568,10 +3580,11 @@ class ElectricalGraph(NodeGraph):
         if not impedance_row.empty:
             impedance_index = impedance_row.index[0]
             impedances = [impedance_index]
-            drop_from_groups(self.net, "impedace", impedances)
-            self.net["impedance"].drop(impedances, inplace=True)
-            res_impedances = self.net.res_impedance.index.intersection(impedances)
-            self.net["res_impedance"].drop(res_impedances, inplace=True)
+            # drop_from_groups(self.net, "impedace", impedances)
+            drop_elements(self.net, "impedace", impedances)
+            # self.net["impedance"].drop(impedances, inplace=True)
+            # res_impedances = self.net.res_impedance.index.intersection(impedances)
+            # self.net["res_impedance"].drop(res_impedances, inplace=True)
 
     def remove_trafo(self, node, directly_removed=True):
         """
@@ -3617,10 +3630,11 @@ class ElectricalGraph(NodeGraph):
         if not gen_row.empty:
             gen_index = gen_row.index[0]
             gens = [gen_index]
-            drop_from_groups(self.net, "gen", gens)
-            self.net["gen"].drop(gens, inplace=True)
-            res_gens = self.net.res_gen.index.intersection(gens)
-            self.net["res_gen"].drop(res_gens, inplace=True)
+            # drop_from_groups(self.net, "gen", gens)
+            drop_elements(self.net, "gen", gens)
+            # self.net["gen"].drop(gens, inplace=True)
+            # res_gens = self.net.res_gen.index.intersection(gens)
+            # self.net["res_gen"].drop(res_gens, inplace=True)
 
     def remove_sgen(self, node):
         """
@@ -3632,10 +3646,11 @@ class ElectricalGraph(NodeGraph):
         if not gen_row.empty:
             gen_index = gen_row.index[0]
             gens = [gen_index]
-            drop_from_groups(self.net, "sgen", gens)
-            self.net["sgen"].drop(gens, inplace=True)
-            res_sgens = self.net.res_sgen.index.intersection(gens)
-            self.net["res_sgen"].drop(res_sgens, inplace=True)
+            # drop_from_groups(self.net, "sgen", gens)
+            drop_elements(self.net, "sgen", gens)
+            # self.net["sgen"].drop(gens, inplace=True)
+            # res_sgens = self.net.res_sgen.index.intersection(gens)
+            # self.net["res_sgen"].drop(res_sgens, inplace=True)
 
     def remove_asgen(self, node):
         """
@@ -3647,11 +3662,12 @@ class ElectricalGraph(NodeGraph):
         if not gen_row.empty:
             gen_index = gen_row.index[0]
             gens = [gen_index]
-            drop_from_groups(self.net, "asymmetric_sgen", gens)
-            self.net["asymmetric_sgen"].drop(gens, inplace=True)
-
-            res_asgens = self.net.res_asymmetric_sgen.index.intersection(gens)
-            self.net["res_asymmetric_sgen"].drop(res_asgens, inplace=True)
+            # drop_from_groups(self.net, "asymmetric_sgen", gens)
+            drop_elements(self.net, "asymmetric_sgen", gens)
+            # self.net["asymmetric_sgen"].drop(gens, inplace=True)
+            #
+            # res_asgens = self.net.res_asymmetric_sgen.index.intersection(gens)
+            # self.net["res_asymmetric_sgen"].drop(res_asgens, inplace=True)
 
             res_asgens2 = self.net.res_asymmetric_sgen_3ph.index.intersection(gens)
             self.net["res_asymmetric_sgen_3ph"].drop(res_asgens2, inplace=True)
@@ -3666,11 +3682,12 @@ class ElectricalGraph(NodeGraph):
         if not grid_row.empty:
             grid_index = grid_row.index[0]
             grids = [grid_index]
-            drop_from_groups(self.net, "ext_grid", grids)
-            self.net["ext_grid"].drop(grids, inplace=True)
+            # drop_from_groups(self.net, "ext_grid", grids)
+            drop_elements(self.net, "ext_grid", grids)
+            # self.net["ext_grid"].drop(grids, inplace=True)
 
-            res_grids = self.net.res_ext_grid.index.intersection(grids)
-            self.net["res_ext_grid"].drop(res_grids, inplace=True)
+            # res_grids = self.net.res_ext_grid.index.intersection(grids)
+            # self.net["res_ext_grid"].drop(res_grids, inplace=True)
 
             res_grids2 = self.net.res_ext_grid_3ph.index.intersection(grids)
             self.net["res_ext_grid_3ph"].drop(res_grids2, inplace=True)
@@ -3683,63 +3700,84 @@ class ElectricalGraph(NodeGraph):
         Remove a symmetric load from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        load_index = node.get_property('load_index')
-        if load_index is not None:
-            pp.drop_elements_simple(self.net, 'load', load_index)
+        load_name = node.get_property('name')
+        load_row = self.net.load[self.net.load['name'] == load_name]
+        if not load_row.empty:
+            load_index = node.get_property('load_index')
+            if load_index is not None:
+                pp.drop_elements_simple(self.net, 'load', load_index)
 
     def remove_aload(self, node):
         """
         Remove an asymmetric load from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        load_index = node.get_property('load_index')
-        if load_index is not None:
-            pp.drop_elements_simple(self.net, 'asymmetric_load', load_index)
+        load_name = node.get_property('name')
+        load_row = self.net.asymmetric_load[self.net.asymmetric_load['name'] == load_name]
+        if not load_row.empty:
+            load_index = node.get_property('load_index')
+            if load_index is not None:
+                pp.drop_elements_simple(self.net, 'asymmetric_load', load_index)
 
     def remove_shunt(self, node):
         """
         Remove a shunt element from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        shunt_index = node.get_property('shunt_index')
-        if shunt_index is not None:
-            pp.drop_elements_simple(self.net, 'shunt', shunt_index)
+        shunt_name = node.get_property('name')
+        shunt_row = self.net.shunt[self.net.shunt['name'] == shunt_name]
+        if not shunt_row.empty:
+            shunt_index = node.get_property('shunt_index')
+            if shunt_index is not None:
+                pp.drop_elements_simple(self.net, 'shunt', shunt_index)
 
     def remove_motor(self, node):
         """
         Remove a motor from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        motor_index = node.get_property('motor_index')
-        if motor_index is not None:
-            pp.drop_elements_simple(self.net, 'motor', motor_index)
+        motor_name = node.get_property('name')
+        motor_row = self.net.motor[self.net.motor['name'] == motor_name]
+        if not motor_row.empty:
+            motor_index = node.get_property('motor_index')
+            if motor_index is not None:
+                pp.drop_elements_simple(self.net, 'motor', motor_index)
 
     def remove_ward(self, node):
         """
         Remove a ward from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        ward_index = node.get_property('ward_index')
-        if ward_index is not None:
-            pp.drop_elements_simple(self.net, 'ward', ward_index)
+        ward_name = node.get_property('name')
+        ward_row = self.net.ward[self.net.ward['name'] == ward_name]
+        if not ward_row.empty:
+            ward_index = node.get_property('ward_index')
+            if ward_index is not None:
+                pp.drop_elements_simple(self.net, 'ward', ward_index)
 
     def remove_xward(self, node):
         """
         Remove an extended ward from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        ward_index = node.get_property('ward_index')
-        if ward_index is not None:
-            pp.drop_elements_simple(self.net, 'xward', ward_index)
+        xward_name = node.get_property('name')
+        xward_row = self.net.xward[self.net.xward['name'] == xward_name]
+        if not xward_row.empty:
+            ward_index = node.get_property('ward_index')
+            if ward_index is not None:
+                pp.drop_elements_simple(self.net, 'xward', ward_index)
 
     def remove_storage(self, node):
         """
         Remove a storage from the pandapower network when its corresponding
         node in the graph is removed.
         """
-        storage_index = node.get_property('storage_index')
-        if storage_index is not None and storage_index in self.net.storage.index:
-            pp.drop_elements_simple(self.net, 'storage', storage_index)
+        storage_name = node.get_property('name')
+        storage_row = self.net.storage[self.net.storage['name'] == storage_name]
+        if not storage_row.empty:
+            storage_index = node.get_property('storage_index')
+            if storage_index is not None and storage_index in self.net.storage.index:
+                pp.drop_elements_simple(self.net, 'storage', storage_index)
             
     def remove_switch(self, node, directly_removed=True):
         """
@@ -3764,3 +3802,58 @@ class ElectricalGraph(NodeGraph):
             trafos3w = node.node_trafo3w_connected()
             for trafo3w_node in trafos3w:
                 self.remove_trafo3w(trafo3w_node, directly_removed=False)
+
+    def run_extension(self, name):
+        """
+        Run an extension.
+
+        Args:
+            name: Extension name
+
+        Returns: None
+
+        """
+        ex_mod = self.extensions_dict[name]
+        ex_obj = ex_mod.Extension(graph=self)
+        ex_obj.set_name(name)
+
+        if ex_obj.extension_window() is True:
+            ex_obj.show_dialog()
+        else:
+            ex_obj.before_running()
+            if ex_obj.separate_thread() is True:
+                ex_wkr = ExtensionWorker(ex_obj)
+                ex_wkr.signals.finished.connect(ex_obj.finish)
+                ex_threadpool = QtCore.QThreadPool()
+                ex_threadpool.start(ex_wkr)
+            else:
+                ex_obj()
+                ex_obj.finish()
+
+    def execute_extension(self):
+        """
+        Execute the selected extension.
+
+        Returns: None
+
+        """
+        selector = self.main_window.findChild(QtWidgets.QComboBox, 'extension_selector')
+        extension_name = selector.currentText()
+        self.run_extension(extension_name)
+
+    def update_extensions_list(self):
+        """
+        Update the extensions list in the combobox selector.
+
+        Returns: None
+
+        """
+        selector = self.main_window.findChild(QtWidgets.QComboBox, 'extension_selector')
+        btn = self.main_window.findChild(QtWidgets.QToolButton, 'extension_run_btn')
+        selector.clear()
+        if self.extensions_dict:
+            selector.addItems(sorted(self.extensions_dict.keys()))
+            btn.setEnabled(True)
+        else:
+            selector.addItem('<No extensions available>')
+            btn.setEnabled(False)

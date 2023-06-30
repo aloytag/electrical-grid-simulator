@@ -8,6 +8,9 @@ import qtawesome as qta
 from pynput.keyboard import Key, Controller
 from platformdirs import user_config_dir
 
+directory = os.path.dirname(__file__)
+root_dir, _ = os.path.split(directory)
+
 
 def show_WIP(window_parent):
     """
@@ -29,6 +32,31 @@ def simulate_ESC_key():
     keyboard = Controller()
     keyboard.press(Key.esc)
     keyboard.release(Key.esc)
+    
+
+def simulate_H_key():
+    """
+    Simulate the press and release of H key.
+    """
+    keyboard = Controller()
+    keyboard.press('h')
+    keyboard.release('h')
+
+
+def simulate_V_key():
+    """
+    Simulate the press and release of V key.
+    """
+    keyboard = Controller()
+    keyboard.press('v')
+    keyboard.release('v')
+
+
+def egs_path():
+    """
+    Returns the EGS installation path (directory).
+    """
+    return root_dir
 
 
 class QMainWindow2(QtWidgets.QMainWindow):
