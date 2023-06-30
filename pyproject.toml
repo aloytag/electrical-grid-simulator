@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "electricalsim"
-version = "0.0.6.9"
+version = "0.0.7.0"
 author = "PhD Ariel S. Loyarte"
 authors = [
   { name="PhD Ariel S. Loyarte", email="aloyarte@frsf.utn.edu.ar" },
