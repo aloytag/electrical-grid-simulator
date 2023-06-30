@@ -1,5 +1,5 @@
 # Electrical Grid Simulator (EGS)
-The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user interface application for simulating electrical networks based on the [pandapower](https://www.pandapower.org/) library. The main objective is to allow the creation of mathematical models for steady-state electrical grids from a user-friendly interface.
+The *Electrical Grid Simulator* (abbreviated as **EGS**) is a graphical user interface application for simulating electrical networks based on the [pandapower](https://www.pandapower.org/) library. The main objective is to allow the creation of mathematical models for steady-state electrical grids from a user-friendly interface. It adds an extensions system for including new calculation or simulation algorithms. Extensions are implemented as standard Python packages, so they can be distributed through the [PyPI repository](https://pypi.org/).
 
 <p align = "center">
 <img src="./img/app_icon.png" alt="EGS logo" width="200">
@@ -13,17 +13,18 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 
 > __Warning__ <br>
 > <span style="color:red">
-<b>This application is considered in alpha stage. So you can expect incomplete sections and some (or many) bugs. New changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
+<b>This application is in an early stage of development. So you can expect incomplete sections and some (or many) bugs. New changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
 </span>
 
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
 - Multiplatform: GNU/Linux, MS Windows and Apple MacOS (not tested on MacOS).
-- Providing an extension system to expand its capabilities **(WIP, not available yet)**.
+- Providing an extensions system to expand its capabilities **(new, starting in versión 0.0.6.9)**.
 
 ## How it is built
 EGS is built in Python and entirely from open source and free software. The main core components are:
 
+* The [pandapower](https://www.pandapower.org/) modeling and calculation library for electrical power systems.
 * The [Qt](https://www.qt.io/) toolkit with [PySide2](https://wiki.qt.io/Qt_for_Python) and [Qt.py](https://github.com/mottosso/Qt.py) bindings for the UI.
 * The [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt) library for building the graph (schematic network graphic).
 * The [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme) package for applying modern themes (light and dark themes).
@@ -32,9 +33,6 @@ EGS is built in Python and entirely from open source and free software. The main
 * Other scientific Python packages, mainly [NumPy](https://numpy.org/) and [pandas](https://pandas.pydata.org/).
 
 EGS is implemented as a Python package uploaded to the [PyPI repository](https://pypi.org/). ```pandapower``` and other packages listed above are set as dependencies.
-
-> __Note__ <br>
-> The ```NodeGraphQt``` is not available in PyPI. Hence, a copy of it is included within the EGS package.
 
 
 ## How it works
@@ -50,6 +48,12 @@ According to the structure proposed by the ```pandapower``` library, the **Data 
 </p>
 
 
+![Main window: Data model view](img/15_Extension_manager.png)
+<p align = "center">
+<i>Extension manager: Select and execute extensions</i>
+</p>
+
+
 ![Main window: Data model view](img/4_Pandapower_DataFrames.png)
 <p align = "center">
 <i>Main window: Data model view - Tables arranged in tabs</i>
@@ -61,9 +65,9 @@ The EGS main window is organized as follows:
 *  The main work area can display either the **Graph** or the **Data model**. The **Data model** is shown as a set of tables arranged in tabs. For more information about this data (including the meaning of column names), see the [pandapower documentation](https://pandapower.readthedocs.io/).
 * The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
 Switches work in a different way. According to ```pandapower```, switches can be added between two buses or between a bus and a line (AC line) or transformer. Thus, if you want to do the first, just select two buses and then click the switch button. On the contrary, if you want to add a switch next to a line (or transformer), select only the corresponding element and then click the switch button. In this case, a new dialog will allow you to select the bus.
-* The upper toolbar is divided into two parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog.
+* The upper toolbar is divided into three parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog. The extension manager is displayed at the center. In order to run an extensión, just select one of them and click the run button.
 * The status bar at the bottom will notify when the grid has been modified and has not been saved.
-* The menu bar includes the same options as the toolbars.
+* The menu bar includes most of the options available in the toolbars.
 
 ## Main features
 
@@ -109,13 +113,13 @@ With EGS you can build and set up the model of an electrical grid in a graphical
 
 1. Export the **Data model** and the last power flow results to a JSON format file ready to be imported from a Python script through ```pandapower```. Then, any calculation or processing can be done from the script. The export is done from the graphical interface, while the subsequent import is done as indicated [in the pandapower documentation](https://pandapower.readthedocs.io/en/latest/file_io.html#pandapower.from_json), using the ```pandapower.from_json()``` function.
 
-2. Incorporate the required calculation functionality from an extension developed in Python. This way, the calculation is executed from within EGS. **Note that this feature is one of the main goals of EGS, but is not yet available in this early stage of development.**
+2. Incorporate the required calculation functionality from an extension developed in Python. This way, the calculation is executed from within EGS. Extensions are implemented as regular Python packages. An Optimal Power Flow (OPF) extension is available in the PyPI repository (package name: **electricalsim-opf-quadratic**). **Instructions and a template for creating extensions will be available soon.**
 
 Models generated by EGS can be saved in a file containing both the **Graph** and the **Data model** (**.egs** file extension). You can then reopen the file whenever you need it and retrieve even the results of the last power flow run.
 
 
 ### Running an AC balanced power flow
-In order to run a power flow, click on the *"play"* button at the upper toolbar. A new dialog gets opened. The first tab allows you to configure the parameters of the numerical method (solver) and other model settings. Then, execute the calculation using the ***Run power flow*** button.
+In order to run a power flow, click on the ***play*** button at the upper toolbar. A new dialog gets opened. The first tab allows you to configure the parameters of the numerical method (solver) and other model settings. Then, execute the calculation using the ***Run power flow*** button.
 
 ![Power flow dialog - First tab (settings)](img/7_PF1.png)
 <p align = "center">
@@ -302,6 +306,19 @@ python -m pip uninstall electricalsim
 ```
 
 Note that shortcuts added with the ```egs-create-shortcut``` command are not removed. So you must delete them manually.
+
+## Installing extensions
+
+Extensions available in the PyPI repository can be installed using ```pip```. For example, the Optimal Power Flow extension is installed with:
+
+```bash
+pip install electricalsim-opf-quadratic
+```
+
+On MS Windows:
+```bash
+python -m pip install electricalsim-opf-quadratic
+```
 
 # License
 
