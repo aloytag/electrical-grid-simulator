@@ -309,7 +309,7 @@ Note that shortcuts added with the ```egs-create-shortcut``` command are not rem
 
 ## Installing extensions
 
-Extensions available in the PyPI repository can be installed using ```pip```. For example, the Optimal Power Flow extension is installed with:
+Extensions available in the PyPI repository can be installed using ```pip```. For example, the [Optimal Power Flow extension](https://github.com/aloytag/electricalsim-opf-quadratic) is installed with:
 
 ```bash
 pip install electricalsim-opf-quadratic
