@@ -1,0 +1,134 @@
+[
+  {
+    "type":"menu",
+    "label":"&Edit",
+    "items":[
+      {
+        "type":"command",
+        "label":"Clear Undo History",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"clear_undo",
+        "shortcut":""
+      },
+      {
+        "type":"command",
+        "label":"Show Undo History",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"show_undo_view",
+        "shortcut":""
+      },
+      {
+        "type":"separator"
+      },
+      {
+        "type":"command",
+        "label":"Delete",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"delete_nodes",
+        "shortcut":"QtGui.QKeySequence.Delete"
+      },
+      {
+        "type":"separator"
+      },
+      {
+        "type":"command",
+        "label":"Select All",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"select_all_nodes",
+        "shortcut":"Ctrl+A"
+      },
+      {
+        "type":"command",
+        "label":"Unselect All",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"clear_node_selection",
+        "shortcut":"Ctrl+Shift+A"
+      },
+      {
+        "type":"command",
+        "label":"Enable/Disable",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"disable_nodes",
+        "shortcut":"D"
+      },
+      {
+        "type":"command",
+        "label":"Flip",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"flip_nodes",
+        "shortcut":"R"
+      },
+      {
+        "type":"separator"
+      },
+      {
+        "type":"command",
+        "label":"Fit to Selection",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"fit_to_selection",
+        "shortcut":"F"
+      },
+      {
+        "type":"command",
+        "label":"Zoom In",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"zoom_in",
+        "shortcut":"Ctrl++"
+      },
+      {
+        "type":"command",
+        "label":"Zoom Out",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"zoom_out",
+        "shortcut":"Ctrl+-"
+      },
+      {
+        "type":"command",
+        "label":"Reset Zoom",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"reset_zoom",
+        "shortcut":"="
+      }
+    ]
+  },
+  {
+    "type":"separator"
+  },
+  {
+    "type":"menu",
+    "label":"&Format",
+    "items":[
+      {
+        "type":"command",
+        "label":"Vertical layout",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"vertical_layout",
+        "shortcut":"V"
+      },
+      {
+        "type":"command",
+        "label":"Horizontal layout",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"horizontal_layout",
+        "shortcut":"H"
+      },
+      {
+        "type":"separator"
+      },
+      {
+        "type":"command",
+        "label":"Vertical alignment",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"vertical_alignment",
+        "shortcut":"Shift+V"
+      },
+      {
+        "type":"command",
+        "label":"Horizontal alignment",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"horizontal_alignment",
+        "shortcut":"Shift+H"
+      }
+    ]
+  }
+]
