@@ -7,6 +7,7 @@
 import os
 
 from Qt import QtGui
+import pandapower as pp
 
 directory = os.path.dirname(__file__)
 root_directory, _ = os.path.split(directory)
@@ -234,3 +235,29 @@ def vertical_alignment(graph):
         pos = last_node.x_pos()
         for node in selected[:-1]:
             node.set_x_pos(pos)
+
+
+def duplicate_nodes(graph):
+    """
+    Duplicates the selected nodes, with Switches as the only exception.
+    """
+    selected = graph.selected_nodes()
+    for node in selected:
+        if node.type_=='SwitchNode.SwitchNode':
+            continue
+        node_duplicated = list(graph.duplicate_nodes([node]))[0]
+        input_ports = node_duplicated.input_ports()
+        output_ports = node_duplicated.output_ports()
+        for port_in in input_ports:
+            port_in.clear_connections(push_undo=False)
+        for port_out in output_ports:
+            port_out.clear_connections(push_undo=False)
+        if node_duplicated.type_=='BusNode.BusNode':
+            bus_index = pp.create_bus(graph.net,
+                                      name=node_duplicated.get_property('name'),
+                                      vn_kv=graph.net.bus.at[node.get_property('bus_index'), 'vn_kv'],
+                                      min_vm_pu=graph.net.bus.at[node.get_property('bus_index'), 'min_vm_pu'],
+                                      max_vm_pu=graph.net.bus.at[node.get_property('bus_index'), 'max_vm_pu'],
+                                      in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
+                                      geodata=node_duplicated.pos())
+            node_duplicated.set_property('bus_index', bus_index, push_undo=False)

@@ -219,6 +219,7 @@ Settings are classified into four categories:
 | ```Ctrl+Shift+A``` | Unselect what is selected |
 | ```D``` | Disable the selected nodes |
 | ```R``` | Flip the selected nodes (works only with nodes that have only one port) |
+| ```Ctrl+D``` | Duplicate the selected nodes (switches cannot be duplicated) |
 | ```Ctrl++``` | Zoom in |
 | ```Ctrl+-``` | Zoom out |
 | ```=``` | Reset zoom |

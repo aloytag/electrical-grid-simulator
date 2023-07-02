@@ -10,6 +10,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2MKCBopZy5dPlZhrEXWU7Iz8rBU" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />

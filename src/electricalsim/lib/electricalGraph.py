@@ -5,9 +5,10 @@ import warnings
 from math import isnan, nan
 import pickle
 
+from NodeGraphQt.base.commands import PortConnectedCmd
 from Qt import QtGui, QtWidgets, QtCore
 
-from NodeGraphQt import NodeGraph, errors
+from NodeGraphQt import NodeGraph, errors, BaseNode
 from NodeGraphQt.constants import PortTypeEnum, PipeLayoutEnum
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
@@ -45,25 +46,25 @@ root_directory, _ = os.path.split(directory)
 icon_path = os.path.join(root_directory, 'icons', 'app_icon.png')
 
 allowed_connections = (
-            set(('BusNode.BusNode', 'LineNode.LineNode')),
-            set(('BusNode.BusNode', 'StdLineNode.StdLineNode')),
-            set(('BusNode.BusNode', 'DCLineNode.DCLineNode')),
-            set(('BusNode.BusNode', 'ImpedanceNode.ImpedanceNode')),
-            set(('BusNode.BusNode', 'TrafoNode.TrafoNode')),
-            set(('BusNode.BusNode', 'StdTrafoNode.StdTrafoNode')),
-            set(('BusNode.BusNode', 'Trafo3wNode.Trafo3wNode')),
-            set(('BusNode.BusNode', 'StdTrafo3wNode.StdTrafo3wNode')),
-            set(('BusNode.BusNode', 'GenNode.GenNode')),
-            set(('BusNode.BusNode', 'SGenNode.SGenNode')),
-            set(('BusNode.BusNode', 'ASGenNode.ASGenNode')),
-            set(('BusNode.BusNode', 'ExtGridNode.ExtGridNode')),
-            set(('BusNode.BusNode', 'LoadNode.LoadNode')),
-            set(('BusNode.BusNode', 'ALoadNode.ALoadNode')),
-            set(('BusNode.BusNode', 'ShuntNode.ShuntNode')),
-            set(('BusNode.BusNode', 'MotorNode.MotorNode')),
-            set(('BusNode.BusNode', 'WardNode.WardNode')),
-            set(('BusNode.BusNode', 'XWardNode.XWardNode')),
-            set(('BusNode.BusNode', 'StorageNode.StorageNode'))
+    {'BusNode.BusNode', 'LineNode.LineNode'},
+    {'BusNode.BusNode', 'StdLineNode.StdLineNode'},
+    {'BusNode.BusNode', 'DCLineNode.DCLineNode'},
+    {'BusNode.BusNode', 'ImpedanceNode.ImpedanceNode'},
+    {'BusNode.BusNode', 'TrafoNode.TrafoNode'},
+    {'BusNode.BusNode', 'StdTrafoNode.StdTrafoNode'},
+    {'BusNode.BusNode', 'Trafo3wNode.Trafo3wNode'},
+    {'BusNode.BusNode', 'StdTrafo3wNode.StdTrafo3wNode'},
+    {'BusNode.BusNode', 'GenNode.GenNode'},
+    {'BusNode.BusNode', 'SGenNode.SGenNode'},
+    {'BusNode.BusNode', 'ASGenNode.ASGenNode'},
+    {'BusNode.BusNode', 'ExtGridNode.ExtGridNode'},
+    {'BusNode.BusNode', 'LoadNode.LoadNode'},
+    {'BusNode.BusNode', 'ALoadNode.ALoadNode'},
+    {'BusNode.BusNode', 'ShuntNode.ShuntNode'},
+    {'BusNode.BusNode', 'MotorNode.MotorNode'},
+    {'BusNode.BusNode', 'WardNode.WardNode'},
+    {'BusNode.BusNode', 'XWardNode.XWardNode'},
+    {'BusNode.BusNode', 'StorageNode.StorageNode'}
         )
 
 
@@ -211,7 +212,132 @@ class ElectricalGraph(NodeGraph):
         self._undo_stack.endMacro()
 
         self.session_change_warning(tooltip_default=False)
-        
+
+    def duplicate_nodes(self, nodes):
+        """
+        MODIFIED VERSION FROM NodeGraph CLASS WITHOUT UNDO
+
+        Create duplicate copy from the list of nodes.
+
+        Args:
+            nodes (list[NodeGraphQt.BaseNode]): list of nodes.
+        Returns:
+            list[NodeGraphQt.BaseNode]: list of duplicated node instances.
+        """
+        if not nodes:
+            return
+
+        # self._undo_stack.beginMacro('duplicate nodes')
+
+        self.clear_selection()
+        serial = self._serialize(nodes)
+        new_nodes = self._deserialize2(serial)
+        offset = 50
+        for n in new_nodes:
+            x, y = n.pos()
+            n.set_pos(x + offset, y + offset)
+            n.set_property('selected', True)
+
+        # self._undo_stack.endMacro()
+        return new_nodes
+
+    def _deserialize2(self, data, relative_pos=False, pos=None):
+        """
+        ALTERNATIVE TO _deserialize2 METHOD WITHOUT push_undo
+
+        deserialize node data.
+        (used internally by the node graph)
+
+        Args:
+            data (dict): node data.
+            relative_pos (bool): position node relative to the cursor.
+            pos (tuple or list): custom x, y position.
+
+        Returns:
+            list[NodeGraphQt.Nodes]: list of node instances.
+        """
+        # update node graph properties.
+        for attr_name, attr_value in data.get('graph', {}).items():
+            if attr_name == 'layout_direction':
+                self.set_layout_direction(attr_value)
+            elif attr_name == 'acyclic':
+                self.set_acyclic(attr_value)
+            elif attr_name == 'pipe_collision':
+                self.set_pipe_collision(attr_value)
+            elif attr_name == 'pipe_slicing':
+                self.set_pipe_slicing(attr_value)
+            elif attr_name == 'pipe_style':
+                self.set_pipe_style(attr_value)
+
+            # connection constrains.
+            elif attr_name == 'accept_connection_types':
+                self.model.accept_connection_types = attr_value
+            elif attr_name == 'reject_connection_types':
+                self.model.reject_connection_types = attr_value
+
+        # build the nodes.
+        nodes = {}
+        for n_id, n_data in data.get('nodes', {}).items():
+            identifier = n_data['type_']
+            node = self._node_factory.create_node_instance(identifier)
+            if node:
+                node.NODE_NAME = n_data.get('name', node.NODE_NAME)
+                # set properties.
+                for prop in node.model.properties.keys():
+                    if prop in n_data.keys():
+                        node.model.set_property(prop, n_data[prop])
+                # set custom properties.
+                for prop, val in n_data.get('custom', {}).items():
+                    node.model.set_property(prop, val)
+                    if isinstance(node, BaseNode):
+                        if prop in node.view.widgets:
+                            node.view.widgets[prop].set_value(val)
+
+                nodes[n_id] = node
+                self.add_node(node, n_data.get('pos'), push_undo=False)
+
+                if n_data.get('port_deletion_allowed', None):
+                    node.set_ports({
+                        'input_ports': n_data['input_ports'],
+                        'output_ports': n_data['output_ports']
+                    })
+
+        # build the connections.
+        for connection in data.get('connections', []):
+            nid, pname = connection.get('in', ('', ''))
+            in_node = nodes.get(nid) or self.get_node_by_id(nid)
+            if not in_node:
+                continue
+            in_port = in_node.inputs().get(pname) if in_node else None
+
+            nid, pname = connection.get('out', ('', ''))
+            out_node = nodes.get(nid) or self.get_node_by_id(nid)
+            if not out_node:
+                continue
+            out_port = out_node.outputs().get(pname) if out_node else None
+
+            if in_port and out_port:
+                # only connect if input port is not connected yet or input port
+                # can have multiple connections.
+                # important when duplicating nodes.
+                allow_connection = any([not in_port.model.connected_ports,
+                                        in_port.model.multi_connection])
+                if allow_connection:
+                    self._undo_stack.push(PortConnectedCmd(in_port, out_port))
+
+                # Run on_input_connected to ensure connections are fully set up after deserialization.
+                in_node.on_input_connected(in_port, out_port)
+
+        node_objs = nodes.values()
+        if relative_pos:
+            self._viewer.move_nodes([n.view for n in node_objs])
+            [setattr(n.model, 'pos', n.view.xy_pos) for n in node_objs]
+        elif pos:
+            self._viewer.move_nodes([n.view for n in node_objs], pos=pos)
+            [setattr(n.model, 'pos', n.view.xy_pos) for n in node_objs]
+
+        return node_objs
+
     def set_tooltip_default(self):
         """
         Set the default tooltip in all the nodes.

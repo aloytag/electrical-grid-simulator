@@ -4,7 +4,7 @@ from Qt import QtCore, QtGui, QtWidgets
 
 import numpy as np
 
-from NodeGraphQt import BaseNode, BaseNodeCircle
+from NodeGraphQt import BaseNode
 from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
 
 from lib.auxiliary import PropertyChangedCmd
@@ -141,17 +141,6 @@ class BaseNode2(BaseNode):
         extras = ('layout_vert',)
         for prop in extras:
             self.create_property(prop, False)
-        
-        # layout_vert = self.get_property('layout_vert')
-        # if layout_vert is not None and layout_vert is True:
-        #     print('Vertical!!!')
-        #     self.set_layout_direction(1)
-        # elif layout_vert is not None and layout_vert is False:
-        #     self.set_layout_direction(0)
-        #     self.model.set_property('text_color', (255, 255, 255, 180))  # default color
-        # elif layout_vert is None:
-        #     print('Recién se crea layout_vert')
-        #     self.create_property('layout_vert', False)
         
     def set_property(self, name, value, push_undo=True):
         """
@@ -374,42 +363,6 @@ class BaseNode2(BaseNode):
         THIS IS A VIRTUAL METHOD.
         """
         pass
-    
-
-class BaseNode2Circle(BaseNodeCircle):
-    def __init__(self):
-        super().__init__()
-        
-    def set_property(self, name, value, push_undo=True):
-        """
-        Set the value on the node custom property.
-
-        Args:
-            name (str): name of the property.
-            value (object): property data (python built in types).
-            push_undo (bool): register the command to the undo stack. (default: True)
-        """
-
-        # prevent signals from causing a infinite loop.
-        if self.get_property(name) == value:
-            return
-
-        if self.graph and name == 'name':
-            value = self.graph.get_unique_name(value)
-            self.NODE_NAME = value
-
-        if self.graph:
-            if push_undo:
-                undo_stack = self.graph.undo_stack()
-                undo_stack.push(PropertyChangedCmd(self, name, value))
-            else:
-                PropertyChangedCmd(self, name, value).redo()
-        else:
-            if hasattr(self.view, name):
-                setattr(self.view, name, value)
-            self.model.set_property(name, value)
-        
-        self.update()
 
 
 class BusNode(BaseNode2):

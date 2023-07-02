@@ -59,6 +59,13 @@
         "shortcut":"R"
       },
       {
+        "type":"command",
+        "label":"Duplicate",
+        "file":"./hotkeys/hotkey_functions.py",
+        "function_name":"duplicate_nodes",
+        "shortcut":"Ctrl+D"
+      },
+      {
         "type":"separator"
       },
       {
