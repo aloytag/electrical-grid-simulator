@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 [project]
 name = "electricalsim"
 version = "0.0.7.1"
-author = "PhD Ariel S. Loyarte"
+author = "Dr. Ing. Ariel S. Loyarte"
 authors = [
-  { name="PhD Ariel S. Loyarte", email="aloyarte@frsf.utn.edu.ar" },
+  { name="Dr. Ing. Ariel S. Loyarte", email="aloyarte@frsf.utn.edu.ar" },
 ]
 description = "Graphical user interface for simulating electrical networks based on the pandapower library"
 readme = "README_PyPI.md"
