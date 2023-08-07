@@ -237,6 +237,8 @@ class ElectricalGraph(NodeGraph):
             x, y = n.pos()
             n.set_pos(x + offset, y + offset)
             n.set_property('selected', True)
+            if n.get_property('layout_vert') is True:
+                n.set_layout_direction(1)
 
         # self._undo_stack.endMacro()
         return new_nodes
@@ -258,9 +260,9 @@ class ElectricalGraph(NodeGraph):
         """
         # update node graph properties.
         for attr_name, attr_value in data.get('graph', {}).items():
-            if attr_name == 'layout_direction':
-                self.set_layout_direction(attr_value)
-            elif attr_name == 'acyclic':
+            # if attr_name == 'layout_direction':
+            #     self.set_layout_direction(attr_value)
+            if attr_name == 'acyclic':
                 self.set_acyclic(attr_value)
             elif attr_name == 'pipe_collision':
                 self.set_pipe_collision(attr_value)
@@ -522,6 +524,8 @@ class ElectricalGraph(NodeGraph):
 
         simulate_ESC_key()
 
+        self.update_widgets_properties()
+
     def new_session(self):
         """
         Clear the session (graph and pandapower network) and creates a new one.
@@ -727,7 +731,7 @@ class ElectricalGraph(NodeGraph):
                     node.set_property(name, value, push_undo=False)
                 elif name in ('tap_neutral', 'tap_max', 'tap_min', 'tap_pos', 'parallel'):
                     node.set_property(name, int(value), push_undo=False)
-                elif name in ('tap_phase_shifter', 'oltc', 'tap_at_star_point') and value=='True':
+                elif name in ('tap_phase_shifter', 'oltc', '') and value=='True':
                     node.set_property(name, True, push_undo=False)
                 elif name in ('tap_phase_shifter', 'oltc', 'tap_at_star_point') and value=='False':
                     node.set_property(name, False, push_undo=False)
@@ -2620,6 +2624,7 @@ class ElectricalGraph(NodeGraph):
 
             node.tap_pos_widget.get_custom_widget().setMinimum(int(dialog.tap_min.value()))
             node.tap_pos_widget.get_custom_widget().setMaximum(int(dialog.tap_max.value()))
+            node.tap_pos_widget.get_custom_widget().setValue(int(dialog.tap_pos.value()))
 
             transformer_index = node.get_property('transformer_index')
             if transformer_index is not None and node.connected_to_network():
@@ -2736,7 +2741,7 @@ class ElectricalGraph(NodeGraph):
         dialog.tap_pos.setMinimum(node.get_property('tap_min'))
         dialog.tap_pos.setMaximum(node.get_property('tap_max'))
 
-        dialog.tap_at_star_point.setChecked(node.get_property('tap_at_star_point'))
+        dialog.tap_at_star_point.setChecked(True if node.get_property('tap_at_star_point')=='True' else False)
 
         vector_group = node.get_property('vector_group')
         all_vector_groups = ('Ddd', 'Ddy', 'Dyd', 'Dyy', 'Ydd', 'Ydy', 'Yyd',
@@ -2824,7 +2829,7 @@ class ElectricalGraph(NodeGraph):
         dialog.tap_pos.setMinimum(table.at[selected_std, 'tap_min'])
         dialog.tap_pos.setMaximum(table.at[selected_std, 'tap_max'])
         
-        dialog.tap_at_star_point.setChecked(node.get_property('tap_at_star_point'))
+        dialog.tap_at_star_point.setChecked(True if node.get_property('tap_at_star_point')=='True' else False)
 
         if dialog.exec():
             node.set_property('max_loading_percent', dialog.max_loading_percent.value(), push_undo=False)
@@ -3983,3 +3988,142 @@ class ElectricalGraph(NodeGraph):
         else:
             selector.addItem('<No extensions available>')
             btn.setEnabled(False)
+
+    def update_widgets_properties(self):
+        """
+        Update the state of widgets inside the nodes when opening a session.
+
+        Returns: None
+
+        """
+        dcline_nodes = self.get_nodes_by_type('DCLineNode.DCLineNode')
+        for node in dcline_nodes:
+            node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            line_index = node.get_property('line_index')
+            if line_index is not None:
+                try:
+                    node.p_mw_widget.get_custom_widget().setValue(self.net.dcline.loc[line_index, 'p_mw'])
+                except KeyError:
+                    node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+
+        trafo_nodes = self.get_nodes_by_type('TrafoNode.TrafoNode')
+        for node in trafo_nodes:
+            node.tap_pos_widget.get_custom_widget().setMinimum(node.get_property('tap_min'))
+            node.tap_pos_widget.get_custom_widget().setMaximum(node.get_property('tap_max'))
+            # node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+            transformer_index = node.get_property('transformer_index')
+            if transformer_index is not None:
+                try:
+                    node.tap_pos_widget.get_custom_widget().setValue(self.net.trafo.loc[transformer_index, 'tap_pos'])
+                except KeyError:
+                    node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+
+        std_trafo_nodes = self.get_nodes_by_type('StdTrafoNode.StdTrafoNode')
+        for node in std_trafo_nodes:
+            node.tap_pos_widget.get_custom_widget().setMinimum(node.get_property('tap_min'))
+            node.tap_pos_widget.get_custom_widget().setMaximum(node.get_property('tap_max'))
+            # node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+            transformer_index = node.get_property('transformer_index')
+            if transformer_index is not None:
+                try:
+                    node.tap_pos_widget.get_custom_widget().setValue(self.net.trafo.loc[transformer_index, 'tap_pos'])
+                except KeyError:
+                    node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+
+        trafo3w_nodes = self.get_nodes_by_type('Trafo3wNode.Trafo3wNode')
+        for node in trafo3w_nodes:
+            node.tap_pos_widget.get_custom_widget().setMinimum(node.get_property('tap_min'))
+            node.tap_pos_widget.get_custom_widget().setMaximum(node.get_property('tap_max'))
+            # node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+            transformer_index = node.get_property('transformer_index')
+            if transformer_index is not None:
+                try:
+                    node.tap_pos_widget.get_custom_widget().setValue(self.net.trafo3w.loc[transformer_index, 'tap_pos'])
+                except KeyError:
+                    node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+
+        std_trafo3w_nodes = self.get_nodes_by_type('StdTrafo3wNode.StdTrafo3wNode')
+        for node in std_trafo3w_nodes:
+            node.tap_pos_widget.get_custom_widget().setMinimum(node.get_property('tap_min'))
+            node.tap_pos_widget.get_custom_widget().setMaximum(node.get_property('tap_max'))
+            # node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+            transformer_index = node.get_property('transformer_index')
+            if transformer_index is not None:
+                try:
+                    node.tap_pos_widget.get_custom_widget().setValue(self.net.trafo3w.loc[transformer_index, 'tap_pos'])
+                except KeyError:
+                    node.tap_pos_widget.get_custom_widget().setValue(node.get_property('tap_pos'))
+
+        gen_nodes = self.get_nodes_by_type('GenNode.GenNode')
+        for node in gen_nodes:
+            node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
+            node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            node.vm_pu_widget.get_custom_widget().setMinimum(node.get_property('min_vm_pu'))
+            node.vm_pu_widget.get_custom_widget().setMaximum(node.get_property('max_vm_pu'))
+
+            gen_index = node.get_property('gen_index')
+            if gen_index is not None:
+                try:
+                    node.p_mw_widget.get_custom_widget().setValue(self.net.gen.loc[gen_index, 'p_mw'])
+                    node.vm_pu_widget.get_custom_widget().setValue(self.net.gen.loc[gen_index, 'vm_pu'])
+                except KeyError:
+                    node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+                    node.vm_pu_widget.get_custom_widget().setValue(node.get_property('vm_pu'))
+
+        sgen_nodes = self.get_nodes_by_type('SGenNode.SGenNode')
+        for node in sgen_nodes:
+            node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
+            node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            # node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+            node.q_mvar_widget.get_custom_widget().setMinimum(node.get_property('min_q_mvar'))
+            node.q_mvar_widget.get_custom_widget().setMaximum(node.get_property('max_q_mvar'))
+            # node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+            gen_index = node.get_property('gen_index')
+            if gen_index is not None:
+                try:
+                    node.p_mw_widget.get_custom_widget().setValue(self.net.sgen.loc[gen_index, 'p_mw'])
+                    node.q_mvar_widget.get_custom_widget().setValue(self.net.sgen.loc[gen_index, 'q_mvar'])
+                except KeyError:
+                    node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+                    node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+        # ext_grid_nodes = self.get_nodes_by_type('ExtGridNode.ExtGridNode')
+        # for node in ext_grid_nodes:
+        #     node.vm_pu_widget.get_custom_widget().setValue(node.get_property('vm_pu'))
+
+        load_nodes = self.get_nodes_by_type('LoadNode.LoadNode')
+        for node in load_nodes:
+            node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
+            node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            # node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+            node.q_mvar_widget.get_custom_widget().setMinimum(node.get_property('min_q_mvar'))
+            node.q_mvar_widget.get_custom_widget().setMaximum(node.get_property('max_q_mvar'))
+            # node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+            load_index = node.get_property('load_index')
+            if load_index is not None:
+                try:
+                    node.p_mw_widget.get_custom_widget().setValue(self.net.load.loc[load_index, 'p_mw'])
+                    node.q_mvar_widget.get_custom_widget().setValue(self.net.load.loc[load_index, 'q_mvar'])
+                except KeyError:
+                    node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+                    node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+        shunt_nodes = self.get_nodes_by_type('ShuntNode.ShuntNode')
+        for node in shunt_nodes:
+            # node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
+            # node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            # node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+            # node.q_mvar_widget.get_custom_widget().setMinimum(node.get_property('min_q_mvar'))
+            # node.q_mvar_widget.get_custom_widget().setMaximum(node.get_property('max_q_mvar'))
+            # node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+            shunt_index = node.get_property('shunt_index')
+            if shunt_index is not None:
+                try:
+                    node.p_mw_widget.get_custom_widget().setValue(self.net.shunt.loc[shunt_index, 'p_mw'])
+                    node.q_mvar_widget.get_custom_widget().setValue(self.net.shunt.loc[shunt_index, 'q_mvar'])
+                except KeyError:
+                    node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
+                    node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))

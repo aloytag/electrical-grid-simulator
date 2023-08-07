@@ -608,6 +608,13 @@ class TrafoNode(BaseNode2):
         
         Updates the 'tap_pos' parameter on the pandapower network too.
         """
+        # tap_max = self.get_property('tap_max')
+        # if tap_max is not None:
+        #     self.tap_pos_widget.get_custom_widget().setMaximum(tap_max)
+        # tap_min = self.get_property('tap_min')
+        # if tap_min is not None:
+        #     self.tap_pos_widget.get_custom_widget().setMinimum(tap_min)
+
         self.set_property('tap_pos', value, push_undo=False)
         
         transformer_index = self.get_property('transformer_index')
@@ -889,6 +896,9 @@ class GenNode(BaseNode2):
         
         self.p_mw_widget.get_custom_widget().valueChanged.connect(self.update_p_mw)
         self.p_mw_widget.get_custom_widget().setDecimals(5)
+        # max_p = self.get_property('max_p_mw')
+        # if max_p is not None:
+        #     self.p_mw_widget.get_custom_widget().setMaximum(max_p)
         self.add_custom_widget(self.p_mw_widget, tab=None)  # Adds the 'p_mw' property.
         
         # add custom widget to node with "node.view" as the parent.
