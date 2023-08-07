@@ -135,6 +135,22 @@ class ElectricalGraph(NodeGraph):
         self.message_unsaved = StatusMessageUnsaved()
         self.main_window.statusbar.addWidget(self.message_unsaved)
         self.message_unsaved.hide()
+        self.set_main_window_title()
+
+    def set_main_window_title(self, file_name=None):
+        """
+        Change the main window title.
+
+        Args:
+            file_name: File name (for saved .egs files)
+
+        Returns: None
+
+        """
+        if file_name is None:
+            self.main_window.setWindowTitle('Electrical Grid Simulation - Unsaved file')
+        else:
+            self.main_window.setWindowTitle(f'Electrical Grid Simulation - {file_name}')
 
     def _on_connection_changed(self, disconnected, connected):
         """
@@ -459,6 +475,8 @@ class ElectricalGraph(NodeGraph):
 
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
+            _, file_name = os.path.split(full_file_path)
+            self.set_main_window_title(file_name[:-4])
         else:
             simulate_ESC_key()
 
@@ -526,6 +544,9 @@ class ElectricalGraph(NodeGraph):
 
         self.update_widgets_properties()
 
+        _, file_name = os.path.split(full_file_path)
+        self.set_main_window_title(file_name[:-4])
+
     def new_session(self):
         """
         Clear the session (graph and pandapower network) and creates a new one.
@@ -551,6 +572,8 @@ class ElectricalGraph(NodeGraph):
         
         if self.main_window.toolBox.currentIndex()==1:
             self.page_changed_on_toolbox(index=1)
+
+        self.set_main_window_title()
 
     def edit_settings(self):
         """
