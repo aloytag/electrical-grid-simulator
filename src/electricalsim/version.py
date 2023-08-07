@@ -5,6 +5,6 @@ try:
 except PackageNotFoundError:
     VERSION = 'development version'
 
-DATE = '2023-07-02'
+DATE = '2023-08-06'
 AUTHOR = 'Dr. Ing. Ariel S. Loyarte'
 CONTACT = 'aloyarte@frsf.utn.edu.ar'
