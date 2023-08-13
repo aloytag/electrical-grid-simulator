@@ -280,7 +280,9 @@ def main():
     edit_settings.setIcon(qta.icon('mdi6.cog-outline'))
     main_window.layout_upper_toolbar.addWidget(edit_settings)
     edit_settings.clicked.connect(graph.edit_settings)
-    
+
+    main_window.menubar.setStyleSheet('border: 1px solid #d3d3d3')
+
     # Menubar:
     file_menu = main_window.menubar.addMenu('File')
     

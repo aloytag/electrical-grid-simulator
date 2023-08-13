@@ -87,6 +87,7 @@ class TableWidgetWithMenu(TableWidget):
             self.column = index.column()
 
             self.menu = QtWidgets.QMenu(self)  # Context menu
+            self.menu.setStyleSheet('border: 1px solid #d3d3d3')
 
             show_action = QtWidgets.QAction('Show component in the graph', self)
             show_action.setText('Show component in the graph')
@@ -119,9 +120,6 @@ class TableWidgetWithMenu(TableWidget):
         Copy selection to clipboard.
         """
         itemSelectionModel = self.table.selectionModel()
-        # print(itemSelectionModel.selectedRows(), itemSelectionModel.selectedColumns(),
-        #       itemSelectionModel.currentIndex(), itemSelectionModel.selectedIndexes())
-        # print(itemSelectionModel.selectedIndexes())
         selected_indexes = itemSelectionModel.selectedIndexes()
         first_selected = selected_indexes[0]
         last_selected = selected_indexes[-1]
