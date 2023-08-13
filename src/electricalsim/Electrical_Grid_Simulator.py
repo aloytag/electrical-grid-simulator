@@ -10,7 +10,7 @@ import qdarktheme  # Always import after Qt
 import qtawesome as qta
 
 from lib.electricalGraph import ElectricalGraph
-from lib.table_widget import TableWidget
+from lib.table_widget import TableWidgetWithMenu
 from lib.auxiliary import QVLine, QMainWindow2, return_config
 from lib.calculations import Run_PF
 
@@ -122,75 +122,75 @@ def main():
     main_window.layout_graph.addWidget(graph.widget)
       
     # Adding Bus DataFrame from pandapower network for the first time:
-    df_bus_widget = TableWidget(graph.net.bus)
+    df_bus_widget = TableWidgetWithMenu(graph.net.bus, graph)
     main_window.layout_bus.addWidget(df_bus_widget)
     
     # Adding Line DataFrame from pandapower network for the first time:
-    df_line_widget = TableWidget(graph.net.line)
+    df_line_widget = TableWidgetWithMenu(graph.net.line, graph)
     main_window.layout_line.addWidget(df_line_widget)
     
     # Adding DC Line DataFrame from pandapower network for the first time:
-    df_dcline_widget = TableWidget(graph.net.dcline)
+    df_dcline_widget = TableWidgetWithMenu(graph.net.dcline, graph)
     main_window.layout_dcline.addWidget(df_dcline_widget)
     
     # Adding Impedance DataFrame from pandapower network for the first time:
-    df_impedance_widget = TableWidget(graph.net.impedance)
+    df_impedance_widget = TableWidgetWithMenu(graph.net.impedance, graph)
     main_window.layout_impedance.addWidget(df_impedance_widget)
     
     # Adding Two Winding Transformer DataFrame from pandapower network for the first time:
-    df_trafo_widget = TableWidget(graph.net.trafo)
+    df_trafo_widget = TableWidgetWithMenu(graph.net.trafo, graph)
     main_window.layout_trafo.addWidget(df_trafo_widget)
     
     # Adding Three Winding Transformer DataFrame from pandapower network for the first time:
-    df_trafo3w_widget = TableWidget(graph.net.trafo3w)
+    df_trafo3w_widget = TableWidgetWithMenu(graph.net.trafo3w, graph)
     main_window.layout_trafo3w.addWidget(df_trafo3w_widget)
     
     # Adding Generator DataFrame from pandapower network for the first time:
-    df_gen_widget = TableWidget(graph.net.gen)
+    df_gen_widget = TableWidgetWithMenu(graph.net.gen, graph)
     main_window.layout_gen.addWidget(df_gen_widget)
     
     # Adding Static Generator DataFrame from pandapower network for the first time:
-    df_sgen_widget = TableWidget(graph.net.sgen)
+    df_sgen_widget = TableWidgetWithMenu(graph.net.sgen, graph)
     main_window.layout_sgen.addWidget(df_sgen_widget)
     
     # Adding Asymmetric Static Generator DataFrame from pandapower network for the first time:
-    df_asgen_widget = TableWidget(graph.net.asymmetric_sgen)
+    df_asgen_widget = TableWidgetWithMenu(graph.net.asymmetric_sgen, graph)
     main_window.layout_asgen.addWidget(df_asgen_widget)
     
     # Adding External Grid DataFrame from pandapower network for the first time:
-    df_ext_grid_widget = TableWidget(graph.net.ext_grid)
+    df_ext_grid_widget = TableWidgetWithMenu(graph.net.ext_grid, graph)
     main_window.layout_ext_grid.addWidget(df_ext_grid_widget)
     
     # Adding Symmetric Load DataFrame from pandapower network for the first time:
-    df_load_widget = TableWidget(graph.net.load)
+    df_load_widget = TableWidgetWithMenu(graph.net.load, graph)
     main_window.layout_load.addWidget(df_load_widget)
     
     # Adding Asymmetric Load DataFrame from pandapower network for the first time:
-    df_aload_widget = TableWidget(graph.net.asymmetric_load)
+    df_aload_widget = TableWidgetWithMenu(graph.net.asymmetric_load, graph)
     main_window.layout_aload.addWidget(df_aload_widget)
     
     # Adding Shunt DataFrame from pandapower network for the first time:
-    df_shunt_widget = TableWidget(graph.net.shunt)
+    df_shunt_widget = TableWidgetWithMenu(graph.net.shunt, graph)
     main_window.layout_shunt.addWidget(df_shunt_widget)
     
     # Adding Motor DataFrame from pandapower network for the first time:
-    df_motor_widget = TableWidget(graph.net.motor)
+    df_motor_widget = TableWidgetWithMenu(graph.net.motor, graph)
     main_window.layout_motor.addWidget(df_motor_widget)
     
     # Adding Ward DataFrame from pandapower network for the first time:
-    df_ward_widget = TableWidget(graph.net.ward)
+    df_ward_widget = TableWidgetWithMenu(graph.net.ward, graph)
     main_window.layout_ward.addWidget(df_ward_widget)
     
     # Adding Extended Ward DataFrame from pandapower network for the first time:
-    df_xward_widget = TableWidget(graph.net.xward)
+    df_xward_widget = TableWidgetWithMenu(graph.net.xward, graph)
     main_window.layout_xward.addWidget(df_xward_widget)
     
     # Adding Storage DataFrame from pandapower network for the first time:
-    df_storage_widget = TableWidget(graph.net.storage)
+    df_storage_widget = TableWidgetWithMenu(graph.net.storage, graph)
     main_window.layout_storage.addWidget(df_storage_widget)
     
     # Adding Switch DataFrame from pandapower network for the first time:
-    df_switch_widget = TableWidget(graph.net.switch)
+    df_switch_widget = TableWidgetWithMenu(graph.net.switch, graph)
     main_window.layout_switch.addWidget(df_switch_widget)
     
     main_window.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -362,109 +362,109 @@ def main():
             # Adding Bus DataFrame from pandapower network:
             old_bus_table = main_window.layout_bus.itemAt(0).widget()
             old_bus_table.setParent(None)
-            df_bus_widget = TableWidget(graph.net.bus.copy(deep=True))
+            df_bus_widget = TableWidgetWithMenu(graph.net.bus.copy(deep=True), graph)
             main_window.layout_bus.addWidget(df_bus_widget)
             
             # Adding Line DataFrame from pandapower network:
             old_line_table = main_window.layout_line.itemAt(0).widget()
             old_line_table.setParent(None)
-            df_line_widget = TableWidget(graph.net.line.copy(deep=True))
+            df_line_widget = TableWidgetWithMenu(graph.net.line.copy(deep=True), graph)
             main_window.layout_line.addWidget(df_line_widget)
             
             # Adding DC Line DataFrame from pandapower network:
             old_dcline_table = main_window.layout_dcline.itemAt(0).widget()
             old_dcline_table.setParent(None)
-            df_dcline_widget = TableWidget(graph.net.dcline.copy(deep=True))
+            df_dcline_widget = TableWidgetWithMenu(graph.net.dcline.copy(deep=True), graph)
             main_window.layout_dcline.addWidget(df_dcline_widget)
             
             # Adding Impedance DataFrame from pandapower network:
             old_impedance_table = main_window.layout_impedance.itemAt(0).widget()
             old_impedance_table.setParent(None)
-            df_impedance_widget = TableWidget(graph.net.impedance.copy(deep=True))
+            df_impedance_widget = TableWidgetWithMenu(graph.net.impedance.copy(deep=True), graph)
             main_window.layout_impedance.addWidget(df_impedance_widget)
             
             # Adding Two Winding Transformer DataFrame from pandapower network:
             old_trafo_table = main_window.layout_trafo.itemAt(0).widget()
             old_trafo_table.setParent(None)
-            df_trafo_widget = TableWidget(graph.net.trafo.copy(deep=True))
+            df_trafo_widget = TableWidgetWithMenu(graph.net.trafo.copy(deep=True), graph)
             main_window.layout_trafo.addWidget(df_trafo_widget)
             
             # Adding Three Winding Transformer DataFrame from pandapower network:
             old_trafo3w_table = main_window.layout_trafo3w.itemAt(0).widget()
             old_trafo3w_table.setParent(None)
-            df_trafo3w_widget = TableWidget(graph.net.trafo3w.copy(deep=True))
+            df_trafo3w_widget = TableWidgetWithMenu(graph.net.trafo3w.copy(deep=True), graph)
             main_window.layout_trafo3w.addWidget(df_trafo3w_widget)
             
             # Adding Generator DataFrame from pandapower network:
             old_gen_table = main_window.layout_gen.itemAt(0).widget()
             old_gen_table.setParent(None)
-            df_gen_widget = TableWidget(graph.net.gen.copy(deep=True))
+            df_gen_widget = TableWidgetWithMenu(graph.net.gen.copy(deep=True), graph)
             main_window.layout_gen.addWidget(df_gen_widget)
             
             # Adding Static Generator DataFrame from pandapower network:
             old_sgen_table = main_window.layout_sgen.itemAt(0).widget()
             old_sgen_table.setParent(None)
-            df_sgen_widget = TableWidget(graph.net.sgen.copy(deep=True))
+            df_sgen_widget = TableWidgetWithMenu(graph.net.sgen.copy(deep=True), graph)
             main_window.layout_sgen.addWidget(df_sgen_widget)
             
             # Adding Asymmetric Static Generator DataFrame from pandapower network:
             old_asgen_table = main_window.layout_asgen.itemAt(0).widget()
             old_asgen_table.setParent(None)
-            df_asgen_widget = TableWidget(graph.net.asymmetric_sgen.copy(deep=True))
+            df_asgen_widget = TableWidgetWithMenu(graph.net.asymmetric_sgen.copy(deep=True), graph)
             main_window.layout_asgen.addWidget(df_asgen_widget)
             
             # Adding External Grid DataFrame from pandapower network:
             old_ext_grid_table = main_window.layout_ext_grid.itemAt(0).widget()
             old_ext_grid_table.setParent(None)
-            df_ext_grid_widget = TableWidget(graph.net.ext_grid.copy(deep=True))
+            df_ext_grid_widget = TableWidgetWithMenu(graph.net.ext_grid.copy(deep=True), graph)
             main_window.layout_ext_grid.addWidget(df_ext_grid_widget)
             
             # Adding Symmetric Load DataFrame from pandapower network:
             old_load_table = main_window.layout_load.itemAt(0).widget()
             old_load_table.setParent(None)
-            df_load_widget = TableWidget(graph.net.load.copy(deep=True))
+            df_load_widget = TableWidgetWithMenu(graph.net.load.copy(deep=True), graph)
             main_window.layout_load.addWidget(df_load_widget)
             
             # Adding Asymmetric Load DataFrame from pandapower network:
             old_aload_table = main_window.layout_aload.itemAt(0).widget()
             old_aload_table.setParent(None)
-            df_aload_widget = TableWidget(graph.net.asymmetric_load.copy(deep=True))
+            df_aload_widget = TableWidgetWithMenu(graph.net.asymmetric_load.copy(deep=True), graph)
             main_window.layout_aload.addWidget(df_aload_widget)
             
             # Adding Shunt DataFrame from pandapower network:
             old_shunt_table = main_window.layout_shunt.itemAt(0).widget()
             old_shunt_table.setParent(None)
-            df_shunt_widget = TableWidget(graph.net.shunt.copy(deep=True))
+            df_shunt_widget = TableWidgetWithMenu(graph.net.shunt.copy(deep=True), graph)
             main_window.layout_shunt.addWidget(df_shunt_widget)
             
             # Adding Motor DataFrame from pandapower network:
             old_motor_table = main_window.layout_motor.itemAt(0).widget()
             old_motor_table.setParent(None)
-            df_motor_widget = TableWidget(graph.net.motor.copy(deep=True))
+            df_motor_widget = TableWidgetWithMenu(graph.net.motor.copy(deep=True), graph)
             main_window.layout_motor.addWidget(df_motor_widget)
             
             # Adding Ward DataFrame from pandapower network:
             old_ward_table = main_window.layout_ward.itemAt(0).widget()
             old_ward_table.setParent(None)
-            df_ward_widget = TableWidget(graph.net.ward.copy(deep=True))
+            df_ward_widget = TableWidgetWithMenu(graph.net.ward.copy(deep=True), graph)
             main_window.layout_ward.addWidget(df_ward_widget)
             
             # Adding Extended Ward DataFrame from pandapower network:
             old_xward_table = main_window.layout_xward.itemAt(0).widget()
             old_xward_table.setParent(None)
-            df_xward_widget = TableWidget(graph.net.xward.copy(deep=True))
+            df_xward_widget = TableWidgetWithMenu(graph.net.xward.copy(deep=True), graph)
             main_window.layout_xward.addWidget(df_xward_widget)
             
             # Adding Storage DataFrame from pandapower network:
             old_storage_table = main_window.layout_storage.itemAt(0).widget()
             old_storage_table.setParent(None)
-            df_storage_widget = TableWidget(graph.net.storage.copy(deep=True))
+            df_storage_widget = TableWidgetWithMenu(graph.net.storage.copy(deep=True), graph)
             main_window.layout_storage.addWidget(df_storage_widget)
             
             # Adding Switch DataFrame from pandapower network:
             old_switch_table = main_window.layout_switch.itemAt(0).widget()
             old_switch_table.setParent(None)
-            df_switch_widget = TableWidget(graph.net.switch.copy(deep=True))
+            df_switch_widget = TableWidgetWithMenu(graph.net.switch.copy(deep=True), graph)
             main_window.layout_switch.addWidget(df_switch_widget)
             
     main_window.toolBox.currentChanged.connect(page_changed_on_toolbox)

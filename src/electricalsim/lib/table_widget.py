@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from Qt import QtCore, QtWidgets
+from Qt import QtCore, QtWidgets, QtGui
+import qtawesome as qta
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -29,6 +30,9 @@ class TableModel(QtCore.QAbstractTableModel):
             if orientation == QtCore.Qt.Vertical:
                 return str(self._data.index[section])
 
+    def get_data(self):
+        return self._data
+
 
 class TableWidget(QtWidgets.QWidget):
 
@@ -55,3 +59,78 @@ class TableWidget(QtWidgets.QWidget):
             # header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
             # header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
             header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeToContents)
+
+
+class TableWidgetWithMenu(TableWidget):
+    """
+    Same as TableWidget class but with context menu for the data model.
+    """
+    def __init__(self, data, graph):
+        super().__init__(data)
+        self.graph = graph
+
+        self.menu = None  # Context menu
+        self.row = None  # Table row when doing a right click
+        self.column = None  # Table column when doing a right click
+
+        self.table.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.table.customContextMenuRequested.connect(self.generate_menu)
+
+    @QtCore.Slot(QtCore.QPoint)
+    def generate_menu(self, pos):
+        """
+        Show a context menu when right-clicking.
+        """
+        index = self.table.indexAt(pos)
+        if index.isValid():
+            self.row = index.row()
+            self.column = index.column()
+
+            self.menu = QtWidgets.QMenu(self)  # Context menu
+
+            show_action = QtWidgets.QAction('Show component in the graph', self)
+            show_action.setText('Show component in the graph')
+            show_action.triggered.connect(self.show_component)
+            show_action.setIcon(qta.icon('mdi6.eye-outline'))
+            self.menu.addAction(show_action)
+
+            copy_action = QtWidgets.QAction('Copy', self)
+            copy_action.setText('Copy')
+            copy_action.triggered.connect(self.copy)
+            copy_action.setIcon(qta.icon('mdi6.content-copy'))
+            self.menu.addAction(copy_action)
+
+            self.menu.popup(QtGui.QCursor.pos())
+
+    def show_component(self):
+        """
+        Show the selected component in the graph.
+        """
+        self.graph.clear_selection()
+        node_name = self.model.get_data().iloc[self.row, :]['name']
+        node = self.graph.get_node_by_name(node_name)
+        if node is not None:
+            node.set_selected(True)
+            self.graph.fit_to_selection()
+            self.graph.main_window.toolBox.setCurrentIndex(0)
+
+    def copy(self):
+        """
+        Copy selection to clipboard.
+        """
+        itemSelectionModel = self.table.selectionModel()
+        # print(itemSelectionModel.selectedRows(), itemSelectionModel.selectedColumns(),
+        #       itemSelectionModel.currentIndex(), itemSelectionModel.selectedIndexes())
+        # print(itemSelectionModel.selectedIndexes())
+        selected_indexes = itemSelectionModel.selectedIndexes()
+        first_selected = selected_indexes[0]
+        last_selected = selected_indexes[-1]
+
+        from_row = first_selected.row()
+        to_row = last_selected.row()
+
+        from_column = first_selected.column()
+        to_column = last_selected.column()
+
+        data_portion = self.model.get_data().iloc[from_row:to_row+1, from_column:to_column+1]
+        data_portion.to_clipboard()
