@@ -646,6 +646,83 @@ def network_settings_dialog():
     return dialog
 
 
+def connecting_buses_dialog():
+    """
+    Returns a dialog to choose which element is connecting between two buses.
+    """
+    ui_file = os.path.join(directory, 'connecting_buses_dialog.ui')
+    dialog = QtCompat.loadUi(uifile=ui_file)
+    dialog.setModal(True)
+    dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+    dialog.option = None  # Element selected
+
+    def line():
+        dialog.option = 'line'
+        dialog.accept()
+
+    def stdline():
+        dialog.option = 'stdline'
+        dialog.accept()
+
+    def dcline():
+        dialog.option = 'dcline'
+        dialog.accept()
+
+    def impedance():
+        dialog.option = 'impedance'
+        dialog.accept()
+
+    def trafo():
+        dialog.option = 'trafo'
+        dialog.accept()
+
+    def stdtrafo():
+        dialog.option = 'stdtrafo'
+        dialog.accept()
+
+    def switch():
+        dialog.option = 'switch'
+        dialog.accept()
+
+    dialog.btn_close.setIcon(qta.icon('mdi6.close'))
+
+    dialog.btnLine.setIcon(qta.icon('ph.line-segment'))
+    dialog.btnLine.setText('AC line')
+    dialog.btnLine.clicked.connect(line)
+
+    dialog.btnStdLine.setIcon(qta.icon('ph.line-segment'))
+    dialog.btnStdLine.setText('Standard AC line')
+    dialog.btnStdLine.clicked.connect(stdline)
+
+    dialog.btnDCLine.setIcon(qta.icon('ph.line-segment'))
+    dialog.btnDCLine.setText('DC line')
+    dialog.btnDCLine.clicked.connect(dcline)
+
+    dialog.btnImpedance.setIcon(qta.icon('mdi6.alpha-z-box-outline'))
+    dialog.btnImpedance.setText('Impedance')
+    dialog.btnImpedance.clicked.connect(impedance)
+
+    dialog.btnTrafo.setIcon(qta.icon('ph.intersect'))
+    dialog.btnTrafo.setText('2-winding transformer')
+    dialog.btnTrafo.clicked.connect(trafo)
+
+    dialog.btnStdTrafo.setIcon(qta.icon('ph.intersect'))
+    dialog.btnStdTrafo.setText('Standard 2-winding transformer')
+    dialog.btnStdTrafo.clicked.connect(stdtrafo)
+
+    dialog.btnSwitch.setIcon(qta.icon('mdi6.electric-switch'))
+    dialog.btnSwitch.setText('Switch')
+    dialog.btnSwitch.clicked.connect(switch)
+
+    # dialog.widget_container.setStyleSheet('border: 1px solid #d3d3d3')
+    # dialog.widget_container.setStyleSheet('QWidget {border-left: 10px solid blue;}')
+    # dialog.widget_container.setStyleSheet('background-color: #d3d3d3')
+    dialog.setStyleSheet('font-size: 20px')
+    dialog.label.setStyleSheet('font-size: 16px')
+
+    return dialog
+
+
 class Toolbar_Matplotlib_custom(NavigationToolbar):
     """
     Custom Matplotlib toolbar.

@@ -36,7 +36,8 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         shunt_dialog, motor_dialog, about_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
-                        network_settings_dialog, Settings_Dialog)
+                        network_settings_dialog, Settings_Dialog,
+                        connecting_buses_dialog)
 from extensions.extension_classes import ExtensionWorker
 
 
@@ -670,11 +671,14 @@ class ElectricalGraph(NodeGraph):
         """
         Adds a line to the graph (AC or DC line).
         """
+        pos = kwargs.get('pos')
+        option = kwargs.get('option')
+
         dialog = choose_line_dialog()
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        if dialog.exec():
-            center_coordinates = self.viewer().scene_center()
-            if dialog.radioAC.isChecked():  # AC line
+        if pos is not None or dialog.exec():
+            center_coordinates = pos if pos is not None else self.viewer().scene_center()
+            if option=='line' or (dialog.radioAC.isChecked() and option is None):  # AC line
                 node = self.create_node('LineNode.LineNode', name='Line 0', pos=center_coordinates,
                                         push_undo=False)
                 settings = self.config['line']
@@ -684,7 +688,7 @@ class ElectricalGraph(NodeGraph):
                     else:
                         node.set_property(name, float(value), push_undo=False)
 
-            elif dialog.radioStdAC.isChecked():  # Std AC line
+            elif option=='stdline' or dialog.radioStdAC.isChecked():  # Std AC line
                 node = self.create_node('StdLineNode.StdLineNode', name='Std Line 0',
                                         pos=center_coordinates,
                                         push_undo=False)
@@ -697,7 +701,7 @@ class ElectricalGraph(NodeGraph):
                     else:
                         node.set_property(name, float(value), push_undo=False)
 
-            elif dialog.radioDC.isChecked():  # DC line
+            elif option=='dcline' or dialog.radioDC.isChecked():  # DC line
                 node = self.create_node('DCLineNode.DCLineNode', name='DC Line 0',
                                         pos=center_coordinates,
                                         push_undo=False)
@@ -706,33 +710,48 @@ class ElectricalGraph(NodeGraph):
                     node.set_property(name, float(value), push_undo=False)
 
             self.set_horizontal_layout_prop(node)
+
+        if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
+            node.set_input(0, node_from.output(0), push_undo=False)
+            node.set_output(0, node_to.input(0), push_undo=False)
+            return node
             
     def add_impedance(self, **kwargs):
         """
         Adds an impedance to the graph.
         """
-        center_coordinates = self.viewer().scene_center()
+        pos = kwargs.get('pos')
+
+        center_coordinates = pos if pos is not None else self.viewer().scene_center()
         node = self.create_node('ImpedanceNode.ImpedanceNode', name='Impedance 0', pos=center_coordinates,
                                 push_undo=False)
         settings = self.config['impedance']
         for name, value in settings.items():
             node.set_property(name, float(value), push_undo=False)
         self.set_horizontal_layout_prop(node)
+
+        if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
+            node.set_input(0, node_from.output(0), push_undo=False)
+            node.set_output(0, node_to.input(0), push_undo=False)
+            return node
         
     def add_trafo(self, **kwargs):
         """
         Adds a transformer to the graph. Two- or three-winding transformers are available.
         """
+        pos = kwargs.get('pos')
+        option = kwargs.get('option')
+
         dialog = choose_transformer_dialog()
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        if dialog.exec():
-            center_coordinates = self.viewer().scene_center()
-            if dialog.radio2w.isChecked():  # 2W-Trafo
+        if pos is not None or dialog.exec():
+            center_coordinates = pos if pos is not None else self.viewer().scene_center()
+            if option=='trafo' or (dialog.radio2w.isChecked() and option is None):  # 2W-Trafo
                 node = self.create_node('TrafoNode.TrafoNode', name='Transformer 0',
                                         pos=center_coordinates, push_undo=False)
                 settings = self.config['trafo']
 
-            if dialog.radio2w_std.isChecked():  # 2W-StdTrafo
+            if option=='stdtrafo' or dialog.radio2w_std.isChecked():  # 2W-StdTrafo
                 node = self.create_node('StdTrafoNode.StdTrafoNode', name='Std Trafo 0',
                                         pos=center_coordinates, push_undo=False)
                 settings = self.config['stdtrafo']
@@ -777,7 +796,11 @@ class ElectricalGraph(NodeGraph):
                 node.tap_pos_widget.get_custom_widget().setMaximum(int(tap_max))
 
             self.set_horizontal_layout_prop(node)
-            
+
+        if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
+            node.set_input(0, node_from.output(0), push_undo=False)
+            node.set_output(0, node_to.input(0), push_undo=False)
+            return node
     def add_generator(self, **kwargs):
         """
         Adds a generator to the graph: voltage-controlled gen.,
@@ -1372,7 +1395,44 @@ class ElectricalGraph(NodeGraph):
             node_from = self.get_node_by_name(port_from.node.name)
             node_to = self.get_node_by_name(port_to.node.name)
 
-            if set((node_from.type_, node_to.type_)) not in allowed_connections:
+            # If 2 buses gets connected...
+            if node_from.type_=='BusNode.BusNode' and node_to.type_=='BusNode.BusNode':
+                port_from.disconnect_from(port_to)
+                dialog = connecting_buses_dialog()
+                dialog.setWindowIcon(QtGui.QIcon(icon_path))
+                main_win_rect = self.main_window.geometry()
+                dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+                dialog.exec()
+
+                if dialog.option in ('line', 'stdline', 'dcline'):
+                    pos0 = node_from.pos()
+                    pos1 = node_to.pos()
+                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                    node_from = self.add_line(pos=pos, option=dialog.option,
+                                              node_from=node_from,
+                                              node_to=node_to)
+                elif dialog.option in ('trafo', 'stdtrafo'):
+                    pos0 = node_from.pos()
+                    pos1 = node_to.pos()
+                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                    node_from = self.add_trafo(pos=pos, option=dialog.option,
+                                               node_from=node_from,
+                                               node_to=node_to)
+                elif dialog.option=='impedance':
+                    pos0 = node_from.pos()
+                    pos1 = node_to.pos()
+                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                    node_from = self.add_impedance(pos=pos,
+                                                   node_from=node_from,
+                                                   node_to=node_to)
+                elif dialog.option=='switch':
+                    self.clear_selection()
+                    node_from.set_selected(True)
+                    node_to.set_selected(True)
+                    self.add_switch()
+
+
+            if {node_from.type_, node_to.type_} not in allowed_connections:
                 port_from.disconnect_from(port_to)
                 return
 
