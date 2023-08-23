@@ -107,10 +107,10 @@ class TableWidgetWithMenu(TableWidget):
         """
         Show the selected component in the graph.
         """
-        self.graph.clear_selection()
         node_name = self.model.get_data().iloc[self.row, :]['name']
         node = self.graph.get_node_by_name(node_name)
         if node is not None:
+            self.graph.clear_selection()
             node.set_selected(True)
             self.graph.fit_to_selection()
             self.graph.main_window.toolBox.setCurrentIndex(0)

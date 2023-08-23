@@ -250,6 +250,15 @@ def main():
 
     main_window.layout_upper_toolbar.addStretch()
 
+    search_node_btn = QtWidgets.QToolButton(main_window)
+    search_node_btn.setToolTip('Find node (Ctrl+F)')
+    search_node_btn.setIconSize(icon_size)
+    search_node_btn.setIcon(qta.icon('mdi6.map-search-outline'))
+    main_window.layout_upper_toolbar.addWidget(search_node_btn)
+    search_node_btn.clicked.connect(graph.search_node)
+
+    main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
+
     extensions_label = QtWidgets.QLabel(main_window)
     extensions_label.setText('Extensions:')
     extensions_combobox = QtWidgets.QComboBox(main_window)

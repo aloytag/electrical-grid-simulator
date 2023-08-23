@@ -2,6 +2,7 @@
 
 import os
 import configparser
+import re
 
 from Qt import QtWidgets
 import qtawesome as qta
@@ -10,6 +11,46 @@ from platformdirs import user_config_dir
 
 directory = os.path.dirname(__file__)
 root_dir, _ = os.path.split(directory)
+
+icon_for_type = {'BusNode.BusNode': 'ph.git-commit',
+                 'LineNode.LineNode': 'ph.line-segment',
+                 'StdLineNode.StdLineNode': 'ph.line-segment',
+                 'DCLineNode.DCLineNode': 'ph.line-segment',
+                 'ImpedanceNode.ImpedanceNode': 'mdi6.alpha-z-box-outline',
+                 'TrafoNode.TrafoNode': 'ph.intersect',
+                 'StdTrafoNode.StdTrafoNode': 'ph.intersect',
+                 'Trafo3wNode.Trafo3wNode': 'ph.intersect',
+                 'StdTrafo3wNode.StdTrafo3wNode': 'ph.intersect',
+                 'GenNode.GenNode': 'mdi6.alpha-g-circle-outline',
+                 'SGenNode.SGenNode': 'mdi6.alpha-g-circle-outline',
+                 'ASGenNode.ASGenNode': 'mdi6.alpha-g-circle-outline',
+                 'ExtGridNode.ExtGridNode': 'mdi6.grid',
+                 'LoadNode.LoadNode': 'mdi6.download-circle-outline',
+                 'ALoadNode.ALoadNode': 'mdi6.download-circle-outline',
+                 'ShuntNode.ShuntNode': 'mdi6.download-circle-outline',
+                 'MotorNode.MotorNode': 'mdi6.download-circle-outline',
+                 'WardNode.WardNode': 'mdi6.download-circle-outline',
+                 'XWardNode.XWardNode': 'mdi6.download-circle-outline',
+                 'StorageNode.StorageNode': 'mdi6.battery-medium',
+                 'SwitchNode.SwitchNode': 'mdi6.electric-switch'}
+
+
+def natsort(s):
+    """
+    Function key for natural sorting.
+
+    s: List with strings.
+    """
+    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
+
+
+def natsort2(s):
+    """
+    Function key for natural sorting.
+
+    s: List obtained as enumerate(list with strings).
+    """
+    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s[1])]
 
 
 def show_WIP(window_parent):

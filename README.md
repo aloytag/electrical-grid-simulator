@@ -65,7 +65,7 @@ The EGS main window is organized as follows:
 *  The main work area can display either the **Graph** or the **Data model**. The **Data model** is shown as a set of tables arranged in tabs. For more information about this data (including the meaning of column names), see the [pandapower documentation](https://pandapower.readthedocs.io/).
 * The side toolbar lists the supported components. An element is added to the **Graph** by clicking on the corresponding icon. In some cases, an icon may represent a category (e.g., loads).  In such cases, a dialog allows you to choose the required type within that category. For example, in the loads category, six different types are available.
 Switches work in a different way. According to ```pandapower```, switches can be added between two buses or between a bus and a line (AC line) or transformer. Thus, if you want to do the first, just select two buses and then click the switch button. On the contrary, if you want to add a switch next to a line (or transformer), select only the corresponding element and then click the switch button. In this case, a new dialog will allow you to select the bus.
-* The upper toolbar is divided into three parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog. The extension manager is displayed at the center. In order to run an extensión, just select one of them and click the run button.
+* The upper toolbar is divided into three parts. The left part contains the file functions and the calculation options. Here it is possible to open/save files, export only the **Data model** to JSON, or simply delete the network and start a new one. The *"play"* button opens the dialog for a power flow calculation. Meanwhile, the right side gives access to the basic network configuration (name, base system power and rated frequency) and to the application settings dialog. The fuuzy search launcher and the extension manager are displayed at the center. In order to run an extensión, just select one of them and click the run button.
 * The status bar at the bottom will notify when the grid has been modified and has not been saved.
 * The menu bar includes most of the options available in the toolbars.
 
@@ -228,6 +228,7 @@ Settings are classified into four categories:
 | ```H``` | Change selected nodes to the horizontal layout |
 | ```Shift+V``` | Apply a vertical alignment to selected nodes |
 | ```Shift+H``` | Apply a horizontal alignment to selected nodes |
+| ```Ctrl+F``` | Find a node by fuzzy search |
 
 > __Note__ <br>
 > * ```Undo``` and ```Redo``` only work for simple actions.
@@ -236,8 +237,10 @@ Settings are classified into four categories:
 > * For selecting nodes in the **Graph** you can use the left mouse button (```LMB```). Just click with the ```LMB```, hold and drag to mark the selection area.
 > * Clicking with the ```LMB``` on the background will unselect all.
 > * You can use ```Shift+LMB``` on a node in order to add it to the selection.
+> * ```Ctrl+LMB``` on a selected node will unselect it.
 > * The mouse scroll wheel can be used to zoom in and out.
 > * Use the medium mouse button (```MMB```) to scroll over the **Graph**. Just click with the ```MMB```, hold and move.
+> * Hold ```Shift+Alt+LMB``` to slice several connections (see the picture below).
 
 If you prefer to use the mouse instead of keyboard shortcuts, just right click on the **Graph** and access a context menu that complements the upper toolbar and the menu bar.
 
@@ -248,7 +251,21 @@ If you prefer to use the mouse instead of keyboard shortcuts, just right click o
 </p>
 </br>
 
-![EGS with dark theme](img/14_Context_menu.png)
+<p align = "center">
+<img src="./img/slice_connections.png" alt="Slicing connections" width="450">
+<p align = "center">
+<i>Slicing connections</i>
+</p>
+</br>
+
+<p align = "center">
+<img src="./img/fuzzy_search2.png" alt="Fuzzy search" width="350">
+<p align = "center">
+<i>Fuzzy search</i>
+</p>
+</br>
+
+![Context menu](img/14_Context_menu.png)
 <p align = "center">
 <i>Context menu</i>
 </p>

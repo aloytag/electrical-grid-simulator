@@ -261,3 +261,10 @@ def duplicate_nodes(graph):
                                       in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
                                       geodata=node_duplicated.pos())
             node_duplicated.set_property('bus_index', bus_index, push_undo=False)
+
+
+def find_node(graph):
+    """
+    Shows the dialog for searching nodes.
+    """
+    graph.search_node()

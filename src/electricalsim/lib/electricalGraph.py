@@ -37,7 +37,7 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
                         network_settings_dialog, Settings_Dialog,
-                        connecting_buses_dialog)
+                        connecting_buses_dialog, search_node_dialog)
 from extensions.extension_classes import ExtensionWorker
 
 
@@ -801,6 +801,7 @@ class ElectricalGraph(NodeGraph):
             node.set_input(0, node_from.output(0), push_undo=False)
             node.set_output(0, node_to.input(0), push_undo=False)
             return node
+
     def add_generator(self, **kwargs):
         """
         Adds a generator to the graph: voltage-controlled gen.,
@@ -4210,3 +4211,22 @@ class ElectricalGraph(NodeGraph):
                 except KeyError:
                     node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
                     node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
+
+    def search_node(self):
+        """
+        Displays a dialog for searching nodes by name.
+        """
+        all_nodes = self.all_nodes()
+
+        dialog = search_node_dialog(all_nodes)
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        main_win_rect = self.main_window.geometry()
+        dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+        if dialog.exec():
+            node = self.get_node_by_name(dialog.selected_node)
+            if node is not None:
+                self.clear_selection()
+                node.set_selected(True)
+                self.fit_to_selection()
+                self.main_window.toolBox.setCurrentIndex(0)
+                simulate_ESC_key()

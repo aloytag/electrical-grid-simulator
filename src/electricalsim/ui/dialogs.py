@@ -17,7 +17,10 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.ticker import MaxNLocator
 from matplotlib import rc
 
+from fuzzysearch import find_near_matches
+
 from lib.table_widget import TableWidget
+from lib.auxiliary import icon_for_type, natsort2
 from version import VERSION, DATE, AUTHOR, CONTACT
 
 directory = os.path.dirname(__file__)
@@ -719,6 +722,111 @@ def connecting_buses_dialog():
     # dialog.widget_container.setStyleSheet('background-color: #d3d3d3')
     dialog.setStyleSheet('font-size: 20px')
     dialog.label.setStyleSheet('font-size: 16px')
+
+    return dialog
+
+
+def search_node_dialog(all_nodes):
+    """
+    all_nodes: List of all nodes in the graph.
+
+    Returns a dialog for searching nodes.
+    """
+    names = [node.name() for node in all_nodes]
+    types = [node.type_ for node in all_nodes]
+
+    ordered = sorted(enumerate(names), key=natsort2)
+    all_names = []
+    all_types = []
+    for order, name in ordered:
+        all_names.append(name)
+        all_types.append(types[order])
+
+    ui_file = os.path.join(directory, 'search_node_dialog.ui')
+    dialog = QtCompat.loadUi(uifile=ui_file)
+    dialog.setModal(True)
+    dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+    dialog.selected_node = None  # Name of the selected element (node)
+
+    dialog.btn_close.setIcon(qta.icon('mdi6.close'))
+
+    dialog.setStyleSheet('font-size: 20px')
+    dialog.label.setStyleSheet('font-size: 16px')
+    dialog.input_search.setFocus()
+    # dialog.frame.setStyleSheet('border: 1px solid #d3d3d3')
+
+    class SaveNodeName:
+        def __init__(self, name):
+            self.name = name
+
+        def __call__(self):
+            dialog.selected_node = self.name
+            dialog.accept()
+
+    def list_all_nodes():
+        widget = QtWidgets.QWidget()
+        dialog.vbox = QtWidgets.QVBoxLayout()
+        icon_size = QtCore.QSize(32, 32)
+
+        for node_name, node_type in zip(all_names, all_types):
+            hbox = QtWidgets.QHBoxLayout()
+            widget_btn = QtWidgets.QWidget()
+            btn_node = QtWidgets.QToolButton(dialog)
+            btn_node.setIcon(qta.icon(icon_for_type[node_type]))
+            btn_node.setText(node_name)
+            btn_node.setIconSize(icon_size)
+            btn_node.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+            btn_node.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+            btn_action = SaveNodeName(node_name)
+            btn_node.clicked.connect(btn_action)
+            hbox.addWidget(btn_node)
+            widget_btn.setLayout(hbox)
+            dialog.vbox.addWidget(widget_btn)
+            # dialog.scrollArea.setFocusProxy(widget_btn)
+
+        dialog.vbox.addStretch()
+        widget.setLayout(dialog.vbox)
+        dialog.scrollArea.setWidget(widget)
+
+    list_all_nodes()
+
+    # dialog.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+    dialog.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+    dialog.scrollArea.setWidgetResizable(True)
+
+    def nodes_found(text):
+        dialog.scrollArea.takeWidget()  # Removing list...
+        if text=='':
+            list_all_nodes()
+            return
+
+        widget = QtWidgets.QWidget()
+        dialog.vbox = QtWidgets.QVBoxLayout()
+        icon_size = QtCore.QSize(32, 32)
+        for node_name, node_type in zip(all_names, all_types):
+            search_text = node_name.join((node_name.lower(), node_name.upper()))
+            found_list = find_near_matches(text, search_text, max_l_dist=1)
+            if text in search_text or (found_list and not all([m.matched=='' for m in found_list])):
+                hbox = QtWidgets.QHBoxLayout()
+                widget_btn = QtWidgets.QWidget()
+                btn_node = QtWidgets.QToolButton(dialog)
+                btn_node.setIcon(qta.icon(icon_for_type[node_type]))
+                btn_node.setText(node_name)
+                btn_node.setIconSize(icon_size)
+                btn_node.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+                btn_node.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+                btn_action = SaveNodeName(node_name)
+                btn_node.clicked.connect(btn_action)
+                hbox.addWidget(btn_node)
+                widget_btn.setLayout(hbox)
+                dialog.vbox.addWidget(widget_btn)
+
+        dialog.vbox.addStretch()
+        widget.setLayout(dialog.vbox)
+        dialog.scrollArea.setWidget(widget)
+
+
+    dialog.input_search.textChanged.connect(nodes_found)
 
     return dialog
 

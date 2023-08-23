@@ -137,5 +137,15 @@
         "shortcut":"Shift+H"
       }
     ]
+  },
+  {
+    "type":"separator"
+  },
+  {
+    "type":"command",
+    "label":"Find node",
+    "file":"./hotkeys/hotkey_functions.py",
+    "function_name":"find_node",
+    "shortcut":"Ctrl+F"
   }
 ]
