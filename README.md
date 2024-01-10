@@ -78,7 +78,7 @@ A **node** element is a component added to the **Graph**. A **node** should not 
 <img src="./img/3_Widgets.png" alt="Symmetric load node" width="300">
 </p>
 <p align = "center">
-<i>Node element (example: symmetric load with an input port)</i>
+<i>Node element (example: symmetric load with an output port)</i>
 </p>
 </br></br>
 
@@ -90,7 +90,7 @@ Some nodes provide widgets that work as shortcuts for some of their main feature
 </p>
 </br></br>
 
-Node types (component types) are distinguished by color. For example, a line is represented by a different color than the one used for a transformer. Two- and three-winding transformers have nodes with the same color, but differs in the number of connections.
+Node types (component types) are distinguished by color. For example, a line is represented by a different color than the one used for a transformer. Two- and three-winding transformers have nodes with the same color, but differs in the number of connections. Additionally, most of the nodes present a symbol (icon) identifying the type of component.
 
 Nodes can have input and output ports. Connections are made by linking an output port on one node with an input port on another node. For example, to connect a generator to a bus, you can link the output port of the generator to the input port of the bus.
 
