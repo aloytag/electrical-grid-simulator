@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from Qt import QtCore, QtGui, QtWidgets
 
 import numpy as np
@@ -7,7 +8,42 @@ import numpy as np
 from NodeGraphQt import BaseNode
 from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
 
-from lib.auxiliary import PropertyChangedCmd
+from lib.auxiliary import PropertyChangedCmd, root_dir
+
+icons_dir = os.path.join(root_dir, 'icons')
+
+
+class ImageWrapper(NodeBaseWidget):
+    """
+    Wrapper that allows an image widget (label with pixmap) to be added in a node object.
+    """
+    def __init__(self, parent=None, widget_type=None):
+        super(ImageWrapper, self).__init__(parent)
+
+        # set the name for node property.
+        self.set_name('image')
+
+        # set the label above the widget.
+        # self.set_label('image')
+
+        # set the custom widget.
+        if widget_type is None:
+            widget_type = QtWidgets.QLabel()
+        self.set_custom_widget(widget_type)
+        
+    def get_value(self):
+        widget = self.get_custom_widget()
+        return widget.styleSheet()
+    
+    # def set_value(self, label):
+    #     widget = self.get_custom_widget()
+    #     widget.setFixedSize(100, 100)
+    #     widget.setStyleSheet(label.styleSheet())
+        
+    def set_value(self, style):
+        widget = self.get_custom_widget()
+        widget.setFixedSize(100, 100)
+        widget.setStyleSheet(style)
 
 
 class QSpinBoxWrapper(NodeBaseWidget):
@@ -363,6 +399,22 @@ class BaseNode2(BaseNode):
         THIS IS A VIRTUAL METHOD.
         """
         pass
+    
+    def add_image(self, image_name):
+        """
+        Add an image to the node.
+        
+        image_name: Image file name from de 'icons' folder.
+        """
+    
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        icon_path = os.path.join(icons_dir, image_name)
+        style = f"image: url('{icon_path}')"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
 
 
 class BusNode(BaseNode2):
@@ -561,6 +613,7 @@ class ImpedanceNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('impedance_index', None)
+        self.add_image('impedance.svg')
             
     def connected_to_network(self):
         """
@@ -596,6 +649,7 @@ class TrafoNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('transformer_index', None)
+        self.add_image('transformer.svg')
             
         # add custom widget to node with "node.view" as the parent.
         self.tap_pos_widget = QSpinBoxWrapper(self.view)
@@ -661,12 +715,14 @@ class StdTrafoNode(BaseNode2):
         self.electrical_properties = ('std_type', 'tap_pos',
                                       'max_loading_percent', 'parallel', 'df',
                                       'vk0_percent', 'vkr0_percent', 'mag0_percent',
-                                      'mag0_rx', 'si0_hv_partial', 'xn_ohm')
+                                      'mag0_rx', 'si0_hv_partial', 'xn_ohm',
+                                      'tap_min', 'tap_max')
         for name in self.electrical_properties:
             if name!='tap_pos':
                 self.create_property(name, None)
                 
         self.create_property('transformer_index', None)
+        self.add_image('transformer.svg')
             
         # add custom widget to node with "node.view" as the parent.
         self.tap_pos_widget = QSpinBoxWrapper(self.view)
@@ -740,6 +796,7 @@ class Trafo3wNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('transformer_index', None)
+        self.add_image('3w-transformer.svg')
             
         # add custom widget to node with "node.view" as the parent.
         self.tap_pos_widget = QSpinBoxWrapper(self.view)
@@ -804,12 +861,14 @@ class StdTrafo3wNode(BaseNode2):
         
         self.electrical_properties = ('std_type', 'tap_pos',
                                       'max_loading_percent',
-                                      'tap_at_star_point')
+                                      'tap_at_star_point',
+                                      'tap_min', 'tap_max')
         for name in self.electrical_properties:
             if name!='tap_pos':
                 self.create_property(name, None)
                 
         self.create_property('transformer_index', None)
+        self.add_image('3w-transformer.svg')
             
         # add custom widget to node with "node.view" as the parent.
         self.tap_pos_widget = QSpinBoxWrapper(self.view)
@@ -888,6 +947,16 @@ class GenNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('gen_index', None)
+        
+        # self.image_widget = ImageWrapper(self.view)
+        # pixmap = QtGui.QPixmap(os.path.join(icons_dir, 'generator.svg'))
+        # pixmap = pixmap.scaledToWidth(100, QtCore.Qt.SmoothTransformation)
+        # self.image_widget.set_value(pixmap)
+        # self.add_custom_widget(self.image_widget, tab=None)
+        # model = self.model
+        # self.set_model(model)
+        
+        self.add_image('generator.svg')
                 
         # add custom widget to node with "node.view" as the parent.
         self.p_mw_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
@@ -1021,6 +1090,7 @@ class SGenNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('gen_index', None)
+        self.add_image('generator.svg')
                 
         # add custom widget to node with "node.view" as the parent.
         self.p_mw_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
@@ -1151,6 +1221,7 @@ class ASGenNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('gen_index', None)
+        self.add_image('generator.svg')
     
     def flip(self):
         """
@@ -1213,6 +1284,7 @@ class ExtGridNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('grid_index', None)
+        self.add_image('ext_grid.svg')
         
         # add custom widget to node with "node.view" as the parent.
         self.vm_pu_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
@@ -1300,6 +1372,24 @@ class LoadNode(BaseNode2):
                 
         self.create_property('load_index', None)
         # self.create_property('layout_vert', False)
+        
+        # self.image_widget = ImageWrapper(self.view)
+        # pixmap = QtGui.QPixmap(os.path.join(icons_dir, 'demand.svg'))
+        # # pixmap = pixmap.scaled(100, 80, QtCore.Qt.KeepAspectRatio)
+        # pixmap = pixmap.scaledToWidth(50, QtCore.Qt.SmoothTransformation)
+        # self.image_widget.set_value(pixmap)
+        # self.add_custom_widget(self.image_widget, tab=None)
+        # model = self.model
+        # self.set_model(model)
+        
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        icon_path = os.path.join(icons_dir, 'demand.svg')
+        style = f"image: url('{icon_path}')"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
                 
         # add custom widget to node with "node.view" as the parent.
         self.p_mw_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
@@ -1442,6 +1532,24 @@ class ALoadNode(BaseNode2):
             
         self.create_property('load_index', None)
         
+        # self.image_widget = ImageWrapper(self.view)
+        # pixmap = QtGui.QPixmap(os.path.join(icons_dir, 'demand.svg'))
+        # # pixmap = pixmap.scaled(100, 80, QtCore.Qt.KeepAspectRatio)
+        # pixmap = pixmap.scaledToWidth(50, QtCore.Qt.SmoothTransformation)
+        # self.image_widget.set_value(pixmap)
+        # self.add_custom_widget(self.image_widget, tab=None)
+        # model = self.model
+        # self.set_model(model)
+        
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        icon_path = os.path.join(icons_dir, 'demand.svg')
+        style = f"image: url('{icon_path}')"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
+        
     def flip(self):
         """
         Flip the node (change the input ports by an output port, or Vice versa).
@@ -1501,6 +1609,7 @@ class ShuntNode(BaseNode2):
                 self.create_property(name, None)
                 
         self.create_property('shunt_index', None)
+        self.add_image('shunt.svg')
                 
         # add custom widget to node with "node.view" as the parent.
         self.p_mw_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
@@ -1636,6 +1745,7 @@ class MotorNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('motor_index', None)
+        self.add_image('motor.svg')
     
     def flip(self):
         """
@@ -1695,6 +1805,7 @@ class WardNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('ward_index', None)
+        self.add_image('ward.svg')
         
     def flip(self):
         """
@@ -1756,6 +1867,7 @@ class XWardNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('ward_index', None)
+        self.add_image('xward.svg')
         
     def flip(self):
         """
@@ -1820,6 +1932,7 @@ class StorageNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('storage_index', None)
+        self.add_image('storage.svg')
         
     def flip(self):
         """
@@ -1870,9 +1983,16 @@ class SwitchNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('switch_index', None)
+        self.add_image('switch_closed.svg')
         
         self.add_checkbox('closed', '', 'Closed', True)  # Adds 'closed' property
-        self.get_widget('closed').value_changed.connect(self.update_closed)
+        widget_checkbox = self.get_widget('closed')
+        widget_checkbox.value_changed.connect(self.update_closed)
+        size = widget_checkbox.size()
+        size.scale(150, 150, QtCore.Qt.KeepAspectRatio)
+        widget_checkbox.resize(size)
+        widget_checkbox.get_custom_widget().setStyleSheet("QCheckBox::indicator { width: 50px; height: 50px;}")
+        # self.update()
         
     def update_closed(self, value):
         """
@@ -1885,8 +2005,13 @@ class SwitchNode(BaseNode2):
             self.graph.net.switch.loc[index, 'closed'] = new_value
         if new_value:
             self.set_color(0, 0, 255)
+            icon_path = os.path.join(icons_dir, 'switch_closed.svg')
         else:
             self.set_color(178, 199, 218)
+            icon_path = os.path.join(icons_dir, 'switch_opened.svg')
+            
+        style = f"image: url('{icon_path}')"
+        self.image_widget.set_value(style)
             
     def connected_to_network(self):
         """

@@ -137,6 +137,7 @@ class ElectricalGraph(NodeGraph):
         self.main_window.statusbar.addWidget(self.message_unsaved)
         self.message_unsaved.hide()
         self.set_main_window_title()
+        self._viewer.setViewportUpdateMode(QtWidgets.QGraphicsView.BoundingRectViewportUpdate)
 
     def set_main_window_title(self, file_name=None):
         """
@@ -250,19 +251,100 @@ class ElectricalGraph(NodeGraph):
         serial = self._serialize(nodes)
         new_nodes = self._deserialize2(serial)
         offset = 50
+        # for n_original, n in zip(nodes, new_nodes):
+        #     x, y = n.pos()
+        #     n.set_pos(x + offset, y + offset)
+        #     n.set_property('selected', True)
+            # if n_original.get_property('layout_vert') is True:
+            #     n.set_layout_direction(1)
+            #     self.set_vertical_layout_prop(n)
+            #     n_original.set_layout_direction(1)
+            # else:
+            #     n.set_layout_direction(0)
+            #     self.set_horizontal_layout_prop(n)
+            #     n_original.set_layout_direction(0)
+
+        # return new_nodes
+    
         for n in new_nodes:
             x, y = n.pos()
             n.set_pos(x + offset, y + offset)
             n.set_property('selected', True)
-            if n.get_property('layout_vert') is True:
-                n.set_layout_direction(1)
-
+        
         # self._undo_stack.endMacro()
+        
         return new_nodes
+    
+    def _serialize(self, nodes):
+        """
+        MODIFIED VERSION FOR SOLVING LAYOUT BUGS.
+        
+        serialize nodes to a dict.
+        (used internally by the node graph)
+
+        Args:
+            nodes (list[NodeGraphQt.Nodes]): list of node instances.
+
+        Returns:
+            dict: serialized data.
+        """
+        serial_data = {'graph': {}, 'nodes': {}, 'connections': []}
+        nodes_data = {}
+
+        # serialize graph session.
+        # serial_data['graph']['layout_direction'] = self.layout_direction()
+        serial_data['graph']['acyclic'] = self.acyclic()
+        serial_data['graph']['pipe_collision'] = self.pipe_collision()
+        serial_data['graph']['pipe_slicing'] = self.pipe_slicing()
+        serial_data['graph']['pipe_style'] = self.pipe_style()
+
+        # connection constrains.
+        serial_data['graph']['accept_connection_types'] = self.model.accept_connection_types
+        serial_data['graph']['reject_connection_types'] = self.model.reject_connection_types
+
+        # serialize nodes.
+        for n in nodes:
+            # update the node model.
+            n.update_model()
+
+            node_dict = n.model.to_dict
+            nodes_data.update(node_dict)
+
+        for n_id, n_data in nodes_data.items():
+            serial_data['nodes'][n_id] = n_data
+
+            # serialize connections
+            inputs = n_data.pop('inputs') if n_data.get('inputs') else {}
+            outputs = n_data.pop('outputs') if n_data.get('outputs') else {}
+
+            for pname, conn_data in inputs.items():
+                for conn_id, prt_names in conn_data.items():
+                    for conn_prt in prt_names:
+                        pipe = {
+                            PortTypeEnum.IN.value: [n_id, pname],
+                            PortTypeEnum.OUT.value: [conn_id, conn_prt]
+                        }
+                        if pipe not in serial_data['connections']:
+                            serial_data['connections'].append(pipe)
+
+            for pname, conn_data in outputs.items():
+                for conn_id, prt_names in conn_data.items():
+                    for conn_prt in prt_names:
+                        pipe = {
+                            PortTypeEnum.OUT.value: [n_id, pname],
+                            PortTypeEnum.IN.value: [conn_id, conn_prt]
+                        }
+                        if pipe not in serial_data['connections']:
+                            serial_data['connections'].append(pipe)
+
+        if not serial_data['connections']:
+            serial_data.pop('connections')
+
+        return serial_data
 
     def _deserialize2(self, data, relative_pos=False, pos=None):
         """
-        ALTERNATIVE TO _deserialize2 METHOD WITHOUT push_undo
+        ALTERNATIVE TO _deserialize() METHOD WITHOUT push_undo
 
         deserialize node data.
         (used internally by the node graph)
@@ -314,6 +396,7 @@ class ElectricalGraph(NodeGraph):
 
                 nodes[n_id] = node
                 self.add_node(node, n_data.get('pos'), push_undo=False)
+                node.set_layout_direction(n_data['layout_direction'])  # Fix
 
                 if n_data.get('port_deletion_allowed', None):
                     node.set_ports({
@@ -342,9 +425,12 @@ class ElectricalGraph(NodeGraph):
                 allow_connection = any([not in_port.model.connected_ports,
                                         in_port.model.multi_connection])
                 if allow_connection:
-                    self._undo_stack.push(PortConnectedCmd(in_port, out_port))
+                    self._undo_stack.push(
+                        PortConnectedCmd(in_port, out_port, emit_signal=False)
+                    )
 
-                # Run on_input_connected to ensure connections are fully set up after deserialization.
+                # Run on_input_connected to ensure connections are fully set up
+                # after deserialization.
                 in_node.on_input_connected(in_port, out_port)
 
         node_objs = nodes.values()
@@ -380,6 +466,16 @@ class ElectricalGraph(NodeGraph):
             node.create_property('layout_vert', False)
         else:
             node.set_property('layout_vert', False, push_undo=False)
+            
+    def set_vertical_layout_prop(self, node):
+        """
+        Set True to the 'layout_vert' property of a node.
+        """
+        layout_vert = node.get_property('layout_vert')
+        if layout_vert is None:
+            node.create_property('layout_vert', True)
+        else:
+            node.set_property('layout_vert', True, push_undo=False)
     
     def disable_nodes(self, nodes, mode=None):
         """
@@ -655,6 +751,7 @@ class ElectricalGraph(NodeGraph):
         center_coordinates = self.viewer().scene_center()
         node = self.create_node('BusNode.BusNode', name='Bus 0', pos=center_coordinates,
                                 push_undo=False)
+        # print(node.view.boundingRect().size().toSize())
         name_assigned = node.get_property('name')
         settings = self.config['bus']
         bus_index = pp.create_bus(self.net, vn_kv=float(settings['vn_kv']),
@@ -863,7 +960,13 @@ class ElectricalGraph(NodeGraph):
                     else:
                         node.set_property(name, float(value), push_undo=False)  # float
 
-            self.set_horizontal_layout_prop(node)
+            self.set_vertical_layout_prop(node)
+            node.set_layout_direction(1)
+            # node.flip()
+            theme = self.config['general']['theme']
+            if theme=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                node.update()
             
     def add_external_grid(self, **kwargs):
         """
@@ -873,6 +976,7 @@ class ElectricalGraph(NodeGraph):
         node = self.create_node('ExtGridNode.ExtGridNode', name='Ext Grid 0',
                                 pos=center_coordinates,
                                 push_undo=False)
+        
         settings = self.config['ext_grid']
         for name, value in settings.items():
             if name=='controllable' and value=='True':
@@ -881,7 +985,14 @@ class ElectricalGraph(NodeGraph):
                 node.set_property(name, False, push_undo=False)  # boolean
             else:
                 node.set_property(name, float(value), push_undo=False)  # float
-        self.set_horizontal_layout_prop(node)
+        # self.set_horizontal_layout_prop(node)
+        
+        self.set_vertical_layout_prop(node)
+        node.set_layout_direction(1)
+        theme = self.config['general']['theme']
+        if theme=='light':
+            node.model.set_property('text_color', (0, 0, 0, 255))  # black
+            node.update()
         
     def add_load(self, **kwargs):
         """
@@ -964,7 +1075,12 @@ class ElectricalGraph(NodeGraph):
                 for name, value in settings.items():
                     node.set_property(name, float(value), push_undo=False)
 
-            self.set_horizontal_layout_prop(node)
+            self.set_vertical_layout_prop(node)
+            node.set_layout_direction(1)
+            theme = self.config['general']['theme']
+            if theme=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                node.update()
             
     def includes_switch(self, bus, node_bus, element, et, node_element,
                         port_number_element, bus_left):
@@ -1262,7 +1378,13 @@ class ElectricalGraph(NodeGraph):
                 node.set_property(name, value, push_undo=False)  # str
             else:
                 node.set_property(name, float(value), push_undo=False)  # float
-        self.set_horizontal_layout_prop(node)
+        # self.set_horizontal_layout_prop(node)
+        self.set_vertical_layout_prop(node)
+        node.set_layout_direction(1)
+        theme = self.config['general']['theme']
+        if theme=='light':
+            node.model.set_property('text_color', (0, 0, 0, 255))  # black
+            node.update()
         
     def disconnect_component(self, port0, port1):
         """
@@ -1398,7 +1520,8 @@ class ElectricalGraph(NodeGraph):
 
             # If 2 buses gets connected...
             if node_from.type_=='BusNode.BusNode' and node_to.type_=='BusNode.BusNode':
-                port_from.disconnect_from(port_to)
+                # port_from.disconnect_from(port_to)
+                self._on_connection_changed(disconnected=[pipe], connected=[])
                 dialog = connecting_buses_dialog()
                 dialog.setWindowIcon(QtGui.QIcon(icon_path))
                 main_win_rect = self.main_window.geometry()
@@ -1434,7 +1557,8 @@ class ElectricalGraph(NodeGraph):
 
 
             if {node_from.type_, node_to.type_} not in allowed_connections:
-                port_from.disconnect_from(port_to)
+                # port_from.disconnect_from(port_to)
+                self._on_connection_changed(disconnected=[pipe], connected=[])
                 return
 
             # Adding line to pandapower network
@@ -2761,6 +2885,8 @@ class ElectricalGraph(NodeGraph):
             node.set_property('max_loading_percent', dialog.max_loading_percent.value(), push_undo=False)
             node.set_property('std_type', dialog.std_type.currentText(), push_undo=False)
             node.set_property('tap_pos', dialog.tap_pos.value(), push_undo=False)
+            node.set_property('tap_min', int(dialog.tap_pos.minimum()), push_undo=False)
+            node.set_property('tap_max', int(dialog.tap_pos.maximum()), push_undo=False)
 
 
             transformer_index = node.get_property('transformer_index')
@@ -2777,8 +2903,10 @@ class ElectricalGraph(NodeGraph):
 
             selected_std = dialog.std_type.currentText()
             tap_pos_widget = node.tap_pos_widget.get_custom_widget()
-            tap_pos_widget.setMinimum(table.at[selected_std, 'tap_min'])
-            tap_pos_widget.setMaximum(table.at[selected_std, 'tap_max'])
+            
+            tap_pos_widget.setMinimum(int(dialog.tap_pos.minimum()))
+            tap_pos_widget.setMaximum(int(dialog.tap_pos.maximum()))
+            tap_pos_widget.setValue(int(dialog.tap_pos.value()))
             
             self.session_change_warning()
 
@@ -2919,6 +3047,8 @@ class ElectricalGraph(NodeGraph):
             node.set_property('max_loading_percent', dialog.max_loading_percent.value(), push_undo=False)
             node.set_property('std_type', dialog.std_type.currentText(), push_undo=False)
             node.set_property('tap_pos', dialog.tap_pos.value(), push_undo=False)
+            node.set_property('tap_min', int(dialog.tap_pos.minimum()), push_undo=False)
+            node.set_property('tap_max', int(dialog.tap_pos.maximum()), push_undo=False)
 
             tap_at_star_point = 'True' if dialog.tap_at_star_point.isChecked() else 'False'
             node.set_property('tap_at_star_point', tap_at_star_point, push_undo=False)
@@ -2941,8 +3071,10 @@ class ElectricalGraph(NodeGraph):
 
             selected_std = dialog.std_type.currentText()
             tap_pos_widget = node.tap_pos_widget.get_custom_widget()
-            tap_pos_widget.setMinimum(table.at[selected_std, 'tap_min'])
-            tap_pos_widget.setMaximum(table.at[selected_std, 'tap_max'])
+            
+            tap_pos_widget.setMinimum(int(dialog.tap_pos.minimum()))
+            tap_pos_widget.setMaximum(int(dialog.tap_pos.maximum()))
+            tap_pos_widget.setValue(int(dialog.tap_pos.value()))
             
             self.session_change_warning()
 

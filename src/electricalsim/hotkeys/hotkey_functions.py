@@ -24,6 +24,7 @@ def horizontal_layout(graph):
         node.model.set_property('text_color', (255, 255, 255, 180))  # default color
         node.update()
         node.set_property('layout_vert', False, push_undo=False)
+        # node.set_property('layout_direction', 0, push_undo=False)
         
     for node in selected:
         node.set_selected()
@@ -40,6 +41,7 @@ def vertical_layout(graph):
         #     continue
         node.set_layout_direction(1)
         node.set_property('layout_vert', True, push_undo=False)
+        # node.set_property('layout_direction', 1, push_undo=False)
         if theme=='light':
             node.model.set_property('text_color', (0, 0, 0, 255))  # black
             node.update()
@@ -261,7 +263,7 @@ def duplicate_nodes(graph):
                                       in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
                                       geodata=node_duplicated.pos())
             node_duplicated.set_property('bus_index', bus_index, push_undo=False)
-
+            
 
 def find_node(graph):
     """

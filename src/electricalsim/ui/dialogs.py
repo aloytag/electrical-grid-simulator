@@ -378,6 +378,11 @@ def stdtransformer3w_dialog(dataframe_stds, selected_std):
         table_std = TableWidget(table_data)
         dialog.layout_table.addWidget(table_std)
         
+        dialog.tap_pos.setMinimum(table_data.at['tap_min', 'Parameter'])
+        dialog.tap_pos.setMaximum(table_data.at['tap_max', 'Parameter'])
+        dialog.tap_pos.setValue(table_data.at['tap_neutral', 'Parameter'])
+        dialog.tap_pos_display.setText(str(table_data.at['tap_neutral', 'Parameter']))
+        
         # height = table_std.table.horizontalHeader().height()
         # for row in range(table_std.model.rowCount(None)):
         #     height += table_std.table.rowHeight(row)

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="26.154549mm"
+   height="26.154549mm"
+   viewBox="0 0 26.154549 26.154549"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
+   sodipodi:docname="generator.svg"
+   inkscape:export-filename="/home/usuario/Documentos/Inquietudes/Electrical Grid Simulator/src/electricalsim/icons/transformer.png"
+   inkscape:export-xdpi="384"
+   inkscape:export-ydpi="384">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.5806608"
+     inkscape:cx="70.083828"
+     inkscape:cy="79.924347"
+     inkscape:document-units="mm"
+     inkscape:current-layer="text834"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1005"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-22.455662,-44.175953)">
+    <circle
+       style="opacity:0.998;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.89645;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stop-color:#000000"
+       id="path835"
+       cx="35.532936"
+       cy="57.253227"
+       r="12.129049" />
+    <g
+       aria-label="G"
+       id="text834"
+       style="font-size:15.6982px;line-height:1.25;font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans';stroke-width:2.28337">
+      <path
+         d="m 39.708658,62.11182 v -4.112929 h -3.296622 v 0.95759 h 2.072163 v 2.590203 c -0.659325,0.219775 -1.365744,0.329663 -2.072163,0.329663 -1.020383,0 -1.946577,-0.549437 -2.590203,-1.350046 -0.722117,-0.926194 -1.067477,-2.08786 -1.067477,-3.265225 0,-1.177365 0.34536,-2.35473 1.067477,-3.280924 0.643626,-0.800608 1.56982,-1.350045 2.590203,-1.350045 0.533739,0 1.05178,0.06279 1.554122,0.251171 0.518041,0.17268 0.973288,0.470946 1.381442,0.816306 l 0.235473,-1.287252 c -0.486645,-0.26687 -1.004685,-0.470946 -1.538424,-0.61223 -0.533739,-0.125586 -1.083176,-0.17268 -1.632613,-0.17268 -1.365743,0 -2.652996,0.627928 -3.579189,1.648311 -0.973289,1.098874 -1.475631,2.52741 -1.475631,3.987343 0,1.459932 0.502342,2.888468 1.475631,3.971644 0.926193,1.020383 2.213446,1.648311 3.579189,1.648311 1.145969,0 2.276239,-0.266869 3.296622,-0.769211 z"
+         style="stroke-width:2.28337"
+         id="path836" />
+    </g>
+  </g>
+</svg>

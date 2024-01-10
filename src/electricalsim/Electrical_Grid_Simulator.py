@@ -53,6 +53,7 @@ def main():
     graph = ElectricalGraph(config, config_file_path,
                             main_window=main_window,
                             extensions_dict=extensions_dict)
+    graph.viewer().setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
     
     # Toolbar settings------------------------------
     addBus_action = QtWidgets.QAction('addBus')
