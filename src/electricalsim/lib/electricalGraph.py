@@ -512,8 +512,39 @@ class ElectricalGraph(NodeGraph):
         
         * tooltip_default: Set the default tooltip.
         """
+        print(tooltip_default, args)
+        if 'fliped' in args:
+            self.message_unsaved.show()
+            self.set_tooltip_default()
+            return
+        
+        if len(args)>0 and args[0].endswith('index'):
+            self.message_unsaved.show()
+            self.set_tooltip_default()
+            return
+        
+        if 'layout_vert' in args:
+            self.update_tooltips()
+            # self.session_change_warning(False)
+            # selected = self.selected_nodes()
+            # self.clear_selection()
+            # for node in selected:
+            #     node.set_selected(True)
+            # self.main_window.toolBox.setCurrentIndex(0)
+            return
+        
+        # if 'layout_vert' in args:
+        #     self.message_unsaved.show()
+        #     self.update_tooltips()
+        #     # tooltip_default.update()
+        #     return
+        # elif 'selected' in args:
+        #     self.update_tooltips()
+        #     # tooltip_default.update()
+        #     return
+            
         self.message_unsaved.show()
-        if tooltip_default:
+        if isinstance(tooltip_default, bool) and tooltip_default is True:
             self.set_tooltip_default()
         else:
             self.update_tooltips()
@@ -618,11 +649,11 @@ class ElectricalGraph(NodeGraph):
                 if layout_vert is not None and layout_vert is True:
                     node.set_layout_direction(1)
                     
-                #     if self.config['general']['theme']=='light':
-                #         node.model.set_property('text_color', (0, 0, 0, 255))  # black
-                #     else:
-                #         node.model.set_property('text_color', (255, 255, 255, 180))  # default color
-                #     node.update()
+                    if self.config['general']['theme']=='light':
+                        node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                    else:
+                        node.model.set_property('text_color', (255, 255, 255, 180))  # default color
+                    node.update()
             
             # for node in self.all_nodes():
             #     layout_vert = node.get_property('layout_vert')
@@ -640,6 +671,7 @@ class ElectricalGraph(NodeGraph):
         simulate_ESC_key()
 
         self.update_widgets_properties()
+        self.update_tooltips()
 
         _, file_name = os.path.split(full_file_path)
         self.set_main_window_title(file_name[:-4])

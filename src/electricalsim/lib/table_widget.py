@@ -113,6 +113,7 @@ class TableWidgetWithMenu(TableWidget):
             self.graph.clear_selection()
             node.set_selected(True)
             self.graph.fit_to_selection()
+            node.update_tooltip(self.graph.net)
             self.graph.main_window.toolBox.setCurrentIndex(0)
 
     def copy(self):
