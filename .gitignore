@@ -1,3 +1,4 @@
 dist/
 test/
 changelog.txt
+src/electricalsim/__pycache__/
