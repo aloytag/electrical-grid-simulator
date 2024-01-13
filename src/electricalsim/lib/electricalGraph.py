@@ -512,7 +512,6 @@ class ElectricalGraph(NodeGraph):
         
         * tooltip_default: Set the default tooltip.
         """
-        print(tooltip_default, args)
         if 'fliped' in args:
             self.message_unsaved.show()
             self.set_tooltip_default()
