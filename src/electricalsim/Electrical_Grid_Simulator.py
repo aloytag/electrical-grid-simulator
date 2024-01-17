@@ -5,7 +5,8 @@ import sys
 import os
 import importlib
 
-from Qt import QtWidgets, QtCompat, QtGui, QtCore
+from PySide6.QtUiTools import QUiLoader
+from PySide6 import QtWidgets, QtGui, QtCore
 import qdarktheme  # Always import after Qt
 import qtawesome as qta
 
@@ -37,11 +38,15 @@ def main():
         qdarktheme.setup_theme(theme)
     
     ui_file = os.path.join(directory, 'ui', 'main_window.ui')
-    main_window = QtCompat.loadUi(uifile=ui_file, baseinstance=QMainWindow2())
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    main_window = loader.load(ui_file_)
+    window = QMainWindow2(main_window)
     
-    icon_path = os.path.join(directory, 'icons', 'app_icon.png')
-    main_window.setWindowIcon(QtGui.QIcon(icon_path))
-    main_window.setWindowTitle('Electrical Grid Simulator')
+    icon_path = os.path.join(directory, 'icons', 'app_icon.png')    
+    window.setWindowIcon(QtGui.QIcon(icon_path))
+    window.setWindowTitle('Electrical Grid Simulator')
 
     # Loading extensions:
     extensions = entry_points(group='electricalsim.extensions')
@@ -56,63 +61,63 @@ def main():
     graph.viewer().setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
     
     # Toolbar settings------------------------------
-    addBus_action = QtWidgets.QAction('addBus')
+    addBus_action = QtGui.QAction('addBus')
     addBus_action.setText('Bus')
     addBus_action.setToolTip('Add a bus')
     addBus_action.triggered.connect(graph.add_bus)
     addBus_action.setIcon(qta.icon('ph.git-commit'))
     main_window.toolBar.addAction(addBus_action)
     
-    addLine_action = QtWidgets.QAction('addLine')
+    addLine_action = QtGui.QAction('addLine')
     addLine_action.setText('Line')
     addLine_action.setToolTip('Add a line')
     addLine_action.triggered.connect(graph.add_line)
     addLine_action.setIcon(qta.icon('ph.line-segment'))
     main_window.toolBar.addAction(addLine_action)
     
-    addImpedance_action = QtWidgets.QAction('addImpedance')
+    addImpedance_action = QtGui.QAction('addImpedance')
     addImpedance_action.setText('Impedance')
     addImpedance_action.setToolTip('Add an impedance')
     addImpedance_action.triggered.connect(graph.add_impedance)
     addImpedance_action.setIcon(qta.icon('mdi6.alpha-z-box-outline'))
     main_window.toolBar.addAction(addImpedance_action)
     
-    addTrafo_action = QtWidgets.QAction('addTrafo')
+    addTrafo_action = QtGui.QAction('addTrafo')
     addTrafo_action.setText('Transformer')
     addTrafo_action.setToolTip('Add a transformer')
     addTrafo_action.triggered.connect(graph.add_trafo)
     addTrafo_action.setIcon(qta.icon('ph.intersect'))
     main_window.toolBar.addAction(addTrafo_action)
     
-    addGenerator_action = QtWidgets.QAction('addGenerator')
+    addGenerator_action = QtGui.QAction('addGenerator')
     addGenerator_action.setText('Generator')
     addGenerator_action.setToolTip('Add a generator')
     addGenerator_action.triggered.connect(graph.add_generator)
     addGenerator_action.setIcon(qta.icon('mdi6.alpha-g-circle-outline'))
     main_window.toolBar.addAction(addGenerator_action)
     
-    addGrid_action = QtWidgets.QAction('addGrid')
+    addGrid_action = QtGui.QAction('addGrid')
     addGrid_action.setText('External Grid')
     addGrid_action.setToolTip('Add an external grid')
     addGrid_action.triggered.connect(graph.add_external_grid)
     addGrid_action.setIcon(qta.icon('mdi6.grid'))
     main_window.toolBar.addAction(addGrid_action)
     
-    addLoad_action = QtWidgets.QAction('addLoad')
+    addLoad_action = QtGui.QAction('addLoad')
     addLoad_action.setText('Load')
     addLoad_action.setToolTip('Add a load')
     addLoad_action.triggered.connect(graph.add_load)
     addLoad_action.setIcon(qta.icon('mdi6.download-circle-outline'))
     main_window.toolBar.addAction(addLoad_action)
     
-    addStorage_action = QtWidgets.QAction('addStorage')
+    addStorage_action = QtGui.QAction('addStorage')
     addStorage_action.setText('Storage')
     addStorage_action.setToolTip('Add a storage system')
     addStorage_action.triggered.connect(graph.add_storage)
     addStorage_action.setIcon(qta.icon('mdi6.battery-medium'))
     main_window.toolBar.addAction(addStorage_action)
     
-    addSwitch_action = QtWidgets.QAction('addSwitch')
+    addSwitch_action = QtGui.QAction('addSwitch')
     addSwitch_action.setText('Switch')
     addSwitch_action.setToolTip('Add a switch')
     addSwitch_action.triggered.connect(graph.add_switch)
@@ -296,28 +301,28 @@ def main():
     # Menubar:
     file_menu = main_window.menubar.addMenu('File')
     
-    new_session_action = QtWidgets.QAction('newSession')
+    new_session_action = QtGui.QAction('newSession')
     new_session_action.setText('New session')
     new_session_action.triggered.connect(graph.new_session)
     new_session_action.setIcon(qta.icon('mdi6.file-plus-outline'))
     new_session_action.setShortcut(QtGui.QKeySequence('Ctrl+N'))
     file_menu.addAction(new_session_action)
     
-    open_session_action = QtWidgets.QAction('openSession')
+    open_session_action = QtGui.QAction('openSession')
     open_session_action.setText('Open session')
     open_session_action.triggered.connect(graph.open_session)
     open_session_action.setIcon(qta.icon('mdi6.folder-outline'))
     open_session_action.setShortcut(QtGui.QKeySequence('Ctrl+O'))
     file_menu.addAction(open_session_action)
     
-    save_session_action = QtWidgets.QAction('saveSession')
+    save_session_action = QtGui.QAction('saveSession')
     save_session_action.setText('Save session')
     save_session_action.triggered.connect(graph.save_session)
     save_session_action.setIcon(qta.icon('mdi6.content-save-outline'))
     save_session_action.setShortcut(QtGui.QKeySequence('Ctrl+S'))
     file_menu.addAction(save_session_action)
     
-    save_session_as_action = QtWidgets.QAction('saveSessionAs')
+    save_session_as_action = QtGui.QAction('saveSessionAs')
     save_session_as_action.setText('Save session as...')
     save_session_as_action.triggered.connect(graph.save_session_as)
     save_session_as_action.setIcon(qta.icon('mdi6.content-save-edit-outline'))
@@ -325,7 +330,7 @@ def main():
     file_menu.addAction(save_session_as_action)
     
     file_menu.addSeparator()
-    export_net_action = QtWidgets.QAction('exportNet')
+    export_net_action = QtGui.QAction('exportNet')
     export_net_action.setText('Export pandapower network')
     export_net_action.triggered.connect(graph.export_net)
     export_net_action.setIcon(qta.icon('mdi6.database-export-outline'))
@@ -340,21 +345,21 @@ def main():
         component_menu.addAction(component)
         
     settings_menu = main_window.menubar.addMenu('Settings')
-    net_settings_action = QtWidgets.QAction('netSettings')
+    net_settings_action = QtGui.QAction('netSettings')
     net_settings_action.setText('Basic network settings')
     net_settings_action.triggered.connect(graph.net_settings)
     net_settings_action.setIcon(qta.icon('mdi6.grid'))
     settings_menu.addAction(net_settings_action)
     
     settings_menu.addSeparator()
-    settings_action = QtWidgets.QAction('AppSettings')
+    settings_action = QtGui.QAction('AppSettings')
     settings_action.setText('Settings and default parameters')
     settings_action.triggered.connect(graph.edit_settings)
     settings_action.setIcon(qta.icon('mdi6.cog-outline'))
     settings_menu.addAction(settings_action)
     
     help_menu = main_window.menubar.addMenu('Help')
-    about_action = QtWidgets.QAction('About')
+    about_action = QtGui.QAction('About')
     about_action.setText('About this application')
     about_action.triggered.connect(graph.about)
     about_action.setIcon(qta.icon('mdi6.information-outline'))
@@ -486,9 +491,10 @@ def main():
     graph.update_extensions_list()
 
     # Show main window:
-    main_window.show()
+    # main_window.show()
+    window.show()
 
-    app.exec_()
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

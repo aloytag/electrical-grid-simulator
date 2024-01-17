@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from Qt import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 import numpy as np
 
-from NodeGraphQt import BaseNode
-from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
+from NodeGraphQt6 import BaseNode
+from NodeGraphQt6.widgets.node_widgets import NodeBaseWidget
 
 from lib.auxiliary import PropertyChangedCmd, root_dir
 
@@ -215,7 +215,7 @@ class BaseNode2(BaseNode):
 
         Args:
             index (int): index of the port.
-            port (NodeGraphQt.Port): port object.
+            port (NodeGraphQt6.Port): port object.
         """
         src_port = self.input(index)
         src_port.connect_to(port, push_undo)
@@ -226,7 +226,7 @@ class BaseNode2(BaseNode):
 
         Args:
             index (int): index of the port.
-            port (NodeGraphQt.Port): port object.
+            port (NodeGraphQt6.Port): port object.
         """
         src_port = self.output(index)
         src_port.connect_to(port, push_undo)

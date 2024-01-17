@@ -17,8 +17,8 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 EGS is built in Python and entirely from open source and free software. The main core components are:
 
 * The [pandapower](https://www.pandapower.org/) modeling and calculation library for electrical power systems.
-* The [Qt](https://www.qt.io/) toolkit with [PySide2](https://wiki.qt.io/Qt_for_Python) and [Qt.py](https://github.com/mottosso/Qt.py) bindings for the UI.
-* The [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt) library for building the graph (schematic network graphic).
+* The [Qt](https://www.qt.io/) toolkit with [PySide6](https://wiki.qt.io/Qt_for_Python) bindings for the UI.
+* A `Qt6` port (fork) of the [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt) library for building the graph (schematic network graphic).
 * The [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme) package for applying modern themes (light and dark themes).
 * The [QtAwesome](https://github.com/spyder-ide/qtawesome) package for modern flat monochromatic icons.
 * The [matplotlib](https://matplotlib.org/) package for plotting calculation results.
@@ -26,6 +26,8 @@ EGS is built in Python and entirely from open source and free software. The main
 
 EGS is implemented as a Python package uploaded to the [PyPI repository](https://pypi.org/). ```pandapower``` and other packages listed above are set as dependencies.
 
+> [!NOTE]  
+> Starting with version **0.0.8.0**, the EGS package includes a fork of `NodeGraphQt` ported to `Qt6` (using the `PySide6` library). This implementation is renamed to `NodeGraphQt6` in order to avoid conflicts. These changes allow the application to run on recent versions of Python.
 
 ## Simulations and calculations
 With EGS you can build and set up the model of an electrical grid in a graphical way. The application also allows you to perform *AC balanced power flow* calculations (other calculations supported by ```pandapower``` may be added in the future). For other types of simulations and calculations, you can proceed according to two alternatives:

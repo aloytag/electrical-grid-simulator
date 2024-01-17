@@ -7,13 +7,14 @@ import configparser
 import pandas as pd
 import pandapower as pp
 
-from Qt import QtCompat, QtGui, QtCore, QtWidgets
+from PySide6.QtUiTools import QUiLoader
+from PySide6 import QtGui, QtCore, QtWidgets
 import qtawesome as qta
 import qdarktheme
 
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.ticker import MaxNLocator
 from matplotlib import rc
 
@@ -30,12 +31,27 @@ font = {'family' : 'sans-serif',
 rc('font', **font)
 
 
+def return_qtwindow(path_ui_file):
+    """
+    Retuns the Qt window from de .ui file path.
+    """
+    ui_file_ = QtCore.QFile(path_ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    window = loader.load(ui_file_)  # window
+    return window
+
+
 def about_dialog():
     """
     Returns the about dialog.
     """
     ui_file = os.path.join(directory, 'about_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     root_dir, _ = os.path.split(directory)
     
@@ -68,7 +84,11 @@ def bus_dialog():
     Returns the bus dialog.
     """
     ui_file = os.path.join(directory, 'bus_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def min_vm_pu_changed(value):
         dialog.max_vm_pu.setMinimum(value)
@@ -87,7 +107,12 @@ def line_dialog():
     Returns the line dialog.
     """
     ui_file = os.path.join(directory, 'line_dialog.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def stdline_dialog(dataframe_stds, selected_std):
@@ -99,7 +124,11 @@ def stdline_dialog(dataframe_stds, selected_std):
     selected_std: Name of the selected standard.
     """
     ui_file = os.path.join(directory, 'stdline_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -147,7 +176,12 @@ def dcline_dialog():
     Returns the DC line dialog.
     """
     ui_file = os.path.join(directory, 'dcline_dialog.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def impedance_dialog():
@@ -155,7 +189,11 @@ def impedance_dialog():
     Returns the impedance dialog.
     """
     ui_file = os.path.join(directory, 'impedance_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def change_state_check1(state):
         dialog.rtf_pu.setEnabled(not state)
@@ -196,7 +234,12 @@ def choose_transformer_dialog():
     Returns the dialog for selecting the transformer type to add.
     """
     ui_file = os.path.join(directory, 'choose_transformer_type.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def choose_line_dialog():
@@ -204,7 +247,12 @@ def choose_line_dialog():
     Returns the dialog for selecting the line type to add (AC or DC line).
     """
     ui_file = os.path.join(directory, 'choose_line_type.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def choose_generator_dialog():
@@ -213,7 +261,12 @@ def choose_generator_dialog():
     (voltage-controlled gen., static gen. or asymmetric static gen.).
     """
     ui_file = os.path.join(directory, 'choose_generator_type.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def choose_bus_switch_dialog():
@@ -222,7 +275,12 @@ def choose_bus_switch_dialog():
     a switch.
     """
     ui_file = os.path.join(directory, 'choose_bus_switch.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def transformer_dialog():
@@ -230,7 +288,11 @@ def transformer_dialog():
     Returns the dialog for a two-winding transformer.
     """
     ui_file = os.path.join(directory, 'transformer_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def tap_min_changed(value):
         dialog.tap_pos.setMinimum(value)
@@ -265,7 +327,11 @@ def stdtransformer_dialog(dataframe_stds, selected_std):
     selected_std: Name of the selected standard.
     """
     ui_file = os.path.join(directory, 'stdtransformer_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -314,7 +380,11 @@ def transformer3w_dialog():
     Returns the dialog for a three-winding transformer.
     """
     ui_file = os.path.join(directory, 'transformer3w_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def tap_min_changed(value):
         dialog.tap_pos.setMinimum(value)
@@ -349,7 +419,11 @@ def stdtransformer3w_dialog(dataframe_stds, selected_std):
     selected_std: Name of the selected standard.
     """
     ui_file = os.path.join(directory, 'stdtransformer3w_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -398,7 +472,11 @@ def gen_dialog():
     Returns the generator dialog.
     """
     ui_file = os.path.join(directory, 'gen_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def min_vm_pu_changed(value):
         dialog.vm_pu.setMinimum(value)
@@ -429,7 +507,11 @@ def sgen_dialog():
     Returns the static generator dialog.
     """
     ui_file = os.path.join(directory, 'sgen_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
         
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -460,7 +542,11 @@ def asgen_dialog():
     Returns the asymmetric static generator dialog.
     """
     ui_file = os.path.join(directory, 'asgen_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -470,7 +556,11 @@ def ext_grid_dialog():
     Returns the external grid dialog.
     """
     ui_file = os.path.join(directory, 'ext_grid_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def min_p_mw_changed(value):
         dialog.max_p_mw.setMinimum(value)
@@ -506,7 +596,12 @@ def choose_load_dialog():
     ward or extended ward).
     """
     ui_file = os.path.join(directory, 'choose_load_type.ui')
-    return QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
 
 
 def load_dialog():
@@ -514,7 +609,11 @@ def load_dialog():
     Returns the symmetric load dialog.
     """
     ui_file = os.path.join(directory, 'load_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -545,7 +644,11 @@ def aload_dialog():
     Returns the asymmetric load dialog.
     """
     ui_file = os.path.join(directory, 'aload_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -555,7 +658,11 @@ def shunt_dialog():
     Returns the shunt element dialog.
     """
     ui_file = os.path.join(directory, 'shunt_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def max_step_changed(value):
         dialog.step.setMaximum(value)
@@ -570,7 +677,11 @@ def motor_dialog():
     Returns the motor dialog.
     """
     ui_file = os.path.join(directory, 'motor_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -580,7 +691,11 @@ def ward_dialog():
     Returns the ward dialog.
     """
     ui_file = os.path.join(directory, 'ward_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -590,7 +705,11 @@ def xward_dialog():
     Returns the extended ward dialog.
     """
     ui_file = os.path.join(directory, 'xward_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -600,7 +719,11 @@ def storage_dialog():
     Returns the storage dialog.
     """
     ui_file = os.path.join(directory, 'storage_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -639,7 +762,11 @@ def switch_dialog():
     Returns the switch dialog.
     """
     ui_file = os.path.join(directory, 'switch_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -649,7 +776,11 @@ def network_settings_dialog():
     Returns the network settings dialog.
     """
     ui_file = os.path.join(directory, 'network_settings_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     
     return dialog
 
@@ -659,7 +790,11 @@ def connecting_buses_dialog():
     Returns a dialog to choose which element is connecting between two buses.
     """
     ui_file = os.path.join(directory, 'connecting_buses_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.option = None  # Element selected
@@ -748,7 +883,11 @@ def search_node_dialog(all_nodes):
         all_types.append(types[order])
 
     ui_file = os.path.join(directory, 'search_node_dialog.ui')
-    dialog = QtCompat.loadUi(uifile=ui_file)
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
     dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.selected_node = None  # Name of the selected element (node)
@@ -899,7 +1038,11 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         
         super(Power_Flow_Dialog, self).__init__()
         ui_file = os.path.join(directory, 'power_flow_dialog.ui')
-        self.w = QtCompat.loadUi(uifile=ui_file)
+        # self.w = QtCompat.loadUi(uifile=ui_file)
+        ui_file_ = QtCore.QFile(ui_file)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        self.w = loader.load(ui_file_)
         
         self.methods = ['nr', 'iwamoto_nr', 'bfsw', 'gs',
                         'fdbx', 'fdxb']  # solvers
@@ -1665,7 +1808,11 @@ class Settings_Dialog:
         Shows the dialog and returns the modified settings (config parser).
         """
         ui_file = os.path.join(directory, 'settings_dialog.ui')
-        self.dialog = QtCompat.loadUi(uifile=ui_file)
+        # self.dialog = QtCompat.loadUi(uifile=ui_file)
+        ui_file_ = QtCore.QFile(ui_file)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        self.dialog = loader.load(ui_file_)
         self.dialog.restore_settings.clicked.connect(self.restore_defaults)
         
         root_dir, _ = os.path.split(directory)
@@ -1692,7 +1839,11 @@ class Settings_Dialog:
         
         # Network page------------------------------------------------------
         ui_file_network = os.path.join(directory, 'network_settings_dialog.ui')
-        network = QtCompat.loadUi(uifile=ui_file_network)  # dialog
+        # network = QtCompat.loadUi(uifile=ui_file_network)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_network)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        network = loader.load(ui_file_)  # dialog
         network.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['network']
@@ -1707,7 +1858,11 @@ class Settings_Dialog:
         
         # Balanced AC Power Flow page--------------------------------------
         ui_file_pf = os.path.join(directory, 'pf_settings_widget.ui')
-        pf = QtCompat.loadUi(uifile=ui_file_pf)
+        ui_file_ = QtCore.QFile(ui_file_pf)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        pf = loader.load(ui_file_)  # dialog
+        # pf = QtCompat.loadUi(uifile=ui_file_pf)
         
         settings = self.config['pf']
         booleans = {'True': True, 'False': False}
@@ -1771,7 +1926,11 @@ class Settings_Dialog:
         
         # Bus page---------------------------------------------------------
         ui_file_bus = os.path.join(directory, 'bus_dialog.ui')
-        bus = QtCompat.loadUi(uifile=ui_file_bus)  # dialog
+        # bus = QtCompat.loadUi(uifile=ui_file_bus)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_bus)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        bus = loader.load(ui_file_)  # dialog
         bus.buttonBox.setParent(None)  # remove the button box
         
         def bus_min_vm_pu_changed(value):
@@ -1795,7 +1954,11 @@ class Settings_Dialog:
         
         # AC line page-----------------------------------------------------
         ui_file_line = os.path.join(directory, 'line_dialog.ui')
-        line = QtCompat.loadUi(uifile=ui_file_line)  # dialog
+        # line = QtCompat.loadUi(uifile=ui_file_line)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_line)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        line = loader.load(ui_file_)  # dialog
         line.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['line']
@@ -1823,7 +1986,11 @@ class Settings_Dialog:
         
         # Standard AC line page--------------------------------------------
         ui_file_stdline = os.path.join(directory, 'stdline_dialog.ui')
-        stdline = QtCompat.loadUi(uifile=ui_file_stdline)  # dialog
+        # stdline = QtCompat.loadUi(uifile=ui_file_stdline)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_stdline)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        stdline = loader.load(ui_file_)  # dialog
         stdline.buttonBox.setParent(None)  # remove the button box
         
         stds_line = self.dataframe_line_stds.index.tolist()
@@ -1877,7 +2044,11 @@ class Settings_Dialog:
         
         # DC line page-----------------------------------------------------
         ui_file_dcline = os.path.join(directory, 'dcline_dialog.ui')
-        dcline = QtCompat.loadUi(uifile=ui_file_dcline)  # dialog
+        # dcline = QtCompat.loadUi(uifile=ui_file_dcline)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_dcline)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        dcline = loader.load(ui_file_)  # dialog
         dcline.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['dcline']
@@ -1899,7 +2070,7 @@ class Settings_Dialog:
         
         # Impedance page---------------------------------------------------
         ui_file_impedance = os.path.join(directory, 'impedance_dialog.ui')
-        impedance = QtCompat.loadUi(uifile=ui_file_impedance)  # dialog
+        impedance = return_qtwindow(ui_file_impedance)  # dialog
         impedance.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['impedance']
@@ -1920,7 +2091,7 @@ class Settings_Dialog:
         
         # Two winding transformer page-------------------------------------
         ui_file_trafo = os.path.join(directory, 'transformer_dialog.ui')
-        trafo = QtCompat.loadUi(uifile=ui_file_trafo)
+        trafo = return_qtwindow(ui_file_trafo)
         trafo.buttonBox.setParent(None)  # remove the button box
         
         def trafo_tap_min_changed(value):
@@ -1987,7 +2158,7 @@ class Settings_Dialog:
         
         # Standard two winding transformer page----------------------------
         ui_file_stdtrafo = os.path.join(directory, 'stdtransformer_dialog.ui')
-        stdtrafo = QtCompat.loadUi(uifile=ui_file_stdtrafo)
+        stdtrafo = return_qtwindow(ui_file_stdtrafo)
         stdtrafo.buttonBox.setParent(None)  # remove the button box
         stdtrafo.label_tap_pos.setParent(None)  # remove the tap position options
         stdtrafo.tap_pos.setParent(None)
@@ -2044,7 +2215,7 @@ class Settings_Dialog:
         
         # Three winding transformer page-----------------------------------
         ui_file_trafo3w = os.path.join(directory, 'transformer3w_dialog.ui')
-        trafo3w = QtCompat.loadUi(uifile=ui_file_trafo3w)
+        trafo3w = return_qtwindow(ui_file_trafo3w)
         trafo3w.buttonBox.setParent(None)  # remove the button box
         
         def trafo3w_tap_min_changed(value):
@@ -2118,7 +2289,7 @@ class Settings_Dialog:
         
         # Standard three winding transformer page--------------------------
         ui_file_stdtrafo3w = os.path.join(directory, 'stdtransformer3w_dialog.ui')
-        stdtrafo3w = QtCompat.loadUi(uifile=ui_file_stdtrafo3w)
+        stdtrafo3w = return_qtwindow(ui_file_stdtrafo3w)
         stdtrafo3w.buttonBox.setParent(None)  # remove the button box
         stdtrafo3w.label_tap_pos.setParent(None)  # remove the tap position options
         stdtrafo3w.tap_pos.setParent(None)
@@ -2168,7 +2339,7 @@ class Settings_Dialog:
         
         # Generator (PV mode) page-----------------------------------------
         ui_file_gen = os.path.join(directory, 'gen_dialog.ui')
-        gen = QtCompat.loadUi(uifile=ui_file_gen)
+        gen = return_qtwindow(ui_file_gen)
         gen.buttonBox.setParent(None)  # remove the button box
         
         def gen_min_vm_pu_changed(value):
@@ -2217,7 +2388,7 @@ class Settings_Dialog:
         
         # Static generator page--------------------------------------------
         ui_file_sgen = os.path.join(directory, 'sgen_dialog.ui')
-        sgen = QtCompat.loadUi(uifile=ui_file_sgen)
+        sgen = return_qtwindow(ui_file_sgen)
         sgen.buttonBox.setParent(None)  # remove the button box
             
         def sgen_min_p_mw_changed(value):
@@ -2294,7 +2465,7 @@ class Settings_Dialog:
         
         # Asymmetric static generator page---------------------------------
         ui_file_asgen = os.path.join(directory, 'asgen_dialog.ui')
-        asgen = QtCompat.loadUi(uifile=ui_file_asgen)
+        asgen = return_qtwindow(ui_file_asgen)
         asgen.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['asymmetric_sgen']
@@ -2316,7 +2487,7 @@ class Settings_Dialog:
         
         # External grid page-----------------------------------------------
         ui_file_ext_grid = os.path.join(directory, 'ext_grid_dialog.ui')
-        ext_grid = QtCompat.loadUi(uifile=ui_file_ext_grid)
+        ext_grid = return_qtwindow(ui_file_ext_grid)
         ext_grid.buttonBox.setParent(None)  # remove the button box
         
         def ext_grid_min_p_mw_changed(value):
@@ -2396,7 +2567,7 @@ class Settings_Dialog:
         
         # Load page--------------------------------------------------------
         ui_file_load = os.path.join(directory, 'load_dialog.ui')
-        load = QtCompat.loadUi(uifile=ui_file_load)
+        load = return_qtwindow(ui_file_load)
         load.buttonBox.setParent(None)  # remove the button box
         
         def load_min_p_mw_changed(value):
@@ -2442,7 +2613,7 @@ class Settings_Dialog:
         
         # Asymmetric load page---------------------------------------------
         ui_file_aload = os.path.join(directory, 'aload_dialog.ui')
-        aload = QtCompat.loadUi(uifile=ui_file_aload)
+        aload = return_qtwindow(ui_file_aload)
         aload.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['asymmetric_load']
@@ -2464,7 +2635,7 @@ class Settings_Dialog:
         
         # Shunt page-------------------------------------------------------
         ui_file_shunt = os.path.join(directory, 'shunt_dialog.ui')
-        shunt = QtCompat.loadUi(uifile=ui_file_shunt)
+        shunt = return_qtwindow(ui_file_shunt)
         shunt.buttonBox.setParent(None)  # remove the button box
         
         def shunt_max_step_changed(value):
@@ -2490,7 +2661,7 @@ class Settings_Dialog:
         
         # Motor page-------------------------------------------------------
         ui_file_motor = os.path.join(directory, 'motor_dialog.ui')
-        motor = QtCompat.loadUi(uifile=ui_file_motor)
+        motor = return_qtwindow(ui_file_motor)
         motor.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['motor']
@@ -2531,7 +2702,7 @@ class Settings_Dialog:
         
         # Ward page--------------------------------------------------------
         ui_file_ward = os.path.join(directory, 'ward_dialog.ui')
-        ward = QtCompat.loadUi(uifile=ui_file_ward)
+        ward = return_qtwindow(ui_file_ward)
         ward.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['ward']
@@ -2547,7 +2718,7 @@ class Settings_Dialog:
         
         # Extended ward page-----------------------------------------------
         ui_file_xward = os.path.join(directory, 'xward_dialog.ui')
-        xward = QtCompat.loadUi(uifile=ui_file_xward)
+        xward = return_qtwindow(ui_file_xward)
         xward.buttonBox.setParent(None)  # remove the button box
         
         settings = self.config['xward']
@@ -2567,7 +2738,7 @@ class Settings_Dialog:
         
         # Storage page-----------------------------------------------------
         ui_file_storage = os.path.join(directory, 'storage_dialog.ui')
-        storage = QtCompat.loadUi(uifile=ui_file_storage)
+        storage = return_qtwindow(ui_file_storage)
         storage.buttonBox.setParent(None)  # remove the button box
         
         def storage_min_p_mw_changed(value):
@@ -2621,7 +2792,7 @@ class Settings_Dialog:
         
         # Switch page------------------------------------------------------
         ui_file_switch = os.path.join(directory, 'switch_dialog.ui')
-        switch = QtCompat.loadUi(uifile=ui_file_switch)
+        switch = return_qtwindow(ui_file_switch)
         switch.buttonBox.setParent(None)  # remove the button box
         # switch.layout_closed.setParent(None)
         # switch.closed.setParent(None)
@@ -3057,7 +3228,7 @@ class Settings_Dialog:
         buttonY = box.button(QtWidgets.QMessageBox.Yes)
         buttonN = box.button(QtWidgets.QMessageBox.No)
         box.setDefaultButton(buttonN)
-        box.exec_()
+        box.exec()
         button_response = box.clickedButton()
 
         if button_response==buttonY:

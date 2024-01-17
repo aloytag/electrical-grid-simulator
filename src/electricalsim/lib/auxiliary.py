@@ -4,7 +4,7 @@ import os
 import configparser
 import re
 
-from Qt import QtWidgets
+from PySide6 import QtWidgets, QtGui
 import qtawesome as qta
 from pynput.keyboard import Key, Controller
 from platformdirs import user_config_dir
@@ -104,18 +104,21 @@ class QMainWindow2(QtWidgets.QMainWindow):
     """
     Same as default QMainWindow, but ask for permission before closing.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, main_window, **kwargs):
         super().__init__(**kwargs)
+        self.main_window = main_window
+        self.resize(1399, 790)
+        self.setCentralWidget(self.main_window)
         
     def closeEvent(self, event):
-        status_msg = self.statusbar.findChild(QtWidgets.QWidget, 'unsaved_message')
+        status_msg = self.main_window.statusbar.findChild(QtWidgets.QWidget, 'unsaved_message')
         if not status_msg.isVisible():
             event.accept()
             return
         
         event.ignore()
         
-        box = QtWidgets.QMessageBox(parent=self)
+        box = QtWidgets.QMessageBox(parent=self.main_window)
         box.setIcon(QtWidgets.QMessageBox.Question)
         box.setWindowTitle('Exit the application')
         box.setText('Session is unsaved. All the data will be lost when closing the application. '+
@@ -124,7 +127,7 @@ class QMainWindow2(QtWidgets.QMainWindow):
         buttonY = box.button(QtWidgets.QMessageBox.Yes)
         buttonN = box.button(QtWidgets.QMessageBox.No)
         box.setDefaultButton(buttonN)
-        box.exec_()
+        box.exec()
         button_response = box.clickedButton()
 
         if button_response==buttonY:
@@ -141,19 +144,19 @@ class QVLine(QtWidgets.QFrame):
         self.setFrameShadow(QtWidgets.QFrame.Sunken)
 
 
-class NodeMovedCmd(QtWidgets.QUndoCommand):
+class NodeMovedCmd(QtGui.QUndoCommand):
     """
     Node moved command. (MODIFIED VERSION)
 
     Args:
-        node (NodeGraphQt.NodeObject): node.
+        node (NodeGraphQt6.NodeObject): node.
         pos (tuple(float, float)): new node position.
         prev_pos (tuple(float, float)): previous node position.
         graph: ElectricalGraph intance.
     """
 
     def __init__(self, node, pos, prev_pos, graph):
-        QtWidgets.QUndoCommand.__init__(self)
+        QtGui.QUndoCommand.__init__(self)
         self.node = node
         self.pos = pos
         self.prev_pos = prev_pos
@@ -196,21 +199,21 @@ class StatusMessageUnsaved(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-class PropertyChangedCmd(QtWidgets.QUndoCommand):
+class PropertyChangedCmd(QtGui.QUndoCommand):
     """
     MODIFIED VERSION.
     
     Node property changed command.
 
     Args:
-        node (NodeGraphQt.NodeObject): node.
+        node (NodeGraphQt6.NodeObject): node.
         name (str): node property name.
         value (object): node property value.
         graph (ElectricalGraph): graph reference.
     """
 
     def __init__(self, node, name, value):
-        QtWidgets.QUndoCommand.__init__(self)
+        QtGui.QUndoCommand.__init__(self)
         
         if name == 'name':
             self.setText('renamed "{}" to "{}"'.format(node.name(), value))

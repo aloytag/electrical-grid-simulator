@@ -6,7 +6,7 @@
 
 import os
 
-from Qt import QtGui
+from PySide6 import QtGui
 import pandapower as pp
 
 directory = os.path.dirname(__file__)

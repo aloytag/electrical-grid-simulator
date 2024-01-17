@@ -5,11 +5,11 @@ import warnings
 from math import isnan, nan
 import pickle
 
-from NodeGraphQt.base.commands import PortConnectedCmd
-from Qt import QtGui, QtWidgets, QtCore
+from NodeGraphQt6.base.commands import PortConnectedCmd
+from PySide6 import QtGui, QtWidgets, QtCore
 
-from NodeGraphQt import NodeGraph, errors, BaseNode
-from NodeGraphQt.constants import PortTypeEnum, PipeLayoutEnum
+from NodeGraphQt6 import NodeGraph, errors, BaseNode
+from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
@@ -221,15 +221,28 @@ class ElectricalGraph(NodeGraph):
         called when selected nodes in the viewer has changed position.
 
         Args:
-            node_data (dict): {<node_view>: <previous_pos>}
+            node_data (dict): {<node_id>: <previous_pos>}
         """
         self._undo_stack.beginMacro('move nodes')
-        for node_view, prev_pos in node_data.items():
-            node = self._model.nodes[node_view.id]
+        for id, prev_pos in node_data.items():
+            node = self._model.nodes[id]
             self._undo_stack.push(NodeMovedCmd(node, node.pos(), prev_pos, self))  # Adding 'self' as last argument
         self._undo_stack.endMacro()
 
         self.session_change_warning(tooltip_default=False)
+        
+    # def _on_nodes_moved(self, node_data):
+    #     """
+    #     called when selected nodes in the viewer has changed position.
+
+    #     Args:
+    #         node_data (dict): {<node_id>: <previous_pos>}
+    #     """
+    #     self._undo_stack.beginMacro('move nodes')
+    #     for id, prev_pos in node_data.items():
+    #         node = self._model.nodes[id]
+    #         self._undo_stack.push(NodeMovedCmd(node, node.pos(), prev_pos))
+    #     self._undo_stack.endMacro()
 
     def duplicate_nodes(self, nodes):
         """
@@ -238,9 +251,9 @@ class ElectricalGraph(NodeGraph):
         Create duplicate copy from the list of nodes.
 
         Args:
-            nodes (list[NodeGraphQt.BaseNode]): list of nodes.
+            nodes (list[NodeGraphQt6.BaseNode]): list of nodes.
         Returns:
-            list[NodeGraphQt.BaseNode]: list of duplicated node instances.
+            list[NodeGraphQt6.BaseNode]: list of duplicated node instances.
         """
         if not nodes:
             return
@@ -283,7 +296,7 @@ class ElectricalGraph(NodeGraph):
         (used internally by the node graph)
 
         Args:
-            nodes (list[NodeGraphQt.Nodes]): list of node instances.
+            nodes (list[NodeGraphQt6.Nodes]): list of node instances.
 
         Returns:
             dict: serialized data.
@@ -355,7 +368,7 @@ class ElectricalGraph(NodeGraph):
             pos (tuple or list): custom x, y position.
 
         Returns:
-            list[NodeGraphQt.Nodes]: list of node instances.
+            list[NodeGraphQt6.Nodes]: list of node instances.
         """
         # update node graph properties.
         for attr_name, attr_value in data.get('graph', {}).items():
@@ -488,7 +501,7 @@ class ElectricalGraph(NodeGraph):
             :meth:`NodeObject.set_disabled`
 
         Args:
-            nodes (list[NodeGraphQt.BaseNode]): list of node instances.
+            nodes (list[NodeGraphQt6.BaseNode]): list of node instances.
             mode (bool): (optional) disable state of the nodes.
         """
         if not nodes:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Qt import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 import qtawesome as qta
 
 
@@ -89,13 +89,13 @@ class TableWidgetWithMenu(TableWidget):
             self.menu = QtWidgets.QMenu(self)  # Context menu
             self.menu.setStyleSheet('border: 1px solid #d3d3d3')
 
-            show_action = QtWidgets.QAction('Show component in the graph', self)
+            show_action = QtGui.QAction('Show component in the graph', self)
             show_action.setText('Show component in the graph')
             show_action.triggered.connect(self.show_component)
             show_action.setIcon(qta.icon('mdi6.eye-outline'))
             self.menu.addAction(show_action)
 
-            copy_action = QtWidgets.QAction('Copy', self)
+            copy_action = QtGui.QAction('Copy', self)
             copy_action.setText('Copy')
             copy_action.triggered.connect(self.copy)
             copy_action.setIcon(qta.icon('mdi6.content-copy'))

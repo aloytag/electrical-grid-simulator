@@ -19,20 +19,24 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
 - Multiplatform: GNU/Linux, MS Windows and Apple MacOS (not tested on MacOS).
-- Providing an extensions system to expand its capabilities **(new, starting in versión 0.0.6.9)**.
+- Providing an extensions system to expand its capabilities **(starting in versión 0.0.6.9)**.
 
 ## How it is built
 EGS is built in Python and entirely from open source and free software. The main core components are:
 
 * The [pandapower](https://www.pandapower.org/) modeling and calculation library for electrical power systems.
-* The [Qt](https://www.qt.io/) toolkit with [PySide2](https://wiki.qt.io/Qt_for_Python) and [Qt.py](https://github.com/mottosso/Qt.py) bindings for the UI.
-* The [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt) library for building the graph (schematic network graphic).
+* The [Qt](https://www.qt.io/) toolkit with [PySide6](https://wiki.qt.io/Qt_for_Python) bindings for the UI.
+* A `Qt6` port (fork) of the [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt) library for building the graph (schematic network graphic).
 * The [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme) package for applying modern themes (light and dark themes).
 * The [QtAwesome](https://github.com/spyder-ide/qtawesome) package for modern flat monochromatic icons.
 * The [matplotlib](https://matplotlib.org/) package for plotting calculation results.
 * Other scientific Python packages, mainly [NumPy](https://numpy.org/) and [pandas](https://pandas.pydata.org/).
 
+
 EGS is implemented as a Python package uploaded to the [PyPI repository](https://pypi.org/). ```pandapower``` and other packages listed above are set as dependencies.
+
+> [!NOTE]  
+> Starting with version **0.0.8.0**, the EGS package includes a fork of `NodeGraphQt` ported to `Qt6` (using the `PySide6` library). This implementation is renamed to `NodeGraphQt6` in order to avoid conflicts. These changes allow the application to run on recent versions of Python.
 
 
 ## How it works
@@ -82,7 +86,7 @@ A **node** element is a component added to the **Graph**. A **node** should not 
 </p>
 </br></br>
 
-Some nodes provide widgets that work as shortcuts for some of their main features. For example, a symmetric load node has three widgets (as shown above) to set the real and reactive demands, and a scale factor. However, all the node parameters are accessed from a dialog after double clicking on the node, as shown below. Additionally, the node name can be modified after double clicking on it.
+Some nodes provide widgets that work as shortcuts for some of their main features. For example, a symmetric load node has three widgets (as shown above) to set the real and reactive power demands, and a scale factor. However, all the node parameters are accessed from a dialog after double clicking on the node, as shown below. Additionally, the node name can be modified after double clicking on it.
 
 ![Node dialog](img/2_Dialogs.png)
 <p align = "center">
@@ -94,7 +98,7 @@ Node types (component types) are distinguished by color. For example, a line is 
 
 Nodes can have input and output ports. Connections are made by linking an output port on one node with an input port on another node. For example, to connect a generator to a bus, you can link the output port of the generator to the input port of the bus.
 
-When a node is displayed in horizontal layout, input ports are placed on the left and output ports on the right. In the vertical layout, input ports are placed at the top and output ports at the bottom. By default, nodes are inserted in horizontal layout, but this can be changed. For convenience, nodes with a single port can be flipped, so that an input port becomes an output port, or vice versa.
+When a node is displayed in horizontal layout, input ports are placed on the left and output ports on the right. In the vertical layout, input ports are placed at the top and output ports at the bottom. For convenience, nodes with a single port can be flipped, so that an input port becomes an output port, or vice versa.
 
 The distinction between input and output ports has another use in certain components. For example, in a two-winding transformer, the input port represents the *high voltage side* (hv), while the output port corresponds to the *low voltage side* (lv). In this case, to make it easier to distinguish, these ports have different shapes. In an AC line, input and output ports refer to the *"from bus"* and *"to bus"* sides, respectively. On the contrary, there is no distinction between input and output ports in a bus, which correspond to the same point.
 
@@ -237,7 +241,7 @@ Settings are classified into four categories:
 > * For selecting nodes in the **Graph** you can use the left mouse button (```LMB```). Just click with the ```LMB```, hold and drag to mark the selection area.
 > * Clicking with the ```LMB``` on the background will unselect all.
 > * You can use ```Shift+LMB``` on a node in order to add it to the selection.
-> * ```Ctrl+LMB``` on a selected node will unselect it.
+> * ```Ctrl+LMB``` or ```Shift+LMB``` on a selected node will unselect it.
 > * The mouse scroll wheel can be used to zoom in and out.
 > * Use the medium mouse button (```MMB```) to scroll over the **Graph**. Just click with the ```MMB```, hold and move.
 > * Hold ```Shift+Alt+LMB``` to slice several connections (see the picture below).

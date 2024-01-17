@@ -2,7 +2,8 @@
 
 import os
 
-from Qt import QtCore, QtCompat, QtGui, QtWidgets
+from PySide6.QtUiTools import QUiLoader
+from PySide6 import QtCore, QtGui, QtWidgets
 import qtawesome as qta
 
 
@@ -27,7 +28,11 @@ class StandardExtensionWin(QtWidgets.QDialog):
     """
     def __init__(self, extension_object):
         super().__init__()
-        self.w = QtCompat.loadUi(uifile=extension_dialog_ui_path)
+        # self.w = QtCompat.loadUi(uifile=extension_dialog_ui_path)
+        ui_file_ = QtCore.QFile(extension_dialog_ui_path)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        self.w = loader.load(ui_file_)
         self.w.setWindowIcon(QtGui.QIcon(icon_path))
         font = QtGui.QFont('unexistent')
         font.setStyleHint(QtGui.QFont.Monospace)
