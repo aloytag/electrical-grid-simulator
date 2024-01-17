@@ -11,10 +11,9 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 <img src="./img/Logo_CIESE_2021 y UTN_Sta_Fe.png" alt="" width="450">
 </p>
 
-> __Warning__ <br>
-> <span style="color:red">
-<b>This application is in an early stage of development. So you can expect incomplete sections and some (or many) bugs. New changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).</b>
-</span>
+
+> [!WARNING]  
+> This application is in an early stage of development. So you can expect incomplete sections and some (or many) bugs. New changes may cause incompatibilities with older versions (old files that no longer work with newer versions of the program).
 
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
