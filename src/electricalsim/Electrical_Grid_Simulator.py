@@ -31,16 +31,25 @@ def main():
     # Reading the config file:
     config, config_file_path = return_config(directory)
     
-    qdarktheme.enable_hi_dpi()
-    app = QtWidgets.QApplication(sys.argv)
-    theme = config['general']['theme']
-    if theme in ('dark', 'light', 'auto'):
-        qdarktheme.setup_theme(theme)
+    # qdarktheme.enable_hi_dpi()
+    # app = QtWidgets.QApplication(sys.argv)
+    # theme = config['general']['theme']
+    # if theme in ('dark', 'light', 'auto'):
+    #     qdarktheme.setup_theme(theme)
     
     ui_file = os.path.join(directory, 'ui', 'main_window.ui')
     ui_file_ = QtCore.QFile(ui_file)
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
+    # main_window = loader.load(ui_file_)
+    # window = QMainWindow2(main_window)
+
+    qdarktheme.enable_hi_dpi()
+    app = QtWidgets.QApplication(sys.argv)
+    theme = config['general']['theme']
+    if theme in ('dark', 'light', 'auto'):
+        qdarktheme.setup_theme(theme)
+
     main_window = loader.load(ui_file_)
     window = QMainWindow2(main_window)
     
