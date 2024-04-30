@@ -287,6 +287,11 @@ On MS Windows you may prefer:
 python -m pip install electricalsim
 ```
 
+If you want to install the latest development version:
+```bash
+python -m pip install git+https://github.com/aloytag/electrical-grid-simulator.git -U
+```
+
 ## Upgrading EGS
 In order to upgrade EGS via ```pip```, execute the following in a terminal:
 
