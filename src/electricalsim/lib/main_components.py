@@ -410,7 +410,7 @@ class BaseNode2(BaseNode):
         self.image_widget = ImageWrapper(self.view)
         self.image_widget.set_name('image')
         icon_path = os.path.join(icons_dir, image_name)
-        style = f"image: url('{icon_path}')"
+        style = f"image: url('{icon_path}');"
         self.image_widget.set_value(style)
         self.add_custom_widget(self.image_widget, tab=None)
         model = self.model
