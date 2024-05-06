@@ -613,7 +613,7 @@ class ImpedanceNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('impedance_index', None)
-        self.add_image('impedance.svg')
+        self.add_image('impedance.png')
             
     def connected_to_network(self):
         """
