@@ -14,6 +14,7 @@ from lib.electricalGraph import ElectricalGraph
 from lib.table_widget import TableWidgetWithMenu
 from lib.auxiliary import QVLine, QMainWindow2, return_config
 from lib.calculations import Run_PF
+from icons import rc_icons
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points

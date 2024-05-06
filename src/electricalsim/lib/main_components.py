@@ -409,8 +409,9 @@ class BaseNode2(BaseNode):
     
         self.image_widget = ImageWrapper(self.view)
         self.image_widget.set_name('image')
-        icon_path = os.path.join(icons_dir, image_name)
-        style = f"image: url('{icon_path}');"
+        # icon_path = os.path.join(icons_dir, image_name)
+        # style = f"image: url('{icon_path}');"
+        style = "image: url(:/" + image_name + ");"
         self.image_widget.set_value(style)
         self.add_custom_widget(self.image_widget, tab=None)
         model = self.model
@@ -613,7 +614,7 @@ class ImpedanceNode(BaseNode2):
             self.create_property(name, None)
             
         self.create_property('impedance_index', None)
-        self.add_image('impedance.png')
+        self.add_image('impedance.svg')
             
     def connected_to_network(self):
         """

@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>impedance.svg</file>
+        <file>app_icon.svg</file>
+        <file>demand.svg</file>
+        <file>ext_grid.svg</file>
+        <file>generator.svg</file>
+        <file>motor.svg</file>
+        <file>shunt.svg</file>
+        <file>storage.svg</file>
+        <file>switch_closed.svg</file>
+        <file>switch_opened.svg</file>
+        <file>transformer.svg</file>
+        <file>ward.svg</file>
+        <file>xward.svg</file>
+    </qresource>
+</RCC>
