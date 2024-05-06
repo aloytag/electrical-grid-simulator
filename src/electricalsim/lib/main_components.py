@@ -1385,8 +1385,9 @@ class LoadNode(BaseNode2):
         
         self.image_widget = ImageWrapper(self.view)
         self.image_widget.set_name('image')
-        icon_path = os.path.join(icons_dir, 'demand.svg')
-        style = f"image: url('{icon_path}')"
+        # icon_path = os.path.join(icons_dir, 'demand.svg')
+        # style = f"image: url('{icon_path}')"
+        style = "image: url(:/demand.svg);"
         self.image_widget.set_value(style)
         self.add_custom_widget(self.image_widget, tab=None)
         model = self.model
@@ -2006,12 +2007,14 @@ class SwitchNode(BaseNode2):
             self.graph.net.switch.loc[index, 'closed'] = new_value
         if new_value:
             self.set_color(0, 0, 255)
-            icon_path = os.path.join(icons_dir, 'switch_closed.svg')
+            # icon_path = os.path.join(icons_dir, 'switch_closed.svg')
+            style = "image: url(:/switch_closed.svg);"
         else:
             self.set_color(178, 199, 218)
-            icon_path = os.path.join(icons_dir, 'switch_opened.svg')
+            # icon_path = os.path.join(icons_dir, 'switch_opened.svg')
+            style = "image: url(:/switch_opened.svg);"
             
-        style = f"image: url('{icon_path}')"
+        # style = f"image: url('{icon_path}')"
         self.image_widget.set_value(style)
             
     def connected_to_network(self):
