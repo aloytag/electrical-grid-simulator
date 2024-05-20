@@ -3173,8 +3173,10 @@ class ElectricalGraph(NodeGraph):
 
             node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
             node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
             node.vm_pu_widget.get_custom_widget().setMinimum(node.get_property('min_vm_pu'))
             node.vm_pu_widget.get_custom_widget().setMaximum(node.get_property('max_vm_pu'))
+            node.vm_pu_widget.get_custom_widget().setValue(node.get_property('vm_pu'))
 
             gen_index = node.get_property('gen_index')
             if gen_index is not None and node.connected_to_network():
@@ -3301,8 +3303,10 @@ class ElectricalGraph(NodeGraph):
 
             node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
             node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
             node.q_mvar_widget.get_custom_widget().setMinimum(node.get_property('min_q_mvar'))
             node.q_mvar_widget.get_custom_widget().setMaximum(node.get_property('max_q_mvar'))
+            node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
 
             gen_index = node.get_property('gen_index')
             if gen_index is not None and node.connected_to_network():
@@ -3508,8 +3512,10 @@ class ElectricalGraph(NodeGraph):
 
             node.p_mw_widget.get_custom_widget().setMinimum(node.get_property('min_p_mw'))
             node.p_mw_widget.get_custom_widget().setMaximum(node.get_property('max_p_mw'))
+            node.p_mw_widget.get_custom_widget().setValue(node.get_property('p_mw'))
             node.q_mvar_widget.get_custom_widget().setMinimum(node.get_property('min_q_mvar'))
             node.q_mvar_widget.get_custom_widget().setMaximum(node.get_property('max_q_mvar'))
+            node.q_mvar_widget.get_custom_widget().setValue(node.get_property('q_mvar'))
 
             load_index = node.get_property('load_index')
             if load_index is not None and node.connected_to_network():
