@@ -1565,12 +1565,14 @@ class ElectricalGraph(NodeGraph):
             # If 2 buses gets connected...
             if node_from.type_=='BusNode.BusNode' and node_to.type_=='BusNode.BusNode':
                 # port_from.disconnect_from(port_to)
-                self._on_connection_changed(disconnected=[pipe], connected=[])
+                # self._on_connection_changed(disconnected=[pipe], connected=[])
                 dialog = connecting_buses_dialog()
                 dialog.setWindowIcon(QtGui.QIcon(icon_path))
                 main_win_rect = self.main_window.geometry()
+                dialog.setParent(self.main_window)
                 dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
                 dialog.exec()
+                self._on_connection_changed(disconnected=[pipe], connected=[])
 
                 if dialog.option in ('line', 'stdline', 'dcline'):
                     pos0 = node_from.pos()
@@ -3977,8 +3979,8 @@ class ElectricalGraph(NodeGraph):
         if not impedance_row.empty:
             impedance_index = impedance_row.index[0]
             impedances = [impedance_index]
-            # drop_from_groups(self.net, "impedace", impedances)
-            drop_elements(self.net, "impedace", impedances)
+            # drop_from_groups(self.net, "impedance", impedances)
+            drop_elements(self.net, "impedance", impedances)
             # self.net["impedance"].drop(impedances, inplace=True)
             # res_impedances = self.net.res_impedance.index.intersection(impedances)
             # self.net["res_impedance"].drop(res_impedances, inplace=True)
