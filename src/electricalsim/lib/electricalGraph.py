@@ -4405,6 +4405,7 @@ class ElectricalGraph(NodeGraph):
         dialog = search_node_dialog(all_nodes)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         main_win_rect = self.main_window.geometry()
+        dialog.setParent(self.main_window)
         dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
         if dialog.exec():
             node = self.get_node_by_name(dialog.selected_node)
