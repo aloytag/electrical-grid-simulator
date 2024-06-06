@@ -418,6 +418,36 @@ class BaseNode2(BaseNode):
         self.set_model(model)
 
 
+# class BusNode(BaseNode2):
+#     __identifier__ = 'BusNode'
+#     NODE_NAME = 'BusNode'
+    
+#     def __init__(self):
+#         super().__init__()
+#         self.input_port = self.add_input(multi_input=True, display_name=False)
+#         self.output_port = self.add_output(display_name=False)
+#         # self.set_color(157, 157, 157)
+#         self.set_color(117, 117, 117)
+        
+#         self.create_property('bus_index', None)
+        
+#     def node_switch_connected(self):
+#         """
+#         Returns a list of SwitchNode connected to the bus.
+#         Returns an empty list if no switch is connected.
+#         """
+#         switches = []
+#         inputs_nodes = self.connected_input_nodes()[self.input_port]
+#         for node in inputs_nodes:
+#             if node.type_=='SwitchNode.SwitchNode':
+#                 switches.append(node)
+#         outputs_nodes = self.connected_output_nodes()[self.output_port]
+#         for node in outputs_nodes:
+#             if node.type_=='SwitchNode.SwitchNode':
+#                 switches.append(node)
+#         return switches
+    
+
 class BusNode(BaseNode2):
     __identifier__ = 'BusNode'
     NODE_NAME = 'BusNode'
@@ -426,7 +456,10 @@ class BusNode(BaseNode2):
         super().__init__()
         self.input_port = self.add_input(multi_input=True, display_name=False)
         self.output_port = self.add_output(display_name=False)
-        # self.set_color(157, 157, 157)
+
+        self.input_port2 = self.add_input(name='input2', multi_input=True, display_name=False)
+        self.output_port2 = self.add_output(name='output2', display_name=False)
+
         self.set_color(117, 117, 117)
         
         self.create_property('bus_index', None)
@@ -437,11 +470,13 @@ class BusNode(BaseNode2):
         Returns an empty list if no switch is connected.
         """
         switches = []
-        inputs_nodes = self.connected_input_nodes()[self.input_port]
+        in_dict = self.connected_input_nodes()
+        inputs_nodes = in_dict[self.input_port] + in_dict[self.input_port2]
         for node in inputs_nodes:
             if node.type_=='SwitchNode.SwitchNode':
                 switches.append(node)
-        outputs_nodes = self.connected_output_nodes()[self.output_port]
+        out_dict = self.connected_output_nodes()
+        outputs_nodes = out_dict[self.output_port] + out_dict[self.output_port2]
         for node in outputs_nodes:
             if node.type_=='SwitchNode.SwitchNode':
                 switches.append(node)

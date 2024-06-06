@@ -9,7 +9,7 @@ from NodeGraphQt6.base.commands import PortConnectedCmd
 from PySide6 import QtGui, QtWidgets, QtCore
 
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
-from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
+from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum, PortEnum
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
@@ -67,6 +67,47 @@ allowed_connections = (
     {'BusNode.BusNode', 'XWardNode.XWardNode'},
     {'BusNode.BusNode', 'StorageNode.StorageNode'}
         )
+
+
+def adecuar_puertos(node):
+    current_width = node.get_property('width')
+    current_height = node.get_property('height')
+
+    con_outs = node.connected_output_nodes()
+    output_ports = list(con_outs.keys())
+
+    if output_ports[0].view.pos().x() != output_ports[1].view.pos().x():
+        return
+    output_port = output_ports[0]
+    pos = output_port.view.pos()
+    current_x = pos.x()
+    current_y = pos.y()
+    pos.setY(current_y + current_height/2)
+    pos.setX(current_x - current_width/2)
+    output_port.view.setPos(pos)
+
+    output_port2 = output_ports[1]
+    pos = output_port2.view.pos()
+    current_y = pos.y()
+    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
+    output_port2.view.setPos(pos)
+
+    con_ins = node.connected_input_nodes()
+    input_ports = list(con_ins.keys())
+
+    input_port = input_ports[0]
+    pos = input_port.view.pos()
+    current_x = pos.x()
+    current_y = pos.y()
+    pos.setX(current_x + current_width/2)
+    pos.setY(current_y - current_height/4 - current_height/3)
+    input_port.view.setPos(pos)
+
+    input_port2 = input_ports[1]
+    pos = input_port2.view.pos()
+    current_y = pos.y()
+    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
+    input_port2.view.setPos(pos)
 
 
 class ElectricalGraph(NodeGraph):
@@ -279,10 +320,13 @@ class ElectricalGraph(NodeGraph):
 
         # return new_nodes
     
-        for n in new_nodes:
+        for n_old, n in zip(nodes, new_nodes):
             x, y = n.pos()
             n.set_pos(x + offset, y + offset)
             n.set_property('selected', True)
+            if n_old.type_=='BusNode.BusNode':
+                adecuar_puertos(n_old)
+                adecuar_puertos(n)
         
         # self._undo_stack.endMacro()
         
@@ -651,6 +695,9 @@ class ElectricalGraph(NodeGraph):
                 self.deserialize_session(data['graph_dict'])
                 self.net = pp.from_json_string(data['pandapower_net'])
                 self.fit_to_selection()
+                for node in self.all_nodes():
+                    if node.type_=='BusNode.BusNode':
+                        adecuar_puertos(node)
 
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
@@ -806,6 +853,8 @@ class ElectricalGraph(NodeGraph):
         # node.create_property('bus_index', bus_index)
         node.set_property('bus_index', bus_index, push_undo=False)
         self.set_horizontal_layout_prop(node)
+        # adecuar_puertos(node)
+        self.update_bus_ports()
         # print(self.net.bus)
 
     def add_line(self, **kwargs):
@@ -853,10 +902,14 @@ class ElectricalGraph(NodeGraph):
             self.set_horizontal_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
-            node.set_input(0, node_from.output(0), push_undo=False)
-            node.set_output(0, node_to.input(0), push_undo=False)
+            i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
+            i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
+            node.set_input(0, node_from.output(i_port_from), push_undo=False)  # node.set_input(0, node_from.output(0), push_undo=False)
+            node.set_output(0, node_to.input(i_port_to), push_undo=False)  # node.set_output(0, node_to.input(0), push_undo=False)
             return node
-            
+
+        self.update_bus_ports()
+
     def add_impedance(self, **kwargs):
         """
         Adds an impedance to the graph.
@@ -876,6 +929,8 @@ class ElectricalGraph(NodeGraph):
             node.set_output(0, node_to.input(0), push_undo=False)
             return node
         
+        self.update_bus_ports()
+
     def add_trafo(self, **kwargs):
         """
         Adds a transformer to the graph. Two- or three-winding transformers are available.
@@ -942,6 +997,8 @@ class ElectricalGraph(NodeGraph):
             node.set_input(0, node_from.output(0), push_undo=False)
             node.set_output(0, node_to.input(0), push_undo=False)
             return node
+
+        self.update_bus_ports()
 
     def add_generator(self, **kwargs):
         """
@@ -1011,7 +1068,9 @@ class ElectricalGraph(NodeGraph):
             if theme=='light':
                 node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 node.update()
-            
+
+        self.update_bus_ports()
+
     def add_external_grid(self, **kwargs):
         """
         Adds an external grid to the graph.
@@ -1038,6 +1097,8 @@ class ElectricalGraph(NodeGraph):
             node.model.set_property('text_color', (0, 0, 0, 255))  # black
             node.update()
         
+        self.update_bus_ports()
+
     def add_load(self, **kwargs):
         """
         Adds a load to the graph: load, asymmetric load, shunt element,
@@ -1125,7 +1186,9 @@ class ElectricalGraph(NodeGraph):
             if theme=='light':
                 node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 node.update()
-            
+
+        self.update_bus_ports()
+
     def includes_switch(self, bus, node_bus, element, et, node_element,
                         port_number_element, bus_left):
         """
@@ -1430,6 +1493,8 @@ class ElectricalGraph(NodeGraph):
             node.model.set_property('text_color', (0, 0, 0, 255))  # black
             node.update()
         
+        self.update_bus_ports()
+
     def disconnect_component(self, port0, port1):
         """
         Removes the corresponding pandapower component if one of its
@@ -1580,7 +1645,9 @@ class ElectricalGraph(NodeGraph):
                     pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
                     node_from = self.add_line(pos=pos, option=dialog.option,
                                               node_from=node_from,
-                                              node_to=node_to)
+                                              node_to=node_to,
+                                              port_from=port_from,
+                                              port_to=port_to)
                 elif dialog.option in ('trafo', 'stdtrafo'):
                     pos0 = node_from.pos()
                     pos1 = node_to.pos()
@@ -4413,3 +4480,9 @@ class ElectricalGraph(NodeGraph):
                 self.fit_to_selection()
                 self.main_window.toolBox.setCurrentIndex(0)
                 simulate_ESC_key()
+
+    def update_bus_ports(self):
+        """Update port positions on bus nodes."""
+        for node in self.all_nodes():
+            if node.type_=='BusNode.BusNode':
+                adecuar_puertos(node)

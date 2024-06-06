@@ -9,6 +9,8 @@ import os
 from PySide6 import QtGui
 import pandapower as pp
 
+from lib.electricalGraph import adecuar_puertos
+
 directory = os.path.dirname(__file__)
 root_directory, _ = os.path.split(directory)
 icon_app_path = os.path.join(root_directory, 'icons', 'app_icon.png')
@@ -39,6 +41,8 @@ def vertical_layout(graph):
     for node in selected:
         # if node.type_ in ('GenNode.GenNode', 'SGenNode.SGenNode', 'ASGenNode.ASGenNode'):
         #     continue
+        if node.type_=='BusNode.BusNode':
+            continue
         node.set_layout_direction(1)
         node.set_property('layout_vert', True, push_undo=False)
         # node.set_property('layout_direction', 1, push_undo=False)
@@ -263,6 +267,8 @@ def duplicate_nodes(graph):
                                       in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
                                       geodata=node_duplicated.pos())
             node_duplicated.set_property('bus_index', bus_index, push_undo=False)
+            adecuar_puertos(node_duplicated)
+            
             
 
 def find_node(graph):
