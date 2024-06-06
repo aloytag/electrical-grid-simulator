@@ -9,7 +9,7 @@ import os
 from PySide6 import QtGui
 import pandapower as pp
 
-from lib.electricalGraph import adecuar_puertos
+from lib.auxiliary import four_ports_on_buses
 
 directory = os.path.dirname(__file__)
 root_directory, _ = os.path.split(directory)
@@ -267,7 +267,7 @@ def duplicate_nodes(graph):
                                       in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
                                       geodata=node_duplicated.pos())
             node_duplicated.set_property('bus_index', bus_index, push_undo=False)
-            adecuar_puertos(node_duplicated)
+            four_ports_on_buses(node_duplicated)
             
             
 

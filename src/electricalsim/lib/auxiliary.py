@@ -9,6 +9,8 @@ import qtawesome as qta
 from pynput.keyboard import Key, Controller
 from platformdirs import user_config_dir
 
+from NodeGraphQt6.constants import PortEnum
+
 directory = os.path.dirname(__file__)
 root_dir, _ = os.path.split(directory)
 
@@ -628,3 +630,47 @@ def return_config(app_root_dir):
                     break
                 
     return config, config_file_path
+
+
+def four_ports_on_buses(node):
+    """
+    Change port positions in a bus node.
+    """
+    current_width = node.get_property('width')
+    current_height = node.get_property('height')
+
+    con_outs = node.connected_output_nodes()
+    output_ports = list(con_outs.keys())
+
+    if output_ports[0].view.pos().x() != output_ports[1].view.pos().x():
+        return
+    output_port = output_ports[0]
+    pos = output_port.view.pos()
+    current_x = pos.x()
+    current_y = pos.y()
+    pos.setY(current_y + current_height/2)
+    pos.setX(current_x - current_width/2)
+    output_port.view.setPos(pos)
+
+    output_port2 = output_ports[1]
+    pos = output_port2.view.pos()
+    current_y = pos.y()
+    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
+    output_port2.view.setPos(pos)
+
+    con_ins = node.connected_input_nodes()
+    input_ports = list(con_ins.keys())
+
+    input_port = input_ports[0]
+    pos = input_port.view.pos()
+    current_x = pos.x()
+    current_y = pos.y()
+    pos.setX(current_x + current_width/2)
+    pos.setY(current_y - current_height/4 - current_height/3)
+    input_port.view.setPos(pos)
+
+    input_port2 = input_ports[1]
+    pos = input_port2.view.pos()
+    current_y = pos.y()
+    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
+    input_port2.view.setPos(pos)

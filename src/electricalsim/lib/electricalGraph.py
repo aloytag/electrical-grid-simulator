@@ -9,7 +9,7 @@ from NodeGraphQt6.base.commands import PortConnectedCmd
 from PySide6 import QtGui, QtWidgets, QtCore
 
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
-from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum, PortEnum
+from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
@@ -23,7 +23,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  WardNode, XWardNode, StorageNode,
                                  SwitchNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,
-                           simulate_ESC_key)  # , show_WIP)
+                           simulate_ESC_key, four_ports_on_buses)  # , show_WIP)
 from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         stdline_dialog,
                         dcline_dialog, impedance_dialog,
@@ -67,47 +67,6 @@ allowed_connections = (
     {'BusNode.BusNode', 'XWardNode.XWardNode'},
     {'BusNode.BusNode', 'StorageNode.StorageNode'}
         )
-
-
-def adecuar_puertos(node):
-    current_width = node.get_property('width')
-    current_height = node.get_property('height')
-
-    con_outs = node.connected_output_nodes()
-    output_ports = list(con_outs.keys())
-
-    if output_ports[0].view.pos().x() != output_ports[1].view.pos().x():
-        return
-    output_port = output_ports[0]
-    pos = output_port.view.pos()
-    current_x = pos.x()
-    current_y = pos.y()
-    pos.setY(current_y + current_height/2)
-    pos.setX(current_x - current_width/2)
-    output_port.view.setPos(pos)
-
-    output_port2 = output_ports[1]
-    pos = output_port2.view.pos()
-    current_y = pos.y()
-    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
-    output_port2.view.setPos(pos)
-
-    con_ins = node.connected_input_nodes()
-    input_ports = list(con_ins.keys())
-
-    input_port = input_ports[0]
-    pos = input_port.view.pos()
-    current_x = pos.x()
-    current_y = pos.y()
-    pos.setX(current_x + current_width/2)
-    pos.setY(current_y - current_height/4 - current_height/3)
-    input_port.view.setPos(pos)
-
-    input_port2 = input_ports[1]
-    pos = input_port2.view.pos()
-    current_y = pos.y()
-    pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
-    input_port2.view.setPos(pos)
 
 
 class ElectricalGraph(NodeGraph):
@@ -325,8 +284,8 @@ class ElectricalGraph(NodeGraph):
             n.set_pos(x + offset, y + offset)
             n.set_property('selected', True)
             if n_old.type_=='BusNode.BusNode':
-                adecuar_puertos(n_old)
-                adecuar_puertos(n)
+                four_ports_on_buses(n_old)
+                four_ports_on_buses(n)
         
         # self._undo_stack.endMacro()
         
@@ -697,7 +656,7 @@ class ElectricalGraph(NodeGraph):
                 self.fit_to_selection()
                 for node in self.all_nodes():
                     if node.type_=='BusNode.BusNode':
-                        adecuar_puertos(node)
+                        four_ports_on_buses(node)
 
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
@@ -853,7 +812,7 @@ class ElectricalGraph(NodeGraph):
         # node.create_property('bus_index', bus_index)
         node.set_property('bus_index', bus_index, push_undo=False)
         self.set_horizontal_layout_prop(node)
-        # adecuar_puertos(node)
+        # four_ports_on_buses(node)
         self.update_bus_ports()
         # print(self.net.bus)
 
@@ -925,8 +884,10 @@ class ElectricalGraph(NodeGraph):
         self.set_horizontal_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
-            node.set_input(0, node_from.output(0), push_undo=False)
-            node.set_output(0, node_to.input(0), push_undo=False)
+            i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
+            i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
+            node.set_input(0, node_from.output(i_port_from), push_undo=False)
+            node.set_output(0, node_to.input(i_port_to), push_undo=False)
             return node
         
         self.update_bus_ports()
@@ -994,8 +955,10 @@ class ElectricalGraph(NodeGraph):
             self.set_horizontal_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
-            node.set_input(0, node_from.output(0), push_undo=False)
-            node.set_output(0, node_to.input(0), push_undo=False)
+            i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
+            i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
+            node.set_input(0, node_from.output(i_port_from), push_undo=False)
+            node.set_output(0, node_to.input(i_port_to), push_undo=False)
             return node
 
         self.update_bus_ports()
@@ -1654,14 +1617,18 @@ class ElectricalGraph(NodeGraph):
                     pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
                     node_from = self.add_trafo(pos=pos, option=dialog.option,
                                                node_from=node_from,
-                                               node_to=node_to)
+                                               node_to=node_to,
+                                               port_from=port_from,
+                                               port_to=port_to)
                 elif dialog.option=='impedance':
                     pos0 = node_from.pos()
                     pos1 = node_to.pos()
                     pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
                     node_from = self.add_impedance(pos=pos,
                                                    node_from=node_from,
-                                                   node_to=node_to)
+                                                   node_to=node_to,
+                                                   port_from=port_from,
+                                                   port_to=port_to)
                 elif dialog.option=='switch':
                     self.clear_selection()
                     node_from.set_selected(True)
@@ -4485,4 +4452,4 @@ class ElectricalGraph(NodeGraph):
         """Update port positions on bus nodes."""
         for node in self.all_nodes():
             if node.type_=='BusNode.BusNode':
-                adecuar_puertos(node)
+                four_ports_on_buses(node)
