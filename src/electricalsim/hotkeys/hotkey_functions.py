@@ -230,6 +230,8 @@ def horizontal_alignment(graph):
         for node in selected[:-1]:
             node.set_y_pos(pos)
 
+        graph.update_bus_ports()
+
 
 def vertical_alignment(graph):
     """
@@ -241,6 +243,8 @@ def vertical_alignment(graph):
         pos = last_node.x_pos()
         for node in selected[:-1]:
             node.set_x_pos(pos)
+
+        graph.update_bus_ports()
 
 
 def duplicate_nodes(graph):

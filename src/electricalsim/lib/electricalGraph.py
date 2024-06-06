@@ -1153,9 +1153,9 @@ class ElectricalGraph(NodeGraph):
         self.update_bus_ports()
 
     def includes_switch(self, bus, node_bus, element, et, node_element,
-                        port_number_element, bus_left):
+                        port_number_element, bus_left, **kwargs):
         """
-        Adds a Switch Node and a switch element in tha pandapower network.
+        Adds a Switch Node and a switch element in the pandapower network.
         
         Similar to 'add_switch', but without dialogs.
         
@@ -1201,21 +1201,36 @@ class ElectricalGraph(NodeGraph):
             node.set_property('switch_index', switch_index, push_undo=False)
         # print(self.net.switch)
         
-        if et=='b' and pos0[0]<pos1[0]:
-            bus_left = True
-        elif et=='b' and pos0[0]>=pos1[0]:
-            bus_left = False
-            
         
-        if bus_left:
-            node.set_input(0, node_bus.output(0), push_undo=False)
-            node.set_output(0, node_element.input(port_number_element), push_undo=False)
+        if et=='b' and (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
+            i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
+            i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
+            node.set_input(0, node_from.output(i_port_from), push_undo=False)
+            node.set_output(0, node_to.input(i_port_to), push_undo=False)            
         else:
-            node.set_output(0, node_bus.input(0), push_undo=False)
-            node.set_input(0, node_element.output(port_number_element), push_undo=False)
+            if et=='b' and pos0[0]<pos1[0]:
+                bus_left = True
+            elif et=='b' and pos0[0]>=pos1[0]:
+                bus_left = False
+
+            if bus_left:
+                if (port := kwargs.get('port_from')) is not None:
+                    i_port_from = 0 if port.name()=='output' else 1
+                else:
+                    i_port_from = 0
+                node.set_input(0, node_bus.output(i_port_from), push_undo=False)
+                node.set_output(0, node_element.input(port_number_element), push_undo=False)
+            else:
+                if (port := kwargs.get('port_to')) is not None:
+                    i_port_to = 0 if port.name()=='input' else 1
+                else:
+                    i_port_to = 0
+                node.set_output(0, node_bus.input(i_port_to), push_undo=False)
+                node.set_input(0, node_element.output(port_number_element), push_undo=False)
             
         node.set_locked(True)
         self.set_horizontal_layout_prop(node)
+        self.update_bus_ports()
     
     def add_switch(self, **kwargs):
         """
@@ -1243,12 +1258,25 @@ class ElectricalGraph(NodeGraph):
             
             if node_bus0.type_=='BusNode.BusNode' and node_bus1.type_=='SwitchNode.SwitchNode':
                 bus = node_bus0.get_property('bus_index')
-                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True)
+                for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode') and node_.get_property('line_index')==element:
+                            port_from = port_
+
+                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True,
+                                     node_from=node_bus0, node_to=node, port_from=port_from,
+                                     port_to=node.input_port)
                 return
             
             if node_bus0.type_=='SwitchNode.SwitchNode' and node_bus1.type_=='BusNode.BusNode':
                 bus = node_bus1.get_property('bus_index')
-                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False)
+                for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode') and node_.get_property('line_index')==element:
+                            port_to = port_
+                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False,
+                                     node_from=node, node_to=node_bus1, port_from=node.output_port,
+                                     port_to=port_to)
                 return
             
             index0 = node_bus0.get_property('bus_index')
@@ -1268,11 +1296,27 @@ class ElectricalGraph(NodeGraph):
                     bus = index0
                     bus_left = True
                     node_bus = node_bus0
+                    node_from = node_bus0
+                    node_to = node
+                    port_to = node.input_port
+                    for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode') and node_.get_property('line_index')==element:
+                                port_from = port_
                 elif selected_bus==1:
                     bus = index1
                     bus_left = False
                     node_bus = node_bus1
-                self.includes_switch(bus, node_bus, element, et, node, 0, bus_left)
+                    node_from = node
+                    node_to = node_bus1
+                    port_from = node.output_port
+                    for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode') and node_.get_property('line_index')==element:
+                                port_to = port_
+                self.includes_switch(bus, node_bus, element, et, node, 0, bus_left,
+                                     node_from=node_from, node_to=node_to,
+                                     port_from=port_from, port_to=port_to)
                         
             return
         
@@ -1297,12 +1341,24 @@ class ElectricalGraph(NodeGraph):
             
             if node_bus0.type_=='BusNode.BusNode' and node_bus1.type_=='SwitchNode.SwitchNode':
                 bus = node_bus0.get_property('bus_index')
-                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True)
+                for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode') and node_.get_property('transformer_index')==element:
+                            port_from = port_
+                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True,
+                                     node_from=node_bus0, node_to=node, port_from=port_from,
+                                     port_to=node.input_port)
                 return
             
             if node_bus0.type_=='SwitchNode.SwitchNode' and node_bus1.type_=='BusNode.BusNode':
                 bus = node_bus1.get_property('bus_index')
-                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False)
+                for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode') and node_.get_property('transformer_index')==element:
+                            port_to = port_
+                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False,
+                                     node_from=node, node_to=node_bus1, port_from=node.output_port,
+                                     port_to=port_to)
                 return
             
             index0 = node_bus0.get_property('bus_index')
@@ -1322,11 +1378,27 @@ class ElectricalGraph(NodeGraph):
                     bus = index0
                     bus_left = True
                     node_bus = node_bus0
+                    node_from = node_bus0
+                    node_to = node
+                    port_to = node.input_port
+                    for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode') and node_.get_property('transformer_index')==element:
+                                port_from = port_
                 elif selected_bus==1:
                     bus = index1
                     bus_left = False
                     node_bus = node_bus1
-                self.includes_switch(bus, node_bus, element, et, node, 0, bus_left)
+                    node_from = node
+                    node_to = node_bus1
+                    port_from = node.output_port
+                    for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode') and node_.get_property('transformer_index')==element:
+                                port_to = port_
+                self.includes_switch(bus, node_bus, element, et, node, 0, bus_left,
+                                     node_from=node_from, node_to=node_to,
+                                     port_from=port_from, port_to=port_to)
                         
             return
          
@@ -1352,17 +1424,35 @@ class ElectricalGraph(NodeGraph):
             
             if node_bus0.type_=='BusNode.BusNode' and node_bus1.type_=='SwitchNode.SwitchNode' and node_bus2.type_=='SwitchNode.SwitchNode':
                 bus = node_bus0.get_property('bus_index')
-                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True)
+                for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                            port_from = port_
+                self.includes_switch(bus, node_bus0, element, et, node, 0, bus_left=True,
+                                     node_from=node_bus0, node_to=node, port_from=port_from,
+                                     port_to=node.input_port)
                 return
             
             if node_bus0.type_=='SwitchNode.SwitchNode' and node_bus1.type_=='BusNode.BusNode' and node_bus2.type_=='SwitchNode.SwitchNode':
                 bus = node_bus1.get_property('bus_index')
-                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False)
+                for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                            port_to = port_
+                self.includes_switch(bus, node_bus1, element, et, node, 0, bus_left=False,
+                                     node_from=node, node_to=node_bus1, port_from=node.output_port1,
+                                     port_to=port_to)
                 return
             
             if node_bus0.type_=='SwitchNode.SwitchNode' and node_bus1.type_=='SwitchNode.SwitchNode' and node_bus2.type_=='BusNode.BusNode':
                 bus = node_bus2.get_property('bus_index')
-                self.includes_switch(bus, node_bus2, element, et, node, 1, bus_left=False)
+                for port_, nodes_ in node_bus2.connected_input_nodes().items():
+                    for node_ in nodes_:
+                        if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                            port_to = port_
+                self.includes_switch(bus, node_bus2, element, et, node, 1, bus_left=False,
+                                     node_from=node, node_to=node_bus2, port_from=node.output_port2,
+                                     port_to=port_to)
                 return
             
             combobox_items = []  # init...
@@ -1401,18 +1491,41 @@ class ElectricalGraph(NodeGraph):
                     bus_left = True
                     node_bus = node_bus0
                     port_number_element = 0
+                    node_from = node_bus0
+                    node_to = node
+                    port_to = node.input_port
+                    for port_, nodes_ in node_bus0.connected_output_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                                port_from = port_
                 elif index1 is not None and selected_txt.startswith(f'({index1})'):
                     bus = index1
                     bus_left = False
                     node_bus = node_bus1
                     port_number_element = 0
+                    node_from = node
+                    node_to = node_bus1
+                    port_from = node.output_port1
+                    for port_, nodes_ in node_bus1.connected_input_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                                port_to = port_
                 elif index2 is not None and selected_txt.startswith(f'({index2})'):
                     bus = index2
                     bus_left = False
                     node_bus = node_bus2
                     port_number_element = 1
+                    node_from = node
+                    node_to = node_bus2
+                    port_from = node.output_port2
+                    for port_, nodes_ in node_bus2.connected_input_nodes().items():
+                        for node_ in nodes_:
+                            if node_.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode') and node_.get_property('transformer_index')==element:
+                                port_to = port_
                 self.includes_switch(bus, node_bus, element, et,
-                                     node, port_number_element, bus_left)
+                                     node, port_number_element, bus_left,
+                                     node_from=node_from, node_to=node_to,
+                                     port_from=port_from, port_to=port_to)
                         
             return
             
@@ -1421,7 +1534,7 @@ class ElectricalGraph(NodeGraph):
             element = node1.get_property('bus_index')
             bus = node0.get_property('bus_index')
             self.includes_switch(bus, node0, element, et,
-                                 node1, 0, bus_left=True)
+                                 node1, 0, bus_left=True, **kwargs)
         
         else:
             title = 'Error when adding a switch'
@@ -1599,8 +1712,8 @@ class ElectricalGraph(NodeGraph):
                 main_win_rect = self.main_window.geometry()
                 dialog.setParent(self.main_window)
                 dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
-                dialog.exec()
                 self._on_connection_changed(disconnected=[pipe], connected=[])
+                dialog.exec()
 
                 if dialog.option in ('line', 'stdline', 'dcline'):
                     pos0 = node_from.pos()
@@ -1633,7 +1746,10 @@ class ElectricalGraph(NodeGraph):
                     self.clear_selection()
                     node_from.set_selected(True)
                     node_to.set_selected(True)
-                    self.add_switch()
+                    self.add_switch(node_from=node_from,
+                                    node_to=node_to,
+                                    port_from=port_from,
+                                    port_to=port_to)
 
 
             if {node_from.type_, node_to.type_} not in allowed_connections:
