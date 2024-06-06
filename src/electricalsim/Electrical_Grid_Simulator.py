@@ -69,7 +69,7 @@ def main():
                             main_window=main_window,
                             extensions_dict=extensions_dict)
     graph.viewer().setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
-    
+
     # Toolbar settings------------------------------
     addBus_action = QtGui.QAction('addBus')
     addBus_action.setText('Bus')

@@ -2226,7 +2226,6 @@ class ElectricalGraph(NodeGraph):
                 node_from = node_to_copy
                 node_to = node_from_copy
             if node_from.type_=='GenNode.GenNode' and node_to.type_=='BusNode.BusNode':
-                # print(node_from.connected_output_nodes())
                 bus = node_to.get_property('bus_index')
                 gen_index = pp.create_gen(self.net, bus=bus,
                                           p_mw=node_from.get_property('p_mw'),
@@ -2251,7 +2250,6 @@ class ElectricalGraph(NodeGraph):
                     node_from.create_property('gen_index', gen_index)
                 except errors.NodePropertyError:
                     node_from.set_property('gen_index', gen_index, push_undo=False)
-                # print(self.net.gen)
 
 
             # Adding a static generator to pandapower network

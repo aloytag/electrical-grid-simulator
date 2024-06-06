@@ -1629,9 +1629,6 @@ class NodeViewer(QtWidgets.QGraphicsView):
         """
         # use QOpenGLWidget instead of the deprecated QGLWidget to avoid
         # problems with Wayland.
-        import PySide6
-        if PySide6.IsPySide2:
-            from PySide6.QtWidgets import QOpenGLWidget
-        elif PySide6.IsPyQt5:
-            from PyQt5.QtWidgets import QOpenGLWidget
-        self.setViewport(QOpenGLWidget())
+
+        import PySide6.QtOpenGLWidgets
+        self.setViewport(PySide6.QtOpenGLWidgets.QOpenGLWidget())
