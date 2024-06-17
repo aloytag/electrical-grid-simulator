@@ -122,7 +122,7 @@
             </size>
            </property>
            <property name="decimals">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>0.000100000000000</double>
@@ -833,7 +833,7 @@
             </size>
            </property>
            <property name="decimals">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>0.000000000000000</double>
@@ -885,7 +885,7 @@
             </size>
            </property>
            <property name="decimals">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>0.000000000000000</double>
@@ -976,7 +976,7 @@
             </size>
            </property>
            <property name="decimals">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>-5000.000000000000000</double>
@@ -1028,7 +1028,7 @@
             </size>
            </property>
            <property name="decimals">
-            <number>4</number>
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>-5000.000000000000000</double>
