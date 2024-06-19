@@ -97,7 +97,7 @@ Node types (component types) are distinguished by color. For example, a line is 
 
 Nodes can have input and output ports. Connections are made by linking an output port on one node with an input port on another node. For example, to connect a generator to a bus, you can link the output port of the generator to the input port of the bus.
 
-When a node is displayed in horizontal layout, input ports are placed on the left and output ports on the right. In the vertical layout, input ports are placed at the top and output ports at the bottom. For convenience, nodes with a single port can be flipped, so that an input port becomes an output port, or vice versa.
+When a node is displayed in horizontal layout, input ports are placed on the left and output ports on the right. In the vertical layout, input ports are placed at the top and output ports at the bottom. For convenience, nodes with a single port can be flipped, so that an input port becomes an output port, or vice versa. For convenience, buses are represented since version 0.0.8.4 with four-port nodes, which means that one output port is placed on the right and one at the bottom, and similar locations are available for two input ports (left and top).
 
 The distinction between input and output ports has another use in certain components. For example, in a two-winding transformer, the input port represents the *high voltage side* (hv), while the output port corresponds to the *low voltage side* (lv). In this case, to make it easier to distinguish, these ports have different shapes. In an AC line, input and output ports refer to the *"from bus"* and *"to bus"* sides, respectively. On the contrary, there is no distinction between input and output ports in a bus, which correspond to the same point.
 
