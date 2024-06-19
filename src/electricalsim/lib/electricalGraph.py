@@ -4555,6 +4555,25 @@ class ElectricalGraph(NodeGraph):
         main_win_rect = self.main_window.geometry()
         dialog.setParent(self.main_window)
         dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+
+        # def dialog_closed(result):
+        #     # dialog.input_search.setFocus(False)
+        #     if result:
+        #         node = self.get_node_by_name(dialog.selected_node)
+        #         if node is not None:
+        #             self.clear_selection()
+        #             node.set_selected(True)
+        #             self.fit_to_selection()
+        #             self.main_window.toolBox.setCurrentIndex(0)
+        #             simulate_ESC_key()
+                    
+        #             if node.type_=='BusNode.BusNode':
+        #                 four_ports_on_buses(node)
+
+        # dialog.finished.connect(dialog_closed)
+        # dialog.open()
+        # dialog.input_search.setFocus()
+
         if dialog.exec():
             node = self.get_node_by_name(dialog.selected_node)
             if node is not None:
@@ -4563,6 +4582,9 @@ class ElectricalGraph(NodeGraph):
                 self.fit_to_selection()
                 self.main_window.toolBox.setCurrentIndex(0)
                 simulate_ESC_key()
+
+                if node.type_=='BusNode.BusNode':
+                    four_ports_on_buses(node)
 
     def update_bus_ports(self):
         """Update port positions on bus nodes."""
