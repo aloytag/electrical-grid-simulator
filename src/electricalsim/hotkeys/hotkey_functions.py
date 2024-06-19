@@ -178,6 +178,7 @@ def disable_nodes(graph):
     """
     selected = graph.selected_nodes()
     graph.disable_nodes(selected)
+    graph.update_bus_ports()
     
     
 def zoom_in(graph):
