@@ -1758,7 +1758,6 @@ class ElectricalGraph(NodeGraph):
 
                 dialog.finished.connect(dialog_closed)
                 dialog.open()
-                # dialog.btnImpedance.setFocus()
 
             if {node_from.type_, node_to.type_} not in allowed_connections:
                 # port_from.disconnect_from(port_to)

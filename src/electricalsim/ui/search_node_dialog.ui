@@ -63,7 +63,7 @@
       <item>
        <widget class="QLineEdit" name="input_search">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::TabFocus</enum>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
@@ -83,8 +83,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>451</width>
-           <height>452</height>
+           <width>447</width>
+           <height>415</height>
           </rect>
          </property>
          <property name="sizePolicy">
