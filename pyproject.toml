@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "electricalsim"
-version = "0.0.8.7.dev5"
+version = "0.0.8.7.dev6"
 author = "Dr. Ing. Ariel S. Loyarte"
 authors = [
   { name="Dr. Ing. Ariel S. Loyarte", email="aloyarte@frsf.utn.edu.ar" },
@@ -14,7 +14,7 @@ readme = "README_PyPI.md"
 requires-python = ">=3.8,<3.12"
 dependencies = [
   "PySide6>=6.6.1",
-  "pandapower>=2.13.1",
+  "pandapower>=2.14.7",
   "numba>=0.56.4",
   "pyqtdarktheme>=2.1.0",
   "qtawesome>=1.2.2",

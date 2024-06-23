@@ -1713,7 +1713,6 @@ class ElectricalGraph(NodeGraph):
                 dialog.setParent(self.main_window)
                 dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
                 self._on_connection_changed(disconnected=[pipe], connected=[])
-                # dialog.exec()
 
                 def dialog_closed(result, node_from=node_from, node_to=node_to,
                                   port_from=port_from, port_to=port_to):
@@ -4009,6 +4008,7 @@ class ElectricalGraph(NodeGraph):
         if type_=='BusNode.BusNode':
             bus_index = node.get_property('bus_index')
             self.net.bus.loc[bus_index, 'name'] = name
+            four_ports_on_buses(node)
         elif type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode'):
             line_index = node.get_property('line_index')
             if line_index is not None:
