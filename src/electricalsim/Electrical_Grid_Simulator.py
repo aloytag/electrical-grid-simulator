@@ -49,7 +49,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     theme = config['general']['theme']
     if theme in ('dark', 'light', 'auto'):
-        qdarktheme.setup_theme(theme)
+        qdarktheme.setup_theme(theme, additional_qss="QToolTip { border: 0px; }")
 
     main_window = loader.load(ui_file_)
     window = QMainWindow2(main_window)
