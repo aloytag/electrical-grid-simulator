@@ -54,7 +54,7 @@ def main():
     main_window = loader.load(ui_file_)
     window = QMainWindow2(main_window)
     
-    icon_path = os.path.join(directory, 'icons', 'app_icon.png')    
+    icon_path = os.path.join(directory, 'icons', 'app_icon.png')
     window.setWindowIcon(QtGui.QIcon(icon_path))
     window.setWindowTitle('Electrical Grid Simulator')
 

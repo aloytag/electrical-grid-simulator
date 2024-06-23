@@ -1713,44 +1713,52 @@ class ElectricalGraph(NodeGraph):
                 dialog.setParent(self.main_window)
                 dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
                 self._on_connection_changed(disconnected=[pipe], connected=[])
-                dialog.exec()
+                # dialog.exec()
 
-                if dialog.option in ('line', 'stdline', 'dcline'):
-                    pos0 = node_from.pos()
-                    pos1 = node_to.pos()
-                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
-                    node_from = self.add_line(pos=pos, option=dialog.option,
-                                              node_from=node_from,
-                                              node_to=node_to,
-                                              port_from=port_from,
-                                              port_to=port_to)
-                elif dialog.option in ('trafo', 'stdtrafo'):
-                    pos0 = node_from.pos()
-                    pos1 = node_to.pos()
-                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
-                    node_from = self.add_trafo(pos=pos, option=dialog.option,
-                                               node_from=node_from,
-                                               node_to=node_to,
-                                               port_from=port_from,
-                                               port_to=port_to)
-                elif dialog.option=='impedance':
-                    pos0 = node_from.pos()
-                    pos1 = node_to.pos()
-                    pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
-                    node_from = self.add_impedance(pos=pos,
-                                                   node_from=node_from,
-                                                   node_to=node_to,
-                                                   port_from=port_from,
-                                                   port_to=port_to)
-                elif dialog.option=='switch':
-                    self.clear_selection()
-                    node_from.set_selected(True)
-                    node_to.set_selected(True)
-                    self.add_switch(node_from=node_from,
-                                    node_to=node_to,
-                                    port_from=port_from,
-                                    port_to=port_to)
+                def dialog_closed(result, node_from=node_from, node_to=node_to,
+                                  port_from=port_from, port_to=port_to):
+                    if not result:
+                        return
 
+                    if dialog.option in ('line', 'stdline', 'dcline'):
+                        pos0 = node_from.pos()
+                        pos1 = node_to.pos()
+                        pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        node_from = self.add_line(pos=pos, option=dialog.option,
+                                                node_from=node_from,
+                                                node_to=node_to,
+                                                port_from=port_from,
+                                                port_to=port_to)
+                    elif dialog.option in ('trafo', 'stdtrafo'):
+                        pos0 = node_from.pos()
+                        pos1 = node_to.pos()
+                        pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        node_from = self.add_trafo(pos=pos, option=dialog.option,
+                                                node_from=node_from,
+                                                node_to=node_to,
+                                                port_from=port_from,
+                                                port_to=port_to)
+                    elif dialog.option=='impedance':
+                        pos0 = node_from.pos()
+                        pos1 = node_to.pos()
+                        pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        node_from = self.add_impedance(pos=pos,
+                                                    node_from=node_from,
+                                                    node_to=node_to,
+                                                    port_from=port_from,
+                                                    port_to=port_to)
+                    elif dialog.option=='switch':
+                        self.clear_selection()
+                        node_from.set_selected(True)
+                        node_to.set_selected(True)
+                        self.add_switch(node_from=node_from,
+                                        node_to=node_to,
+                                        port_from=port_from,
+                                        port_to=port_to)
+
+                dialog.finished.connect(dialog_closed)
+                dialog.open()
+                # dialog.btnImpedance.setFocus()
 
             if {node_from.type_, node_to.type_} not in allowed_connections:
                 # port_from.disconnect_from(port_to)

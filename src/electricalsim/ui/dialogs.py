@@ -843,6 +843,8 @@ def connecting_buses_dialog():
 
     dialog.btnImpedance.setIcon(qta.icon('mdi6.alpha-z-box-outline'))
     dialog.btnImpedance.setText('Impedance')
+    # dialog.btnImpedance.setStyleSheet("text-align:left;")
+    # dialog.btnImpedance.setStyleSheet("border:0px; text-align:left;")
     dialog.btnImpedance.clicked.connect(impedance)
 
     dialog.btnTrafo.setIcon(qta.icon('ph.intersect'))
