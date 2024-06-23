@@ -664,7 +664,7 @@ class ElectricalGraph(NodeGraph):
             
             for node in self.all_nodes():
                 layout_vert = node.get_property('layout_vert')
-                if layout_vert is not None and layout_vert is True:
+                if layout_vert is not None and layout_vert is True and node.type_!='BusNode.BusNode':
                     node.set_layout_direction(1)
                     
                     if self.config['general']['theme']=='light':
