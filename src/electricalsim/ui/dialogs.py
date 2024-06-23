@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 import configparser
+from concurrent.futures import Future
 
 import pandas as pd
 import pandapower as pp
@@ -1556,68 +1557,75 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.w.btn_run.setText('Running...')
         self.w.btn_run.setStyleSheet('background-color: red')
         
-        if self.w.tdpf_delay_s_check.isChecked():
-            tdpf_delay_s = self.w.tdpf_delay_s.value()
-        else:
-            tdpf_delay_s = None
-        
-        try:
-            pp.runpp(self.net,
-                algorithm=self.methods[self.w.algorithm.currentIndex()],
-                max_iteration=self.w.max_iteration.value(),
-                tolerance_mva=self.w.tolerance_mva.value() * 1e-6,
-                delta_q=self.w.delta_q.value(),
-                check_connectivity=self.w.check_connectivity.isChecked(),
-                init=self.w.init.currentText(),
-                trafo_model=self.w.trafo_model.currentText(),
-                trafo_loading=self.w.trafo_loading.currentText(),
-                trafo3w_losses=self.w.trafo3w_losses.currentText(),
-                switch_rx_ratio=self.w.switch_rx_ratio.value(),
-                neglect_open_switch_branches=self.w.neglect_open_switch_branches.isChecked(),
-                enforce_q_lims=self.w.enforce_q_lims.isChecked(),
-                voltage_depend_loads=self.w.voltage_depend_loads.isChecked(),
-                consider_line_temperature=self.w.consider_line_temperature.isChecked(),
-                distributed_slack=self.w.distributed_slack.isChecked(),
-                tdpf=self.w.tdpf.isChecked(),
-                tdpf_delay_s=tdpf_delay_s,
-                tdpf_update_r_theta=self.w.tdpf_update_r_theta.isChecked())
-
-            # if self.net._ppc['success']:
-            if self.net.converged:
-                title = 'Success!'
-                et = self.net._ppc['et']
-                try:
-                    iterations = self.net._ppc['iterations']
-                    content = f'Solver converged in {et: .2f} (s) after {iterations} iterations.'
-                except KeyError:
-                    content = f'Solver converged in {et: .2f} (s).'
-                QtWidgets.QMessageBox.information(self.w, title, content)
+        def pf_calculation():
+            if self.w.tdpf_delay_s_check.isChecked():
+                tdpf_delay_s = self.w.tdpf_delay_s.value()
             else:
+                tdpf_delay_s = None
+            
+            try:
+                pp.runpp(self.net,
+                    algorithm=self.methods[self.w.algorithm.currentIndex()],
+                    max_iteration=self.w.max_iteration.value(),
+                    tolerance_mva=self.w.tolerance_mva.value() * 1e-6,
+                    delta_q=self.w.delta_q.value(),
+                    check_connectivity=self.w.check_connectivity.isChecked(),
+                    init=self.w.init.currentText(),
+                    trafo_model=self.w.trafo_model.currentText(),
+                    trafo_loading=self.w.trafo_loading.currentText(),
+                    trafo3w_losses=self.w.trafo3w_losses.currentText(),
+                    switch_rx_ratio=self.w.switch_rx_ratio.value(),
+                    neglect_open_switch_branches=self.w.neglect_open_switch_branches.isChecked(),
+                    enforce_q_lims=self.w.enforce_q_lims.isChecked(),
+                    voltage_depend_loads=self.w.voltage_depend_loads.isChecked(),
+                    consider_line_temperature=self.w.consider_line_temperature.isChecked(),
+                    distributed_slack=self.w.distributed_slack.isChecked(),
+                    tdpf=self.w.tdpf.isChecked(),
+                    tdpf_delay_s=tdpf_delay_s,
+                    tdpf_update_r_theta=self.w.tdpf_update_r_theta.isChecked())
+
+                # if self.net._ppc['success']:
+                if self.net.converged:
+                    title = 'Success!'
+                    et = self.net._ppc['et']
+                    try:
+                        iterations = self.net._ppc['iterations']
+                        content = f'Solver converged in {et: .2f} (s) after {iterations} iterations.'
+                    except KeyError:
+                        content = f'Solver converged in {et: .2f} (s).'
+                    QtWidgets.QMessageBox.information(self.w, title, content)
+                else:
+                    title = 'Failed!'
+                    content = 'Solver did not converge.'
+                    QtWidgets.QMessageBox.critical(self.w, title, content)
+                
+            except ValueError:
                 title = 'Failed!'
-                content = 'Solver did not converge.'
+                content = 'Solver failed.'
+                QtWidgets.QMessageBox.critical(self.w, title, content)
+                
+            except pp.LoadflowNotConverged:
+                title = 'Failed!'
+                content = 'Solver failed.'
                 QtWidgets.QMessageBox.critical(self.w, title, content)
             
-        except ValueError:
-            title = 'Failed!'
-            content = 'Solver failed.'
-            QtWidgets.QMessageBox.critical(self.w, title, content)
+            except UserWarning as uw:
+                title = 'Failed!'
+                content = 'Solver failed.\n' + str(uw) + '.'
+                QtWidgets.QMessageBox.critical(self.w, title, content)
             
-        except pp.LoadflowNotConverged:
-            title = 'Failed!'
-            content = 'Solver failed.'
-            QtWidgets.QMessageBox.critical(self.w, title, content)
         
-        except UserWarning as uw:
-            title = 'Failed!'
-            content = 'Solver failed.\n' + str(uw) + '.'
-            QtWidgets.QMessageBox.critical(self.w, title, content)
-            
-        self.w.btn_run.setText('Run power flow')
-        self.w.btn_run.setStyleSheet('')
-        self.w.btn_run.setEnabled(True)
-            
-        self.session_change_warning(tooltip_default=False)
-        self.plot()
+        def callback_pf_finished(*args):
+            self.w.btn_run.setText('Run power flow')
+            self.w.btn_run.setStyleSheet('')
+            self.w.btn_run.setEnabled(True)
+                
+            self.session_change_warning(tooltip_default=False)
+            self.plot()
+        
+        future = Future()
+        future.add_done_callback(callback_pf_finished)
+        future.set_result(pf_calculation())       
         
     def clear_plots(self):
         """
