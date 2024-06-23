@@ -1638,150 +1638,154 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
             self.clear_plots()
             return
         
-        if not self.net.res_bus.empty:
-            self.ax_vm.clear()
-            min_vm = self.net.res_bus['vm_pu'].min()
-            max_vm = self.net.res_bus['vm_pu'].max()
-            mean_vm = self.net.res_bus['vm_pu'].mean()
-            std_vm = self.net.res_bus['vm_pu'].std()
-            title_vm = f'Min: {min_vm: .5f}    ;    Max: {max_vm: .5f}    ;    Mean: {mean_vm: .5f}    ;    Dstd: {std_vm: .5f}'
-            colors = []
-            for mi, ma, v in zip(self.net.bus['min_vm_pu'], self.net.bus['max_vm_pu'], self.net.res_bus['vm_pu']):
-                if v<mi:
-                    colors.append('khaki')
-                elif v>ma:
-                    colors.append('tomato')
-                else:
-                    colors.append('mediumslateblue')
-            self.net.res_bus.plot(y='vm_pu', kind='bar', ax=self.ax_vm,
-                                  color=colors,
-                                  xlabel='Bus',
-                                  ylabel='Voltage mangnitude (p.u.)',
-                                  title=title_vm)
-            
-            self.ax_vm_load.clear()
-            series_vm_load = self.net.res_bus.loc[self.net.load['bus'], 'vm_pu']
-            series_vm_load.sort_index(inplace=True)
-            min_vm_load = series_vm_load.min()
-            max_vm_load = series_vm_load.max()
-            mean_vm_load = series_vm_load.mean()
-            std_vm_load = series_vm_load.std()
-            title_vm_load = f'Min: {min_vm_load: .5f}    ;    Max: {max_vm_load: .5f}    ;    Mean: {mean_vm_load: .5f}    ;    Dstd: {std_vm_load: .5f}'
-            colors = []
-            for index, v in series_vm_load.items():
-                mi = self.net.bus.at[index, 'min_vm_pu']
-                ma = self.net.bus.at[index, 'max_vm_pu']
-                if v<mi:
-                    colors.append('khaki')
-                elif v>ma:
-                    colors.append('tomato')
-                else:
-                    colors.append('mediumslateblue')
-            if colors:
-                series_vm_load.plot(kind='bar', ax=self.ax_vm_load,
+        try:
+            if not self.net.res_bus.empty:
+                self.ax_vm.clear()
+                min_vm = self.net.res_bus['vm_pu'].min()
+                max_vm = self.net.res_bus['vm_pu'].max()
+                mean_vm = self.net.res_bus['vm_pu'].mean()
+                std_vm = self.net.res_bus['vm_pu'].std()
+                title_vm = f'Min: {min_vm: .5f}    ;    Max: {max_vm: .5f}    ;    Mean: {mean_vm: .5f}    ;    Dstd: {std_vm: .5f}'
+                colors = []
+                for mi, ma, v in zip(self.net.bus['min_vm_pu'], self.net.bus['max_vm_pu'], self.net.res_bus['vm_pu']):
+                    if v<mi:
+                        colors.append('khaki')
+                    elif v>ma:
+                        colors.append('tomato')
+                    else:
+                        colors.append('mediumslateblue')
+                self.net.res_bus.plot(y='vm_pu', kind='bar', ax=self.ax_vm,
                                     color=colors,
                                     xlabel='Bus',
                                     ylabel='Voltage mangnitude (p.u.)',
-                                    title=title_vm_load)
+                                    title=title_vm)
+                
+                self.ax_vm_load.clear()
+                series_vm_load = self.net.res_bus.loc[self.net.load['bus'], 'vm_pu']
+                series_vm_load.sort_index(inplace=True)
+                min_vm_load = series_vm_load.min()
+                max_vm_load = series_vm_load.max()
+                mean_vm_load = series_vm_load.mean()
+                std_vm_load = series_vm_load.std()
+                title_vm_load = f'Min: {min_vm_load: .5f}    ;    Max: {max_vm_load: .5f}    ;    Mean: {mean_vm_load: .5f}    ;    Dstd: {std_vm_load: .5f}'
+                colors = []
+                for index, v in series_vm_load.items():
+                    mi = self.net.bus.at[index, 'min_vm_pu']
+                    ma = self.net.bus.at[index, 'max_vm_pu']
+                    if v<mi:
+                        colors.append('khaki')
+                    elif v>ma:
+                        colors.append('tomato')
+                    else:
+                        colors.append('mediumslateblue')
+                if colors:
+                    series_vm_load.plot(kind='bar', ax=self.ax_vm_load,
+                                        color=colors,
+                                        xlabel='Bus',
+                                        ylabel='Voltage mangnitude (p.u.)',
+                                        title=title_vm_load)
+                
+                self.ax_vm_box.clear()
+                q1 = self.net.res_bus['vm_pu'].quantile(0.25)
+                q2 = self.net.res_bus['vm_pu'].quantile(0.5)
+                q3 = self.net.res_bus['vm_pu'].quantile(0.75)
+                title_vm_box = f'Q1: {q1: .5f}    ;    Q2: {q2: .5f}    ;    Q3: {q3: .5f}'
+                self.net.res_bus.plot(y='vm_pu', kind='box',
+                                    ax=self.ax_vm_box,
+                                    xlabel='Voltage mangnitude (p.u.)',
+                                    title=title_vm_box,
+                                    vert=False,
+                                    boxprops=dict(linewidth=2,
+                                                    color='mediumslateblue'),
+                                    whiskerprops=dict(linewidth=2, color='b'),
+                                    medianprops=dict(linewidth=2, color='g'))
             
-            self.ax_vm_box.clear()
-            q1 = self.net.res_bus['vm_pu'].quantile(0.25)
-            q2 = self.net.res_bus['vm_pu'].quantile(0.5)
-            q3 = self.net.res_bus['vm_pu'].quantile(0.75)
-            title_vm_box = f'Q1: {q1: .5f}    ;    Q2: {q2: .5f}    ;    Q3: {q3: .5f}'
-            self.net.res_bus.plot(y='vm_pu', kind='box',
-                                  ax=self.ax_vm_box,
-                                  xlabel='Voltage mangnitude (p.u.)',
-                                  title=title_vm_box,
-                                  vert=False,
-                                  boxprops=dict(linewidth=2,
-                                                color='mediumslateblue'),
-                                  whiskerprops=dict(linewidth=2, color='b'),
-                                  medianprops=dict(linewidth=2, color='g'))
+            if not self.net.res_line.empty:
+                self.ax_line_loading.clear()
+                min_line_loading = self.net.res_line['loading_percent'].min()
+                max_line_loading = self.net.res_line['loading_percent'].max()
+                mean_line_loading = self.net.res_line['loading_percent'].mean()
+                std_line_loading = self.net.res_line['loading_percent'].std()
+                title_line_loading = f'Min: {min_line_loading: .1f}    ;    Max: {max_line_loading: .1f}    ;    Mean: {mean_line_loading: .1f}    ;    Dstd: {std_line_loading: .1f}'
+                colors = []
+                for rate in self.net.res_line['loading_percent']:
+                    if rate<=100:
+                        colors.append('mediumaquamarine')
+                    else:
+                        colors.append('tomato')
+                self.net.res_line.plot(y='loading_percent', kind='bar',
+                                    ax=self.ax_line_loading,
+                                    xlabel='AC line',
+                                    ylabel='Loading (%)',
+                                    title=title_line_loading,
+                                    color=colors)
+                
+                self.ax_line_vm.clear()
+                diff_vm_line = self.net.res_line['vm_from_pu'] - self.net.res_line['vm_to_pu']
+                min_diff_vm_line = diff_vm_line.abs().min()
+                max_diff_vm_line = diff_vm_line.abs().max()
+                mean_diff_vm_line = diff_vm_line.abs().mean()
+                title_line_vm = f'DIFFERENCE:   Min: {min_diff_vm_line: .5f}    ;    Max: {max_diff_vm_line: .5f}    ;    Mean: {mean_diff_vm_line: .5f}'
+                self.ax_line_vm.bar(x=self.net.res_line.index,
+                                    height=self.net.res_line['vm_from_pu'] - self.net.res_line['vm_to_pu'],
+                                    bottom=self.net.res_line['vm_to_pu'],
+                                    color='mediumslateblue')
+                self.ax_line_vm.set_xlabel('AC line')
+                self.ax_line_vm.set_ylabel('Voltage magnitude (p.u.)')
+                self.ax_line_vm.set_title(title_line_vm)
+                self.ax_line_vm.xaxis.set_major_locator(MaxNLocator(integer=True))  # xticks int
+                self.ax_line_vm.tick_params(axis='x', labelrotation=90)
+                
+            if not self.net.res_trafo.empty:
+                self.ax_trafo_loading.clear()
+                min_trafo_loading = self.net.res_trafo['loading_percent'].min()
+                max_trafo_loading = self.net.res_trafo['loading_percent'].max()
+                mean_trafo_loading = self.net.res_trafo['loading_percent'].mean()
+                std_trafo_loading = self.net.res_trafo['loading_percent'].std()
+                title_trafo_loading = f'Min: {min_trafo_loading: .1f}    ;    Max: {max_trafo_loading: .1f}    ;    Mean: {mean_trafo_loading: .1f}    ;    Dstd: {std_trafo_loading: .1f}'
+                colors = []
+                for rate in self.net.res_trafo['loading_percent']:
+                    if rate<=100:
+                        colors.append('mediumaquamarine')
+                    else:
+                        colors.append('tomato')
+                self.net.res_trafo.plot(y='loading_percent', kind='bar',
+                                    ax=self.ax_trafo_loading,
+                                    xlabel='Two winding transformer',
+                                    ylabel='Loading (%)',
+                                    title=title_trafo_loading,
+                                    color=colors)
+                
+            if not self.net.res_trafo3w.empty:
+                self.ax_trafo3w_loading.clear()
+                min_trafo3w_loading = self.net.res_trafo3w['loading_percent'].min()
+                max_trafo3w_loading = self.net.res_trafo3w['loading_percent'].max()
+                mean_trafo3w_loading = self.net.res_trafo3w['loading_percent'].mean()
+                std_trafo3w_loading = self.net.res_trafo3w['loading_percent'].std()
+                title_trafo3w_loading = f'Min: {min_trafo3w_loading: .1f}    ;    Max: {max_trafo3w_loading: .1f}    ;    Mean: {mean_trafo3w_loading: .1f}    ;    Dstd: {std_trafo3w_loading: .1f}'
+                colors = []
+                for rate in self.net.res_trafo3w['loading_percent']:
+                    if rate<=100:
+                        colors.append('mediumaquamarine')
+                    else:
+                        colors.append('tomato')
+                self.net.res_trafo3w.plot(y='loading_percent', kind='bar',
+                                    ax=self.ax_trafo3w_loading,
+                                    xlabel='Three winding transformer',
+                                    ylabel='Loading (%)',
+                                    title=title_trafo3w_loading,
+                                    color=colors)
+                
+            if not self.net.res_gen.empty:
+                self.ax_gen_q_mvar.clear()
+                self.net.res_gen.plot(y='q_mvar', kind='bar',
+                                    ax=self.ax_gen_q_mvar,
+                                    xlabel='Generator (PV mode)',
+                                    ylabel='Reactive generated power (Mvar)',
+                                    color='skyblue')
         
-        if not self.net.res_line.empty:
-            self.ax_line_loading.clear()
-            min_line_loading = self.net.res_line['loading_percent'].min()
-            max_line_loading = self.net.res_line['loading_percent'].max()
-            mean_line_loading = self.net.res_line['loading_percent'].mean()
-            std_line_loading = self.net.res_line['loading_percent'].std()
-            title_line_loading = f'Min: {min_line_loading: .1f}    ;    Max: {max_line_loading: .1f}    ;    Mean: {mean_line_loading: .1f}    ;    Dstd: {std_line_loading: .1f}'
-            colors = []
-            for rate in self.net.res_line['loading_percent']:
-                if rate<=100:
-                    colors.append('mediumaquamarine')
-                else:
-                    colors.append('tomato')
-            self.net.res_line.plot(y='loading_percent', kind='bar',
-                                   ax=self.ax_line_loading,
-                                   xlabel='AC line',
-                                   ylabel='Loading (%)',
-                                   title=title_line_loading,
-                                   color=colors)
-            
-            self.ax_line_vm.clear()
-            diff_vm_line = self.net.res_line['vm_from_pu'] - self.net.res_line['vm_to_pu']
-            min_diff_vm_line = diff_vm_line.abs().min()
-            max_diff_vm_line = diff_vm_line.abs().max()
-            mean_diff_vm_line = diff_vm_line.abs().mean()
-            title_line_vm = f'DIFFERENCE:   Min: {min_diff_vm_line: .5f}    ;    Max: {max_diff_vm_line: .5f}    ;    Mean: {mean_diff_vm_line: .5f}'
-            self.ax_line_vm.bar(x=self.net.res_line.index,
-                                height=self.net.res_line['vm_from_pu'] - self.net.res_line['vm_to_pu'],
-                                bottom=self.net.res_line['vm_to_pu'],
-                                color='mediumslateblue')
-            self.ax_line_vm.set_xlabel('AC line')
-            self.ax_line_vm.set_ylabel('Voltage magnitude (p.u.)')
-            self.ax_line_vm.set_title(title_line_vm)
-            self.ax_line_vm.xaxis.set_major_locator(MaxNLocator(integer=True))  # xticks int
-            self.ax_line_vm.tick_params(axis='x', labelrotation=90)
-            
-        if not self.net.res_trafo.empty:
-            self.ax_trafo_loading.clear()
-            min_trafo_loading = self.net.res_trafo['loading_percent'].min()
-            max_trafo_loading = self.net.res_trafo['loading_percent'].max()
-            mean_trafo_loading = self.net.res_trafo['loading_percent'].mean()
-            std_trafo_loading = self.net.res_trafo['loading_percent'].std()
-            title_trafo_loading = f'Min: {min_trafo_loading: .1f}    ;    Max: {max_trafo_loading: .1f}    ;    Mean: {mean_trafo_loading: .1f}    ;    Dstd: {std_trafo_loading: .1f}'
-            colors = []
-            for rate in self.net.res_trafo['loading_percent']:
-                if rate<=100:
-                    colors.append('mediumaquamarine')
-                else:
-                    colors.append('tomato')
-            self.net.res_trafo.plot(y='loading_percent', kind='bar',
-                                   ax=self.ax_trafo_loading,
-                                   xlabel='Two winding transformer',
-                                   ylabel='Loading (%)',
-                                   title=title_trafo_loading,
-                                   color=colors)
-            
-        if not self.net.res_trafo3w.empty:
-            self.ax_trafo3w_loading.clear()
-            min_trafo3w_loading = self.net.res_trafo3w['loading_percent'].min()
-            max_trafo3w_loading = self.net.res_trafo3w['loading_percent'].max()
-            mean_trafo3w_loading = self.net.res_trafo3w['loading_percent'].mean()
-            std_trafo3w_loading = self.net.res_trafo3w['loading_percent'].std()
-            title_trafo3w_loading = f'Min: {min_trafo3w_loading: .1f}    ;    Max: {max_trafo3w_loading: .1f}    ;    Mean: {mean_trafo3w_loading: .1f}    ;    Dstd: {std_trafo3w_loading: .1f}'
-            colors = []
-            for rate in self.net.res_trafo3w['loading_percent']:
-                if rate<=100:
-                    colors.append('mediumaquamarine')
-                else:
-                    colors.append('tomato')
-            self.net.res_trafo3w.plot(y='loading_percent', kind='bar',
-                                   ax=self.ax_trafo3w_loading,
-                                   xlabel='Three winding transformer',
-                                   ylabel='Loading (%)',
-                                   title=title_trafo3w_loading,
-                                   color=colors)
-            
-        if not self.net.res_gen.empty:
-            self.ax_gen_q_mvar.clear()
-            self.net.res_gen.plot(y='q_mvar', kind='bar',
-                                ax=self.ax_gen_q_mvar,
-                                xlabel='Generator (PV mode)',
-                                ylabel='Reactive generated power (Mvar)',
-                                color='skyblue')
+        except KeyError:
+            pass
          
         # Updating the figures view:
         for figure in self.list_of_figures:
