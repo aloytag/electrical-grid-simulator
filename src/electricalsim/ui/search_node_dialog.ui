@@ -10,6 +10,9 @@
     <height>554</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Search node</string>
   </property>
@@ -96,6 +99,9 @@
            <height>150</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_3"/>
         </widget>
        </widget>
@@ -108,7 +114,6 @@
  <tabstops>
   <tabstop>input_search</tabstop>
   <tabstop>scrollArea</tabstop>
-  <tabstop>btn_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

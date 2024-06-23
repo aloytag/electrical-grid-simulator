@@ -5,15 +5,15 @@ import warnings
 from math import isnan, nan
 import pickle
 
-from NodeGraphQt6.base.commands import PortConnectedCmd
+import numpy as np
 from PySide6 import QtGui, QtWidgets, QtCore
-
-from NodeGraphQt6 import NodeGraph, errors, BaseNode
-from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
-import numpy as np
+
+from NodeGraphQt6.base.commands import PortConnectedCmd
+from NodeGraphQt6 import NodeGraph, errors, BaseNode
+from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 
 from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  ImpedanceNode, TrafoNode, StdTrafoNode,
@@ -4556,35 +4556,25 @@ class ElectricalGraph(NodeGraph):
         dialog.setParent(self.main_window)
         dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
-        # def dialog_closed(result):
-        #     # dialog.input_search.setFocus(False)
-        #     if result:
-        #         node = self.get_node_by_name(dialog.selected_node)
-        #         if node is not None:
-        #             self.clear_selection()
-        #             node.set_selected(True)
-        #             self.fit_to_selection()
-        #             self.main_window.toolBox.setCurrentIndex(0)
-        #             simulate_ESC_key()
-                    
-        #             if node.type_=='BusNode.BusNode':
-        #                 four_ports_on_buses(node)
+        def dialog_closed(result):
+            if result:
+                node = self.get_node_by_name(dialog.selected_node)
+                if node is not None:
+                    self.clear_selection()
+                    node.set_selected(True)
+                    self.fit_to_selection()
+                    self.main_window.toolBox.setCurrentIndex(0)
+                    simulate_ESC_key()
+                    # if node.type_=='BusNode.BusNode':
+                    #     four_ports_on_buses(node)
+                    self.update_bus_ports()
 
-        # dialog.finished.connect(dialog_closed)
-        # dialog.open()
-        # dialog.input_search.setFocus()
-
-        if dialog.exec():
-            node = self.get_node_by_name(dialog.selected_node)
-            if node is not None:
-                self.clear_selection()
-                node.set_selected(True)
-                self.fit_to_selection()
-                self.main_window.toolBox.setCurrentIndex(0)
-                simulate_ESC_key()
-
-                if node.type_=='BusNode.BusNode':
-                    four_ports_on_buses(node)
+            self.viewer().setFocus()
+            simulate_ESC_key()
+        
+        dialog.finished.connect(dialog_closed)
+        dialog.open()
+        dialog.input_search.setFocus()
 
     def update_bus_ports(self):
         """Update port positions on bus nodes."""

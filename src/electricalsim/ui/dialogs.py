@@ -888,7 +888,7 @@ def search_node_dialog(all_nodes):
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
-    dialog.setModal(True)
+    # dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.selected_node = None  # Name of the selected element (node)
 
@@ -896,7 +896,6 @@ def search_node_dialog(all_nodes):
 
     dialog.setStyleSheet('font-size: 20px')
     dialog.label.setStyleSheet('font-size: 16px')
-    dialog.input_search.setFocus()
     # dialog.frame.setStyleSheet('border: 1px solid #d3d3d3')
 
     class SaveNodeName:
@@ -909,13 +908,14 @@ def search_node_dialog(all_nodes):
 
     def list_all_nodes():
         widget = QtWidgets.QWidget()
-        dialog.vbox = QtWidgets.QVBoxLayout()
+        dialog.vbox = QtWidgets.QVBoxLayout(widget)
         icon_size = QtCore.QSize(32, 32)
 
+        button_group = QtWidgets.QButtonGroup(widget)
+        button_group.setExclusive(True)
+
         for node_name, node_type in zip(all_names, all_types):
-            hbox = QtWidgets.QHBoxLayout()
-            widget_btn = QtWidgets.QWidget()
-            btn_node = QtWidgets.QToolButton(dialog)
+            btn_node = QtWidgets.QToolButton(widget)
             btn_node.setIcon(qta.icon(icon_for_type[node_type]))
             btn_node.setText(node_name)
             btn_node.setIconSize(icon_size)
@@ -923,10 +923,10 @@ def search_node_dialog(all_nodes):
             btn_node.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
             btn_action = SaveNodeName(node_name)
             btn_node.clicked.connect(btn_action)
-            hbox.addWidget(btn_node)
-            widget_btn.setLayout(hbox)
-            dialog.vbox.addWidget(widget_btn)
-            # dialog.scrollArea.setFocusProxy(widget_btn)
+            btn_node.setFocusPolicy(QtCore.Qt.FocusPolicy.TabFocus)
+            btn_node.setAutoExclusive(False)
+            dialog.vbox.addWidget(btn_node)
+            button_group.addButton(btn_node)
 
         dialog.vbox.addStretch()
         widget.setLayout(dialog.vbox)
@@ -945,15 +945,17 @@ def search_node_dialog(all_nodes):
             return
 
         widget = QtWidgets.QWidget()
-        dialog.vbox = QtWidgets.QVBoxLayout()
+        dialog.vbox = QtWidgets.QVBoxLayout(widget)
         icon_size = QtCore.QSize(32, 32)
+
+        button_group = QtWidgets.QButtonGroup(widget)
+        button_group.setExclusive(True)
+
         for node_name, node_type in zip(all_names, all_types):
             search_text = node_name.join((node_name.lower(), node_name.upper()))
             found_list = find_near_matches(text, search_text, max_l_dist=1)
             if text in search_text or (found_list and not all([m.matched=='' for m in found_list])):
-                hbox = QtWidgets.QHBoxLayout()
-                widget_btn = QtWidgets.QWidget()
-                btn_node = QtWidgets.QToolButton(dialog)
+                btn_node = QtWidgets.QToolButton(widget)
                 btn_node.setIcon(qta.icon(icon_for_type[node_type]))
                 btn_node.setText(node_name)
                 btn_node.setIconSize(icon_size)
@@ -961,9 +963,10 @@ def search_node_dialog(all_nodes):
                 btn_node.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
                 btn_action = SaveNodeName(node_name)
                 btn_node.clicked.connect(btn_action)
-                hbox.addWidget(btn_node)
-                widget_btn.setLayout(hbox)
-                dialog.vbox.addWidget(widget_btn)
+                btn_node.setFocusPolicy(QtCore.Qt.FocusPolicy.TabFocus)
+                btn_node.setAutoExclusive(False)
+                dialog.vbox.addWidget(btn_node)
+                button_group.addButton(btn_node)
 
         dialog.vbox.addStretch()
         widget.setLayout(dialog.vbox)
