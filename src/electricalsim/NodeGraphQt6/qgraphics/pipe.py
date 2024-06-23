@@ -40,11 +40,11 @@ class PipeItem(QtWidgets.QGraphicsPathItem):
         self._input_port = input_port
         self._output_port = output_port
 
-        size = 6.0
+        # size = 6.0
         self._poly = QtGui.QPolygonF()
-        self._poly.append(QtCore.QPointF(-size, size))
-        self._poly.append(QtCore.QPointF(0.0, -size * 1.5))
-        self._poly.append(QtCore.QPointF(size, size))
+        # self._poly.append(QtCore.QPointF(-size, size))
+        # self._poly.append(QtCore.QPointF(0.0, -size * 1.5))
+        # self._poly.append(QtCore.QPointF(size, size))
 
         self._dir_pointer = QtWidgets.QGraphicsPolygonItem(self)
         self._dir_pointer.setPolygon(self._poly)
