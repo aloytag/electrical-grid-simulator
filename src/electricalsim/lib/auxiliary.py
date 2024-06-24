@@ -592,14 +592,14 @@ def return_config(app_root_dir):
     the config file exists, but it doesn't have the proper sections
     and options.
     
-    Rertuns the confif file path as a second argument.
+    Rertuns the config file path as a second argument.
     
     * app_root_dir: Root directory of the applications
     
     Returns:
     
     - First output: the configparser
-    - Second aoutput: the config file path
+    - Second output: the config file path
     """
     config_dir = user_config_dir('electricalsim')
     config_file_path = os.path.join(config_dir, 'config.ini')

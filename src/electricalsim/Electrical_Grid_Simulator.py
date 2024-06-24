@@ -15,6 +15,7 @@ from lib.table_widget import TableWidgetWithMenu
 from lib.auxiliary import QVLine, QMainWindow2, return_config
 from lib.calculations import Run_PF
 from icons import rc_icons
+from version import VERSION
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
@@ -47,6 +48,22 @@ def main():
 
     qdarktheme.enable_hi_dpi()
     app = QtWidgets.QApplication(sys.argv)
+
+    icon_splash_svg = os.path.join(directory, 'icons', 'splash_screen.svg')
+    data_splash = None
+    with open(icon_splash_svg, 'r') as banner:
+        data_splash = banner.read().replace('&lt;VERSION&gt;', VERSION)
+        directory_splash2, _ = os.path.split(config_file_path)
+        icon_splash_svg2 = os.path.join(directory_splash2, 'egs_splash_screen.svg')
+        banner2 = open(icon_splash_svg2, 'w')
+        banner2.write(data_splash)
+        banner2.close()
+
+        pixmap_splash = QtGui.QPixmap(icon_splash_svg2)
+        splash = QtWidgets.QSplashScreen(pixmap_splash)
+        splash.show()
+        app.processEvents()
+
     theme = config['general']['theme']
     if theme in ('dark', 'light', 'auto'):
         qdarktheme.setup_theme(theme, additional_qss="QToolTip { border: 0px; }")
@@ -503,7 +520,9 @@ def main():
     # Show main window:
     # main_window.show()
     window.show()
-
+    # splash.finish(window)
+    if data_splash is not None:
+        QtCore.QTimer.singleShot(2000, splash, splash.close)
     sys.exit(app.exec())
 
 
