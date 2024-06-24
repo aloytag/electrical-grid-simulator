@@ -349,3 +349,5 @@ python -m pip install electricalsim-opf-quadratic
 # License
 
 This project uses the [MIT license](https://github.com/aloytag/electrical-grid-simulator/blob/main/LICENSE).
+
+The background image on the splash screen is based on the work of [David Gunter](https://www.flickr.com/photos/23812004@N03/6637323071), marked with a [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) license.
