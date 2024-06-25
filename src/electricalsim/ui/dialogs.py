@@ -3174,7 +3174,7 @@ class Settings_Dialog:
         self.dialog.listView_main.clicked.connect(self.change_page)
         
         # Second ListView-----------------------------------------------------------
-        list_view2_options = ['Bus', 'AC ine', 'Standard AC line', 'DC line',
+        list_view2_options = ['Bus', 'AC line', 'Standard AC line', 'DC line',
                               'Impedance', 'Two winding transformer',
                               'Standard two winding transformer', 'Three winding transformer',
                               'Standard three winding transformer',

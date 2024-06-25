@@ -22,6 +22,8 @@ def horizontal_layout(graph):
     """
     selected = graph.selected_nodes()
     for node in selected:
+        if node.type_=='BusNode.BusNode':
+            continue
         node.set_layout_direction(0)
         node.model.set_property('text_color', (255, 255, 255, 180))  # default color
         node.update()
