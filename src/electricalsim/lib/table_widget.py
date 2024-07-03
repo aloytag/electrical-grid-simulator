@@ -115,6 +115,7 @@ class TableWidgetWithMenu(TableWidget):
             self.graph.fit_to_selection()
             node.update_tooltip(self.graph.net)
             self.graph.main_window.toolBox.setCurrentIndex(0)
+            self.graph.update_bus_ports()
 
     def copy(self):
         """
