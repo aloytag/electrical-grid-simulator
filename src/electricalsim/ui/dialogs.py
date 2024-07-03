@@ -1707,7 +1707,20 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                                                     color='mediumslateblue'),
                                     whiskerprops=dict(linewidth=2, color='b'),
                                     medianprops=dict(linewidth=2, color='g'))
-            
+
+                if self.theme=='dark':
+                    self.ax_vm.xaxis.label.set_color('white')
+                    self.ax_vm_load.xaxis.label.set_color('white')
+                    self.ax_vm_box.xaxis.label.set_color('white')
+
+                    self.ax_vm.yaxis.label.set_color('white')
+                    self.ax_vm_load.yaxis.label.set_color('white')
+                    self.ax_vm_box.yaxis.label.set_color('white')
+
+                    self.ax_vm.title.set_color('white')
+                    self.ax_vm_load.title.set_color('white')
+                    self.ax_vm_box.title.set_color('white')
+
             if not self.net.res_line.empty:
                 self.ax_line_loading.clear()
                 min_line_loading = self.net.res_line['loading_percent'].min()
@@ -1743,6 +1756,16 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                 self.ax_line_vm.set_title(title_line_vm)
                 self.ax_line_vm.xaxis.set_major_locator(MaxNLocator(integer=True))  # xticks int
                 self.ax_line_vm.tick_params(axis='x', labelrotation=90)
+
+                if self.theme=='dark':
+                    self.ax_line_loading.xaxis.label.set_color('white')
+                    self.ax_line_vm.xaxis.label.set_color('white')
+
+                    self.ax_line_loading.yaxis.label.set_color('white')
+                    self.ax_line_vm.yaxis.label.set_color('white')
+
+                    self.ax_line_loading.title.set_color('white')
+                    self.ax_line_vm.title.set_color('white')
                 
             if not self.net.res_trafo.empty:
                 self.ax_trafo_loading.clear()
@@ -1764,6 +1787,11 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                                     title=title_trafo_loading,
                                     color=colors)
                 
+                if self.theme=='dark':
+                    self.ax_trafo_loading.xaxis.label.set_color('white')
+                    self.ax_trafo_loading.yaxis.label.set_color('white')
+                    self.ax_trafo_loading.title.set_color('white')
+
             if not self.net.res_trafo3w.empty:
                 self.ax_trafo3w_loading.clear()
                 min_trafo3w_loading = self.net.res_trafo3w['loading_percent'].min()
@@ -1784,6 +1812,11 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                                     title=title_trafo3w_loading,
                                     color=colors)
                 
+                if self.theme=='dark':
+                    self.ax_trafo3w_loading.xaxis.label.set_color('white')
+                    self.ax_trafo3w_loading.yaxis.label.set_color('white')
+                    self.ax_trafo3w_loading.title.set_color('white')
+
             if not self.net.res_gen.empty:
                 self.ax_gen_q_mvar.clear()
                 self.net.res_gen.plot(y='q_mvar', kind='bar',
@@ -1791,7 +1824,12 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                                     xlabel='Generator (PV mode)',
                                     ylabel='Reactive generated power (Mvar)',
                                     color='skyblue')
-        
+
+                if self.theme=='dark':
+                    self.ax_gen_q_mvar.xaxis.label.set_color('white')
+                    self.ax_gen_q_mvar.yaxis.label.set_color('white')
+                    self.ax_gen_q_mvar.title.set_color('white')
+
         except KeyError:
             pass
          
