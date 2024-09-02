@@ -4003,6 +4003,7 @@ class ElectricalGraph(NodeGraph):
         """
         node = self.get_node_by_id(node_id)
         node.set_property('name', name)
+        name = node.get_property('name')
         node.update_tooltip(self.net)
         type_ = node.get_property('type_')
         if type_=='BusNode.BusNode':
