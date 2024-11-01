@@ -587,10 +587,10 @@ class ElectricalGraph(NodeGraph):
         """
         if self.saved_file_path is not None:
             with open(self.saved_file_path, 'wb') as file:
-                data = {'graph_dict': self.serialize_session(),
-                        'pandapower_net': pp.to_json(self.net, None)}
                 # data = {'graph_dict': self.serialize_session(),
-                #         'pandapower_net': self.net}
+                #         'pandapower_net': pp.to_json(self.net, None)}
+                data = {'graph_dict': self.serialize_session(),
+                        'pandapower_net': self.net}
                 pickle.dump(data, file)
 
             self.message_unsaved.hide()
@@ -614,10 +614,10 @@ class ElectricalGraph(NodeGraph):
                                 filter='EGS Files (*.egs)')
         if full_file_path:
             with open(full_file_path, 'wb') as file:
-                data = {'graph_dict': self.serialize_session(),
-                        'pandapower_net': pp.to_json(self.net, None)}
                 # data = {'graph_dict': self.serialize_session(),
-                #         'pandapower_net': self.net}
+                #         'pandapower_net': pp.to_json(self.net, None)}
+                data = {'graph_dict': self.serialize_session(),
+                        'pandapower_net': self.net}
                 pickle.dump(data, file)
 
             self.saved_file_path = full_file_path
@@ -656,8 +656,8 @@ class ElectricalGraph(NodeGraph):
             with open(full_file_path, 'rb') as file:
                 data = pickle.load(file)  # data dict
                 self.deserialize_session(data['graph_dict'])
-                self.net = pp.from_json_string(data['pandapower_net'])
-                # self.net = data['pandapower_net']
+                # self.net = pp.from_json_string(data['pandapower_net'])
+                self.net = data['pandapower_net']
                 self.fit_to_selection()
                 for node in self.all_nodes():
                     if node.type_=='BusNode.BusNode':
