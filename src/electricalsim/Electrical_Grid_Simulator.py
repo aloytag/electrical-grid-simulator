@@ -86,6 +86,8 @@ def main():
                             main_window=main_window,
                             extensions_dict=extensions_dict)
     graph.viewer().setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
+    # graph.viewer().setOptimizationFlag(QtWidgets.QGraphicsView.DontAdjustForAntialiasing, True)
+    # graph.scene().setItemIndexMethod(QtWidgets.QGraphicsScene.NoIndex)
 
     # Toolbar settings------------------------------
     addBus_action = QtGui.QAction('addBus')

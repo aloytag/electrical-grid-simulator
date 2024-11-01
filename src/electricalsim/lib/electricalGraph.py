@@ -589,6 +589,8 @@ class ElectricalGraph(NodeGraph):
             with open(self.saved_file_path, 'wb') as file:
                 data = {'graph_dict': self.serialize_session(),
                         'pandapower_net': pp.to_json(self.net, None)}
+                # data = {'graph_dict': self.serialize_session(),
+                #         'pandapower_net': self.net}
                 pickle.dump(data, file)
 
             self.message_unsaved.hide()
@@ -614,6 +616,8 @@ class ElectricalGraph(NodeGraph):
             with open(full_file_path, 'wb') as file:
                 data = {'graph_dict': self.serialize_session(),
                         'pandapower_net': pp.to_json(self.net, None)}
+                # data = {'graph_dict': self.serialize_session(),
+                #         'pandapower_net': self.net}
                 pickle.dump(data, file)
 
             self.saved_file_path = full_file_path
@@ -653,6 +657,7 @@ class ElectricalGraph(NodeGraph):
                 data = pickle.load(file)  # data dict
                 self.deserialize_session(data['graph_dict'])
                 self.net = pp.from_json_string(data['pandapower_net'])
+                # self.net = data['pandapower_net']
                 self.fit_to_selection()
                 for node in self.all_nodes():
                     if node.type_=='BusNode.BusNode':
@@ -1728,6 +1733,102 @@ class ElectricalGraph(NodeGraph):
                                                 node_to=node_to,
                                                 port_from=port_from,
                                                 port_to=port_to)
+                        if node_from.type_=='LineNode.LineNode':
+                            inputs_connected = node_from.connected_input_nodes()
+                            # print(inputs_connected)
+                            if len(inputs_connected)==1:
+                                list_of_connected_nodes = list(inputs_connected.values())[0]
+                                if not list_of_connected_nodes:
+                                    return
+                                n = list_of_connected_nodes[0]
+                                type_ = n.type_
+                                bus_index_from = n.get_property('bus_index')
+                                bus_index_to = node_to.get_property('bus_index')
+                                if type_=='BusNode.BusNode':
+                                    line_index = pp.create_line_from_parameters(self.net, from_bus=bus_index_from,
+                                                            to_bus=bus_index_to,
+                                                            length_km=node_from.get_property('length_km'),
+                                                            r_ohm_per_km=node_from.get_property('r_ohm_per_km'),
+                                                            parallel=node_from.get_property('parallel'),
+                                                            df=node_from.get_property('df'),
+                                                            x_ohm_per_km=node_from.get_property('x_ohm_per_km'),
+                                                            c_nf_per_km=node_from.get_property('c_nf_per_km'),
+                                                            max_i_ka=node_from.get_property('max_i_ka'),
+                                                            name=node_from.name(),
+                                                            in_service=not node_from.disabled(),
+                                                            g_us_per_km=node_from.get_property('g_us_per_km'),
+                                                            r0_ohm_per_km=node_from.get_property('r0_ohm_per_km'),
+                                                            x0_ohm_per_km=node_from.get_property('x0_ohm_per_km'),
+                                                            c0_nf_per_km=node_from.get_property('c0_nf_per_km'),
+                                                            g0_us_per_km=node_from.get_property('g0_us_per_km'),
+                                                            max_loading_percent=node_from.get_property('max_loading_percent'),
+                                                            alpha=node_from.get_property('alpha'),
+                                                            temperature_degree_celsius=node_from.get_property('temperature_degree_celsius'),
+                                                            endtemp_degree=node_from.get_property('endtemp_degree'))
+                                    try:
+                                        node_from.create_property('line_index', line_index)
+                                    except errors.NodePropertyError:
+                                        node_from.set_property('line_index', line_index, push_undo=False)
+                    
+                        if node_from.type_=='StdLineNode.StdLineNode':
+                            inputs_connected = node_from.connected_input_nodes()
+                            # print(inputs_connected)
+                            if len(inputs_connected)==1:
+                                list_of_connected_nodes = list(inputs_connected.values())[0]
+                                if not list_of_connected_nodes:
+                                    return
+                                n = list_of_connected_nodes[0]
+                                type_ = n.type_
+                                bus_index_from = n.get_property('bus_index')
+                                bus_index_to = node_to.get_property('bus_index')
+                                if type_=='BusNode.BusNode':
+                                    line_index = pp.create_line(self.net, from_bus=bus_index_from,
+                                                    to_bus=bus_index_to,
+                                                    length_km=node_from.get_property('length_km'),
+                                                    std_type=node_from.get_property('std_type'),
+                                                    name=node_from.name(),
+                                                    in_service=not node_from.disabled(),
+                                                    parallel=node_from.get_property('parallel'),
+                                                    df=node_from.get_property('df'),
+                                                    max_loading_percent=node_from.get_property('max_loading_percent'))
+                                    try:
+                                        node_from.create_property('line_index', line_index)
+                                    except errors.NodePropertyError:
+                                        node_from.set_property('line_index', line_index, push_undo=False)
+                                    # print(self.net.line)
+
+                        if node_from.type_=='DCLineNode.DCLineNode':
+                            inputs_connected = node_from.connected_input_nodes()
+                            # print(inputs_connected)
+                            if len(inputs_connected)==1:
+                                list_of_connected_nodes = list(inputs_connected.values())[0]
+                                if not list_of_connected_nodes:
+                                    return
+                                n = list_of_connected_nodes[0]
+                                type_ = n.type_
+                                bus_index_from = n.get_property('bus_index')
+                                bus_index_to = node_to.get_property('bus_index')
+                                if type_=='BusNode.BusNode':
+                                    line_index = pp.create_dcline(self.net, from_bus=bus_index_from,
+                                                    to_bus=bus_index_to,
+                                                    p_mw=node_from.get_property('p_mw'),
+                                                    loss_percent=node_from.get_property('loss_percent'),
+                                                    loss_mw=node_from.get_property('loss_mw'),
+                                                    vm_from_pu=node_from.get_property('vm_from_pu'),
+                                                    vm_to_pu=node_from.get_property('vm_to_pu'),
+                                                    name=node_from.name(),
+                                                    in_service=not node_from.disabled(),
+                                                    max_p_mw=node_from.get_property('max_p_mw'),
+                                                    min_q_from_mvar=node_from.get_property('min_q_from_mvar'),
+                                                    min_q_to_mvar=node_from.get_property('min_q_to_mvar'),
+                                                    max_q_from_mvar=node_from.get_property('max_q_from_mvar'),
+                                                    max_q_to_mvar=node_from.get_property('max_q_to_mvar'))
+                                    try:
+                                        node_from.create_property('line_index', line_index)
+                                    except errors.NodePropertyError:
+                                        node_from.set_property('line_index', line_index, push_undo=False)
+                                    # print(self.net.dcline)
+
                     elif dialog.option in ('trafo', 'stdtrafo'):
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
@@ -1737,6 +1838,91 @@ class ElectricalGraph(NodeGraph):
                                                 node_to=node_to,
                                                 port_from=port_from,
                                                 port_to=port_to)
+                        
+                        if node_from.type_=='TrafoNode.TrafoNode':
+                            inputs_connected = node_from.connected_input_nodes()
+                            # print(inputs_connected)
+                            if len(inputs_connected)==1:
+                                list_of_connected_nodes = list(inputs_connected.values())[0]
+                                if not list_of_connected_nodes:
+                                    return
+                                n = list_of_connected_nodes[0]
+                                type_ = n.type_
+                                bus_index_from = n.get_property('bus_index')
+                                bus_index_to = node_to.get_property('bus_index')
+                                if type_=='BusNode.BusNode':
+                                    transformer_index = pp.create_transformer_from_parameters(self.net,
+                                                            hv_bus=bus_index_from,
+                                                            lv_bus=bus_index_to,
+                                                            sn_mva=node_from.get_property('sn_mva'),
+                                                            vn_hv_kv=node_from.get_property('vn_hv_kv'),
+                                                            vn_lv_kv=node_from.get_property('vn_lv_kv'),
+                                                            vkr_percent=node_from.get_property('vkr_percent'),
+                                                            vk_percent=node_from.get_property('vk_percent'),
+                                                            pfe_kw=node_from.get_property('pfe_kw'),
+                                                            i0_percent=node_from.get_property('i0_percent'),
+                                                            shift_degree=node_from.get_property('shift_degree'),
+                                                            tap_side=node_from.get_property('tap_side'),
+                                                            tap_neutral=node_from.get_property('tap_neutral'),
+                                                            tap_max=node_from.get_property('tap_max'),
+                                                            tap_min=node_from.get_property('tap_min'),
+                                                            tap_step_percent=node_from.get_property('tap_step_percent'),
+                                                            tap_step_degree=node_from.get_property('tap_step_degree'),
+                                                            tap_pos=node_from.get_property('tap_pos'),
+                                                            tap_phase_shifter=node_from.get_property('tap_phase_shifter'),
+                                                            in_service=not node_from.disabled(),
+                                                            name=node_from.name(),
+                                                            vector_group=node_from.get_property('vector_group'),
+                                                            max_loading_percent=node_from.get_property('max_loading_percent'),
+                                                            parallel=node_from.get_property('parallel'),
+                                                            df=node_from.get_property('df'),
+                                                            vk0_percent=node_from.get_property('vk0_percent'),
+                                                            vkr0_percent=node_from.get_property('vkr0_percent'),
+                                                            mag0_percent=node_from.get_property('mag0_percent'),
+                                                            mag0_rx=node_from.get_property('mag0_rx'),
+                                                            si0_hv_partial=node_from.get_property('si0_hv_partial'),
+                                                            oltc=node_from.get_property('oltc'),
+                                                            xn_ohm=node_from.get_property('xn_ohm'))
+                                    try:
+                                        node_from.create_property('transformer_index', transformer_index)
+                                    except errors.NodePropertyError:
+                                        node_from.set_property('transformer_index', transformer_index, push_undo=False)
+                                    # print(self.net.trafo)
+
+                        if node_from.type_=='StdTrafoNode.StdTrafoNode':
+                            inputs_connected = node_from.connected_input_nodes()
+                            # print(inputs_connected)
+                            if len(inputs_connected)==1:
+                                list_of_connected_nodes = list(inputs_connected.values())[0]
+                                if not list_of_connected_nodes:
+                                    return
+                                n = list_of_connected_nodes[0]
+                                type_ = n.type_
+                                bus_index_from = n.get_property('bus_index')
+                                bus_index_to = node_to.get_property('bus_index')
+                                if type_=='BusNode.BusNode':
+                                    transformer_index = pp.create_transformer(self.net,
+                                                            hv_bus=bus_index_from,
+                                                            lv_bus=bus_index_to,
+                                                            std_type=node_from.get_property('std_type'),
+                                                            tap_pos=node_from.get_property('tap_pos'),
+                                                            in_service=not node_from.disabled(),
+                                                            name=node_from.name(),
+                                                            max_loading_percent=node_from.get_property('max_loading_percent'),
+                                                            parallel=node_from.get_property('parallel'),
+                                                            df=node_from.get_property('df'),
+                                                            vk0_percent=node_from.get_property('vk0_percent'),
+                                                            vkr0_percent=node_from.get_property('vkr0_percent'),
+                                                            mag0_percent=node_from.get_property('mag0_percent'),
+                                                            mag0_rx=node_from.get_property('mag0_rx'),
+                                                            si0_hv_partial=node_from.get_property('si0_hv_partial'),
+                                                            xn_ohm=node_from.get_property('xn_ohm'))
+                                    try:
+                                        node_from.create_property('transformer_index', transformer_index)
+                                    except errors.NodePropertyError:
+                                        node_from.set_property('transformer_index', transformer_index)
+                                    # print(self.net.trafo)
+
                     elif dialog.option=='impedance':
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
@@ -1746,6 +1932,37 @@ class ElectricalGraph(NodeGraph):
                                                     node_to=node_to,
                                                     port_from=port_from,
                                                     port_to=port_to)
+                        
+                        inputs_connected = node_from.connected_input_nodes()
+                        # print(inputs_connected)
+                        if len(inputs_connected)==1:
+                            list_of_connected_nodes = list(inputs_connected.values())[0]
+                            if not list_of_connected_nodes:
+                                return
+                            n = list_of_connected_nodes[0]
+                            type_ = n.type_
+                            bus_index_from = n.get_property('bus_index')
+                            bus_index_to = node_to.get_property('bus_index')
+                            if type_=='BusNode.BusNode':
+                                impedance_index = pp.create_impedance(self.net, from_bus=bus_index_from,
+                                                        to_bus=bus_index_to,
+                                                        rft_pu=node_from.get_property('rft_pu'),
+                                                        xft_pu=node_from.get_property('xft_pu'),
+                                                        sn_mva=node_from.get_property('sn_mva'),
+                                                        rtf_pu=node_from.get_property('rtf_pu'),
+                                                        xtf_pu=node_from.get_property('xtf_pu'),
+                                                        name=node_from.name(),
+                                                        in_service=not node_from.disabled(),
+                                                        rft0_pu=node_from.get_property('rft0_pu'),
+                                                        xft0_pu=node_from.get_property('xft0_pu'),
+                                                        rtf0_pu=node_from.get_property('rtf0_pu'),
+                                                        xtf0_pu=node_from.get_property('xtf0_pu'))
+                                try:
+                                    node_from.create_property('impedance_index', impedance_index)
+                                except errors.NodePropertyError:
+                                    node_from.set_property('impedance_index', impedance_index, push_undo=False)
+                                # print(self.net.impedance)
+
                     elif dialog.option=='switch':
                         self.clear_selection()
                         node_from.set_selected(True)
