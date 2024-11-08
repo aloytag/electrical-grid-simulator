@@ -714,6 +714,9 @@ class ElectricalGraph(NodeGraph):
             simulate_ESC_key()
             return
 
+        for node in self.all_nodes():
+            if node.type_=='SwitchNode.SwitchNode':
+                node.set_locked(False)
         self.clear_session()
         settings = self.config['network']
         self.net = pp.create_empty_network(settings['name'],
