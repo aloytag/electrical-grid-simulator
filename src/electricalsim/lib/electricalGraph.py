@@ -652,6 +652,10 @@ class ElectricalGraph(NodeGraph):
             if button_response!=QtWidgets.QMessageBox.Yes:
                 simulate_ESC_key()
                 return
+            
+            for node in self.all_nodes():
+                if node.type_=='SwitchNode.SwitchNode':
+                    node.set_locked(False)
 
             with open(full_file_path, 'rb') as file:
                 data = pickle.load(file)  # data dict
