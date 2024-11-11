@@ -174,20 +174,23 @@ class ElectricalGraph(NodeGraph):
         ptypes = {PortTypeEnum.IN.value: 'inputs',
                   PortTypeEnum.OUT.value: 'outputs'}
 
-        # self._undo_stack.beginMacro(label)
-        for p1_view, p2_view in disconnected:
-            node1 = self._model.nodes[p1_view.node.id]
-            node2 = self._model.nodes[p2_view.node.id]
-            port1 = getattr(node1, ptypes[p1_view.port_type])()[p1_view.name]
-            port2 = getattr(node2, ptypes[p2_view.port_type])()[p2_view.name]
-            port1.disconnect_from(port2, push_undo=False)
-        for p1_view, p2_view in connected:
-            node1 = self._model.nodes[p1_view.node.id]
-            node2 = self._model.nodes[p2_view.node.id]
-            port1 = getattr(node1, ptypes[p1_view.port_type])()[p1_view.name]
-            port2 = getattr(node2, ptypes[p2_view.port_type])()[p2_view.name]
-            port1.connect_to(port2, push_undo=False)
-        # self._undo_stack.endMacro()
+        try:
+            # self._undo_stack.beginMacro(label)
+            for p1_view, p2_view in disconnected:
+                node1 = self._model.nodes[p1_view.node.id]
+                node2 = self._model.nodes[p2_view.node.id]
+                port1 = getattr(node1, ptypes[p1_view.port_type])()[p1_view.name]
+                port2 = getattr(node2, ptypes[p2_view.port_type])()[p2_view.name]
+                port1.disconnect_from(port2, push_undo=False)
+            for p1_view, p2_view in connected:
+                node1 = self._model.nodes[p1_view.node.id]
+                node2 = self._model.nodes[p2_view.node.id]
+                port1 = getattr(node1, ptypes[p1_view.port_type])()[p1_view.name]
+                port2 = getattr(node2, ptypes[p2_view.port_type])()[p2_view.name]
+                port1.connect_to(port2, push_undo=False)
+            # self._undo_stack.endMacro()
+        except errors.PortError:
+            pass
 
     def _on_connection_sliced(self, ports):
         """
@@ -666,6 +669,9 @@ class ElectricalGraph(NodeGraph):
                 for node in self.all_nodes():
                     if node.type_=='BusNode.BusNode':
                         four_ports_on_buses(node)
+
+                    if node.type_=='SwitchNode.SwitchNode':
+                        node.set_locked(True)
 
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
@@ -1663,10 +1669,13 @@ class ElectricalGraph(NodeGraph):
         connected: List of recently connected pipes.
         """
         self.session_change_warning()
+
         for pipe in disconnected:
             # print('Disconnected:', pipe)
             for port in pipe:
                 node = self.get_node_by_name(port.node.name)
+                if node is None:
+                    continue
                 if node.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode'):
                     self.remove_line(node)
                 elif node.type_=='DCLineNode.DCLineNode':
@@ -4325,6 +4334,7 @@ class ElectricalGraph(NodeGraph):
             for sw in node.node_switch_connected():
                 self.remove_switch(sw, directly_removed=False)
                 self.delete_nodes([sw], push_undo=False)
+                print('papa')
         
         line_name = node.get_property('name')
         line_row = self.net.line[self.net.line['name']==line_name]
@@ -4581,6 +4591,8 @@ class ElectricalGraph(NodeGraph):
             trafos3w = node.node_trafo3w_connected()
             for trafo3w_node in trafos3w:
                 self.remove_trafo3w(trafo3w_node, directly_removed=False)
+
+            self.remove_node(node, push_undo=False)
 
     def run_extension(self, name):
         """
