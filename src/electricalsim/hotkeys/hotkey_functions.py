@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 
 import os
+from itertools import chain
 
 from PySide6 import QtGui
 import pandapower as pp
@@ -258,13 +259,25 @@ def duplicate_nodes(graph):
     for node in selected:
         if node.type_=='SwitchNode.SwitchNode':
             continue
+        
+        connected_nodes = list(chain(*(node.connected_input_nodes().values()))) +\
+                          list(chain(*(node.connected_output_nodes().values())))
+        if node.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode',
+                          'TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode',
+                          'Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode'):
+            connected_types = [n.type_ for n in connected_nodes]
+            if 'SwitchNode.SwitchNode' in connected_types:
+                continue
+
         node_duplicated = list(graph.duplicate_nodes([node]))[0]
         input_ports = node_duplicated.input_ports()
         output_ports = node_duplicated.output_ports()
+        
         for port_in in input_ports:
             port_in.clear_connections(push_undo=False)
         for port_out in output_ports:
             port_out.clear_connections(push_undo=False)
+        
         if node_duplicated.type_=='BusNode.BusNode':
             bus_index = pp.create_bus(graph.net,
                                       name=node_duplicated.get_property('name'),

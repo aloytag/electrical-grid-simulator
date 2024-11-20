@@ -4334,7 +4334,6 @@ class ElectricalGraph(NodeGraph):
             for sw in node.node_switch_connected():
                 self.remove_switch(sw, directly_removed=False)
                 self.delete_nodes([sw], push_undo=False)
-                print('papa')
         
         line_name = node.get_property('name')
         line_row = self.net.line[self.net.line['name']==line_name]
