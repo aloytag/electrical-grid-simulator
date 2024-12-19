@@ -256,6 +256,7 @@ def duplicate_nodes(graph):
     Duplicates the selected nodes, with Switches as the only exception.
     """
     selected = graph.selected_nodes()
+    are_nodes_dupplicated = False
     for node in selected:
         if node.type_=='SwitchNode.SwitchNode':
             continue
@@ -279,6 +280,7 @@ def duplicate_nodes(graph):
             port_out.clear_connections(push_undo=False)
         
         if node_duplicated.type_=='BusNode.BusNode':
+            are_nodes_dupplicated = True
             bus_index = pp.create_bus(graph.net,
                                       name=node_duplicated.get_property('name'),
                                       vn_kv=graph.net.bus.at[node.get_property('bus_index'), 'vn_kv'],
@@ -287,7 +289,10 @@ def duplicate_nodes(graph):
                                       in_service=graph.net.bus.at[node.get_property('bus_index'), 'in_service'],
                                       geodata=node_duplicated.pos())
             node_duplicated.set_property('bus_index', bus_index, push_undo=False)
-            four_ports_on_buses(node_duplicated)
+            # four_ports_on_buses(node_duplicated)
+    
+    if are_nodes_dupplicated is True:    
+        graph.update_bus_ports()
             
             
 
