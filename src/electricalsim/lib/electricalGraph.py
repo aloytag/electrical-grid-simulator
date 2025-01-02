@@ -22,7 +22,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  LoadNode, ALoadNode, ShuntNode, MotorNode,
                                  WardNode, XWardNode, StorageNode,
                                  SwitchNode)
-from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,
+from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
                            simulate_ESC_key, four_ports_on_buses)  # , show_WIP)
 from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         stdline_dialog,
@@ -136,23 +136,30 @@ class ElectricalGraph(NodeGraph):
         self.message_unsaved = StatusMessageUnsaved()
         self.main_window.statusbar.addWidget(self.message_unsaved)
         self.message_unsaved.hide()
-        self.set_main_window_title()
+
+        # File name in the status bar:
+        # self.main_window.statusbar.addWidget(QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding))
+        self.file_name_status = StatusFileName()
+        self.main_window.statusbar.addPermanentWidget(self.file_name_status, 0)
+
+        self.set_file_name_status()
         self._viewer.setViewportUpdateMode(QtWidgets.QGraphicsView.BoundingRectViewportUpdate)
 
-    def set_main_window_title(self, file_name=None):
+    def set_file_name_status(self, file_name=None):
         """
-        Change the main window title.
+        Set the file name in the status bar.
 
         Args:
             file_name: File name (for saved .egs files)
 
         Returns: None
-
         """
         if file_name is None:
-            self.main_window.setWindowTitle('Electrical Grid Simulation - Unsaved file')
+            # self.main_window.setWindowTitle('Electrical Grid Simulation - Unsaved file')
+            self.file_name_status.set_name('<< UNSAVED FILE >>')
         else:
-            self.main_window.setWindowTitle(f'Electrical Grid Simulation - {file_name}')
+            # self.main_window.setWindowTitle(f'Electrical Grid Simulation - {file_name}')
+            self.file_name_status.set_name(file_name)
 
     def _on_connection_changed(self, disconnected, connected):
         """
@@ -626,7 +633,7 @@ class ElectricalGraph(NodeGraph):
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
             _, file_name = os.path.split(full_file_path)
-            self.set_main_window_title(file_name[:-4])
+            self.set_file_name_status(file_name[:-4])
         else:
             simulate_ESC_key()
 
@@ -707,7 +714,7 @@ class ElectricalGraph(NodeGraph):
         self.update_tooltips()
 
         _, file_name = os.path.split(full_file_path)
-        self.set_main_window_title(file_name[:-4])
+        self.set_file_name_status(file_name[:-4])
 
     def new_session(self):
         """
@@ -738,7 +745,7 @@ class ElectricalGraph(NodeGraph):
         if self.main_window.toolBox.currentIndex()==1:
             self.page_changed_on_toolbox(index=1)
 
-        self.set_main_window_title()
+        self.set_file_name_status()
 
     def edit_settings(self):
         """

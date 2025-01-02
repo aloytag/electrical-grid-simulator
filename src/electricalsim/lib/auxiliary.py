@@ -201,6 +201,36 @@ class StatusMessageUnsaved(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
+class StatusFileName(QtWidgets.QWidget):
+    """
+    Widget for the satusbar.
+    Shows the file name in the status bar.
+    """
+    def __init__(self):
+        super().__init__()
+        
+        self.setObjectName('file_name_status')
+        
+        layout = QtWidgets.QHBoxLayout()
+        self.txt = QtWidgets.QLabel('<< UNSAVED FILE >>')
+
+        # layout.addSpacerItem(QtWidgets.QSpacerItem(500, 5, hData=QtWidgets.QSizePolicy.Maximum))
+        # layout.addStretch()
+        # layout.addSpacerItem(QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding))
+        layout.addWidget(self.txt)
+        
+        self.setLayout(layout)
+
+    def remove_name(self):
+        """Remove the file name in the status bar."""
+        self.txt.setText('')
+
+    def set_name(self, name: str) -> None:
+        """Set the file name in the satus bar."""
+        self.txt.setText(name)
+
+
+
 class PropertyChangedCmd(QtGui.QUndoCommand):
     """
     MODIFIED VERSION.
