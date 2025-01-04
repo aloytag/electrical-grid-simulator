@@ -18,7 +18,7 @@ EGS is developed at the *National Technological University, Santa Fe Regional Fa
 ## Goals
 - Providing a minimalistic, modern and good-looking interface.
 - Multiplatform: GNU/Linux, MS Windows and Apple MacOS (not tested on MacOS).
-- Providing an extensions system to expand its capabilities **(starting in versión 0.0.6.9)**.
+- Providing an extensions system to expand its capabilities **(starting in version 0.0.6.9)**.
 
 ## How it is built
 EGS is built in Python and entirely from open source and free software. The main core components are:
@@ -114,7 +114,7 @@ When a bus node is added to the **Graph**, it is immediately inserted also into 
 ### Simulations and calculations
 With EGS you can build and set up the model of an electrical grid in a graphical way. The application also allows you to perform *AC balanced power flow* calculations (other calculations supported by ```pandapower``` may be added in the future). For other types of simulations and calculations, you can proceed according to two alternatives:
 
-1. Export the **Data model** and the last power flow results to a JSON format file ready to be imported from a Python script through ```pandapower```. Then, any calculation or processing can be done from the script. The export is done from the graphical interface, while the subsequent import is done as indicated [in the pandapower documentation](https://pandapower.readthedocs.io/en/latest/file_io.html#pandapower.from_json), using the ```pandapower.from_json()``` function.
+1. Export the **Data model** and the last power flow results to a JSON, MS Excel or binary file (using the `pickle` module) ready to be imported from a Python script through ```pandapower```. Then, any calculation or processing can be done from the script. The export is done from the graphical interface, while the subsequent import is done as indicated [in the pandapower documentation](https://pandapower.readthedocs.io/en/latest/file_io.html#save-and-load-networks), using one of the fuctions: `pandapower.from_json()`, `pandapower.from_excel()` or `pandapower.from_pickle()`.
 
 2. Incorporate the required calculation functionality from an extension developed in Python. This way, the calculation is executed from within EGS. Extensions are implemented as regular Python packages. An Optimal Power Flow (OPF) extension is available in the PyPI repository (package name: **electricalsim-opf-quadratic**). **Instructions and a template for creating extensions will be available soon.**
 
