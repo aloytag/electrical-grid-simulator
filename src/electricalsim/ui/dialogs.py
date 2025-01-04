@@ -983,6 +983,56 @@ def search_node_dialog(all_nodes):
     return dialog
 
 
+def export_dialog():
+    """
+    Returns a dialog to export the pandapower network in three possible options:
+    JSON, Picke and MS Excel.
+    """
+    ui_file = os.path.join(directory, 'export_dialog.ui')
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    dialog.setModal(True)
+    dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+    dialog.option = None  # Export option selected
+
+    def json_():
+        dialog.option = 'json'
+        dialog.accept()
+
+    def pickle_():
+        dialog.option = 'pickle'
+        dialog.accept()
+
+    def excel_():
+        dialog.option = 'excel'
+        dialog.accept()
+
+    dialog.btn_close.setIcon(qta.icon('mdi6.close'))
+
+    dialog.btnJSON.setIcon(qta.icon('mdi6.code-json'))
+    dialog.btnJSON.setText('to JSON')
+    dialog.btnJSON.clicked.connect(json_)
+
+    dialog.btnPickle.setIcon(qta.icon('mdi6.memory'))
+    dialog.btnPickle.setText('to Pickle')
+    dialog.btnPickle.clicked.connect(pickle_)
+
+    dialog.btnExcel.setIcon(qta.icon('mdi6.file-excel-outline'))
+    dialog.btnExcel.setText('to MS Excel')
+    dialog.btnExcel.clicked.connect(excel_)
+
+    # dialog.widget_container.setStyleSheet('border: 1px solid #d3d3d3')
+    # dialog.widget_container.setStyleSheet('QWidget {border-left: 10px solid blue;}')
+    # dialog.widget_container.setStyleSheet('background-color: #d3d3d3')
+    dialog.setStyleSheet('font-size: 16px')
+    dialog.label.setStyleSheet('font-size: 16px')
+
+    return dialog
+
+
 class Toolbar_Matplotlib_custom(NavigationToolbar):
     """
     Custom Matplotlib toolbar.

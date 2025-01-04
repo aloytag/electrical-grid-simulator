@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "electricalsim"
-version = "0.0.8.11.dev1"
+version = "0.0.8.11.dev2"
 author = "Dr. Ing. Ariel S. Loyarte"
 authors = [
   { name="Dr. Ing. Ariel S. Loyarte", email="aloyarte@frsf.utn.edu.ar" },
@@ -28,6 +28,7 @@ dependencies = [
   "Grid2Op>=1.9.7",
   "pyarrow>=15.0.0",
   "qtpy>=2.4.1",
+  "XlsxWriter>=3.2.0",
 ]
 classifiers = [
   "Programming Language :: Python :: 3",

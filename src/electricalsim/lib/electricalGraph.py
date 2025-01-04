@@ -37,7 +37,8 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
                         network_settings_dialog, Settings_Dialog,
-                        connecting_buses_dialog, search_node_dialog)
+                        connecting_buses_dialog, search_node_dialog,
+                        export_dialog)
 from extensions.extension_classes import ExtensionWorker
 
 
@@ -579,16 +580,71 @@ class ElectricalGraph(NodeGraph):
         Export the pandapower network using JSON format.
         """
         dir_path = self.config['general']['default_path']
-        init_file_path = os.path.join(dir_path, f'{self.net.name}.json')
-        full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
-                                                                  caption='Export Pandapower Network',
-                                                                  dir=init_file_path,
-                                                                  filter='JSON Files (*.json)')
+        
+        dialog = export_dialog()
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        main_win_rect = self.main_window.geometry()
+        dialog.setParent(self.main_window)
+        dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
-        if full_file_path:
-            pp.to_json(self.net, full_file_path)
-        else:
-            simulate_ESC_key()
+        def dialog_closed(result):
+            if not result:
+                return
+
+            if dialog.option=='json':
+                init_file_path = os.path.join(dir_path, f'{self.net.name}.json')
+                full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
+                                                                          caption='Export Pandapower Network',
+                                                                          dir=init_file_path,
+                                                                          filter='JSON Files (*.json)')
+
+                if full_file_path:
+                    pp.to_json(self.net, full_file_path)
+                else:
+                    simulate_ESC_key()
+            
+            elif dialog.option=='pickle':
+                init_file_path = os.path.join(dir_path, f'{self.net.name}.p')
+                full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
+                                                                          caption='Export Pandapower Network',
+                                                                          dir=init_file_path,
+                                                                          filter='Pickle Files (*.p)')
+
+                if full_file_path:
+                    pp.to_pickle(self.net, full_file_path)
+                else:
+                    simulate_ESC_key()
+
+            elif dialog.option=='excel':
+                init_file_path = os.path.join(dir_path, f'{self.net.name}.xlsx')
+                full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
+                                                                          caption='Export Pandapower Network',
+                                                                          dir=init_file_path,
+                                                                          filter='MS Excel Files (*.xlsx)')
+
+                if full_file_path:
+                    pp.to_excel(self.net, full_file_path, include_empty_tables=False)
+                else:
+                    simulate_ESC_key()
+
+        dialog.finished.connect(dialog_closed)
+        dialog.open()
+        
+        
+        
+        
+        
+        
+        # init_file_path = os.path.join(dir_path, f'{self.net.name}.json')
+        # full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
+        #                                                           caption='Export Pandapower Network',
+        #                                                           dir=init_file_path,
+        #                                                           filter='JSON Files (*.json)')
+
+        # if full_file_path:
+        #     pp.to_json(self.net, full_file_path)
+        # else:
+        #     simulate_ESC_key()
 
     def save_session(self):
         """
