@@ -830,35 +830,44 @@ def connecting_buses_dialog():
 
     dialog.btn_close.setIcon(qta.icon('mdi6.close'))
 
+    icon_size = QtCore.QSize(24, 24)
+
     dialog.btnLine.setIcon(qta.icon('ph.line-segment'))
     dialog.btnLine.setText('AC line')
     dialog.btnLine.clicked.connect(line)
+    dialog.btnLine.setIconSize(icon_size)
 
     dialog.btnStdLine.setIcon(qta.icon('ph.line-segment'))
     dialog.btnStdLine.setText('Standard AC line')
     dialog.btnStdLine.clicked.connect(stdline)
+    dialog.btnStdLine.setIconSize(icon_size)
 
     dialog.btnDCLine.setIcon(qta.icon('ph.line-segment'))
     dialog.btnDCLine.setText('DC line')
     dialog.btnDCLine.clicked.connect(dcline)
+    dialog.btnDCLine.setIconSize(icon_size)
 
     dialog.btnImpedance.setIcon(qta.icon('mdi6.alpha-z-box-outline'))
     dialog.btnImpedance.setText('Impedance')
     # dialog.btnImpedance.setStyleSheet("text-align:left;")
     # dialog.btnImpedance.setStyleSheet("border:0px; text-align:left;")
     dialog.btnImpedance.clicked.connect(impedance)
+    dialog.btnImpedance.setIconSize(icon_size)
 
     dialog.btnTrafo.setIcon(qta.icon('ph.intersect'))
     dialog.btnTrafo.setText('2-winding transformer')
     dialog.btnTrafo.clicked.connect(trafo)
+    dialog.btnTrafo.setIconSize(icon_size)
 
     dialog.btnStdTrafo.setIcon(qta.icon('ph.intersect'))
     dialog.btnStdTrafo.setText('Standard 2-winding transformer')
     dialog.btnStdTrafo.clicked.connect(stdtrafo)
+    dialog.btnStdTrafo.setIconSize(icon_size)
 
     dialog.btnSwitch.setIcon(qta.icon('mdi6.electric-switch'))
     dialog.btnSwitch.setText('Switch')
     dialog.btnSwitch.clicked.connect(switch)
+    dialog.btnSwitch.setIconSize(icon_size)
 
     # dialog.widget_container.setStyleSheet('border: 1px solid #d3d3d3')
     # dialog.widget_container.setStyleSheet('QWidget {border-left: 10px solid blue;}')
@@ -897,7 +906,7 @@ def search_node_dialog(all_nodes):
 
     dialog.btn_close.setIcon(qta.icon('mdi6.close'))
 
-    dialog.setStyleSheet('font-size: 20px')
+    dialog.setStyleSheet('font-size: 16px')
     dialog.label.setStyleSheet('font-size: 16px')
     # dialog.frame.setStyleSheet('border: 1px solid #d3d3d3')
 
@@ -912,7 +921,7 @@ def search_node_dialog(all_nodes):
     def list_all_nodes():
         widget = QtWidgets.QWidget()
         dialog.vbox = QtWidgets.QVBoxLayout(widget)
-        icon_size = QtCore.QSize(32, 32)
+        icon_size = QtCore.QSize(24, 24)
 
         button_group = QtWidgets.QButtonGroup(widget)
         button_group.setExclusive(True)

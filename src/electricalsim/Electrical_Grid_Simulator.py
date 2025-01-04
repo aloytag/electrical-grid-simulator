@@ -90,6 +90,9 @@ def main():
     # graph.scene().setItemIndexMethod(QtWidgets.QGraphicsScene.NoIndex)
 
     # Toolbar settings------------------------------
+    icon_size_toobar = QtCore.QSize(32, 32)
+    main_window.toolBar.setIconSize(icon_size_toobar)
+
     addBus_action = QtGui.QAction('addBus')
     addBus_action.setText('Bus')
     addBus_action.setToolTip('Add a bus')
@@ -235,7 +238,7 @@ def main():
     main_window.toolBox.setItemIcon(1, qta.icon('ph.table'))  # Model data section
     
     # Upper toolbar:
-    icon_size = QtCore.QSize(36, 36)
+    icon_size = QtCore.QSize(24, 24)
     
     new_session = QtWidgets.QToolButton(main_window)
     new_session.setToolTip('New session (Ctrl+N)')
