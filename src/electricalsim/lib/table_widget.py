@@ -101,6 +101,12 @@ class TableWidgetWithMenu(TableWidget):
             copy_action.setIcon(qta.icon('mdi6.content-copy'))
             self.menu.addAction(copy_action)
 
+            copy_table_action = QtGui.QAction('Copy table', self)
+            copy_table_action.setText('Copy table')
+            copy_table_action.triggered.connect(self.copy_table)
+            copy_table_action.setIcon(qta.icon('mdi6.content-duplicate'))
+            self.menu.addAction(copy_table_action)
+
             self.menu.popup(QtGui.QCursor.pos())
 
     def show_component(self):
@@ -123,8 +129,6 @@ class TableWidgetWithMenu(TableWidget):
         """
         itemSelectionModel = self.table.selectionModel()
         selected_indexes = itemSelectionModel.selectedIndexes()
-        # first_selected = selected_indexes[0]
-        # last_selected = selected_indexes[-1]
 
         rows = set()
         cols = set()
@@ -132,20 +136,20 @@ class TableWidgetWithMenu(TableWidget):
             rows.add(item.row())
             cols.add(item.column())
 
-        # from_row = first_selected.row()
-        # to_row = last_selected.row()
-
-        # from_column = first_selected.column()
-        # to_column = last_selected.column()
-
-        # data_portion = self.model.get_data().iloc[from_row:to_row+1, from_column:to_column+1]
         data_portion = self.model.get_data().iloc[list(rows), list(cols)]
         data_portion.to_clipboard()
+
+    def copy_table(self):
+        """
+        Copy the entire table to clipboard.
+        """
+        self.model.get_data().to_clipboard()
 
 
 class TableWidgetWithCopy(TableWidgetWithMenu):
     """
-    Same as the TableWidgetWithMenu class, but the context menu only has the 'copy' option.
+    Same as the TableWidgetWithMenu class, but the context menu only has the 'copy'
+    and 'copy table' options.
     """
     def __init__(self, data):
         super().__init__(data, graph=None)
@@ -168,6 +172,12 @@ class TableWidgetWithCopy(TableWidgetWithMenu):
             copy_action.triggered.connect(self.copy)
             copy_action.setIcon(qta.icon('mdi6.content-copy'))
             self.menu.addAction(copy_action)
+
+            copy_table_action = QtGui.QAction('Copy table', self)
+            copy_table_action.setText('Copy table')
+            copy_table_action.triggered.connect(self.copy_table)
+            copy_table_action.setIcon(qta.icon('mdi6.content-duplicate'))
+            self.menu.addAction(copy_table_action)
 
             self.menu.popup(QtGui.QCursor.pos())
 
