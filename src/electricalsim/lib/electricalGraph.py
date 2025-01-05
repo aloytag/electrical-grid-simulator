@@ -10,6 +10,7 @@ from PySide6 import QtGui, QtWidgets, QtCore
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
+from pyqttoast import Toast, ToastPreset
 
 from NodeGraphQt6.base.commands import PortConnectedCmd
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
@@ -4887,3 +4888,35 @@ class ElectricalGraph(NodeGraph):
         for node in self.all_nodes():
             if node.type_=='BusNode.BusNode':
                 four_ports_on_buses(node)
+
+    def show_notification(self, title, message, duration=5000, type_='INFORMATION'):
+        """
+        Show a message as notification.
+
+        duration: milliseconds duration.
+
+        Possible values for 'type_' argument:
+          - INFORMATION
+          - ERROR
+          - SUCCESS
+          - WARNING
+        """
+        toast = Toast(parent=self.main_window)
+        toast.setDuration(duration)
+        toast.setTitle(title)
+        toast.setText(message)
+        toast.setBorderRadius(6)
+        toast.setIconSize(QtCore.QSize(24, 24))
+
+        theme = self.config['general']['theme']
+        if type_=='INFORMATION':
+            preset = ToastPreset.INFORMATION if theme=='light' else ToastPreset.INFORMATION_DARK
+        elif type_=='ERROR':
+            preset = ToastPreset.ERROR if theme=='light' else ToastPreset.ERROR_DARK
+        elif type_=='SUCCESS':
+            preset = ToastPreset.SUCCESS if theme=='light' else ToastPreset.SUCCESS_DARK
+        elif type_=='WARNING':
+            preset = ToastPreset.WARNING if theme=='light' else ToastPreset.WARNING_DARK
+        
+        toast.applyPreset(preset)  # Apply style preset
+        toast.show()

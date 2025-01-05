@@ -2,3 +2,4 @@ dist/
 test/
 changelog.txt
 .idea/
+.pyc
