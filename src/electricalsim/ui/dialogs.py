@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 import configparser
-from concurrent.futures import Future
+from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
 import pandapower as pp
@@ -1088,6 +1088,10 @@ class Toolbar_Matplotlib_custom(NavigationToolbar):
         self.setStyleSheet(style_toolbar)
 
 
+class WorkerSignals(QtCore.QObject):
+    calculation_done = QtCore.Signal(object)
+
+
 class Power_Flow_Dialog(QtWidgets.QDialog):
     """
     Balanced AC Power Flow dialog.
@@ -1204,6 +1208,10 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.w.btn_run.clicked.connect(self.run_pf)
         self.w.listView.clicked.connect(lambda index :
                 self.w.stacked_plots.setCurrentIndex(index.row()))
+        
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.signals = WorkerSignals()
+        self.signals.calculation_done.connect(self.pf_calculation_ended)
         
     def load_settings(self):
         """
@@ -1643,48 +1651,23 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                     tdpf_delay_s=tdpf_delay_s,
                     tdpf_update_r_theta=self.w.tdpf_update_r_theta.isChecked())
 
-                # if self.net._ppc['success']:
                 if self.net.converged:
-                    title = 'Success!'
-                    et = self.net._ppc['et']
-                    try:
-                        iterations = self.net._ppc['iterations']
-                        content = f'Solver converged in {et: .2f} (s) after {iterations} iterations.'
-                    except KeyError:
-                        content = f'Solver converged in {et: .2f} (s).'
-                    QtWidgets.QMessageBox.information(self.w, title, content)
+                    return 'success'
                 else:
-                    title = 'Failed!'
-                    content = 'Solver did not converge.'
-                    QtWidgets.QMessageBox.critical(self.w, title, content)
+                    return 'failed'
                 
             except ValueError:
-                title = 'Failed!'
-                content = 'Solver failed.'
-                QtWidgets.QMessageBox.critical(self.w, title, content)
+                return 'failed'
                 
             except pp.LoadflowNotConverged:
-                title = 'Failed!'
-                content = 'Solver failed.'
-                QtWidgets.QMessageBox.critical(self.w, title, content)
+                return 'failed'
             
             except UserWarning as uw:
-                title = 'Failed!'
-                content = 'Solver failed.\n' + str(uw) + '.'
-                QtWidgets.QMessageBox.critical(self.w, title, content)
-            
-        
-        def callback_pf_finished(*args):
-            self.w.btn_run.setText('Run power flow')
-            self.w.btn_run.setStyleSheet('')
-            self.w.btn_run.setEnabled(True)
-                
-            self.session_change_warning(tooltip_default=False)
-            self.plot()
-        
-        future = Future()
-        future.add_done_callback(callback_pf_finished)
-        future.set_result(pf_calculation())       
+                return uw
+
+        QtCore.QCoreApplication.processEvents()
+        future = self.executor.submit(pf_calculation)  # Running PF in a secondary thread
+        future.add_done_callback(self._callback_pf_finished)
         
     def clear_plots(self):
         """
@@ -1897,6 +1880,41 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
             figure.canvas.draw()
             figure.canvas.flush_events()
 
+    def _callback_pf_finished(self, future):
+        self.signals.calculation_done.emit(future.result())
+    
+    def pf_calculation_ended(self, result):
+        """
+        Executed after a power flow calculation.
+        """
+        if result=='success':
+            title = 'Success!'
+            et = self.net._ppc['et']
+            try:
+                iterations = self.net._ppc['iterations']
+                content = f'Solver converged in {et: .2f} (s) after {iterations} iterations.'
+            except KeyError:
+                content = f'Solver converged in {et: .2f} (s).'
+            QtWidgets.QMessageBox.information(self.w, title, content)
+        
+        elif result=='failed':
+            title = 'Failed!'
+            content = 'Solver failed.'
+            QtWidgets.QMessageBox.critical(self.w, title, content)
+
+        else:
+            title = 'Failed!'
+            content = 'Solver failed.\n' + result + '.'
+            QtWidgets.QMessageBox.critical(self.w, title, content)
+    
+        self.w.btn_run.setText('Run power flow')
+        self.w.btn_run.setStyleSheet('')
+        self.w.btn_run.setEnabled(True)
+            
+        self.session_change_warning(tooltip_default=False)
+        self.plot()
+
+        
 
 class Settings_Dialog:
     """
