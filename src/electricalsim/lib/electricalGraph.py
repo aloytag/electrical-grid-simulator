@@ -4902,9 +4902,13 @@ class ElectricalGraph(NodeGraph):
           - WARNING
         """
         toast = Toast(parent=self.main_window)
+        font = QtGui.QFont('Sans', 12)
+        toast.setTextFont(font)
+        font_title = QtGui.QFont('Sans', 12, QtGui.QFont.Weight.Bold)
+        toast.setTitleFont(font_title)
         toast.setDuration(duration)
         toast.setTitle(title)
-        toast.setText(message)
+        toast.setText(f'{message}  ')
         toast.setBorderRadius(6)
         toast.setIconSize(QtCore.QSize(24, 24))
 
