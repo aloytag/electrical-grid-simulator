@@ -21,7 +21,7 @@ from matplotlib import rc
 
 from fuzzysearch import find_near_matches
 
-from lib.table_widget import TableWidget
+from lib.table_widget import TableWidget, TableWidgetWithCopy
 from lib.auxiliary import icon_for_type, natsort2
 from version import VERSION, DATE, AUTHOR, CONTACT
 
@@ -1271,75 +1271,75 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         Load results DataFrames to the GUI.
         """
         # Adding Bus DataFrame from pandapower network:
-        df_bus_widget = TableWidget(self.net.res_bus)
+        df_bus_widget = TableWidgetWithCopy(self.net.res_bus)
         self.w.layout_bus.addWidget(df_bus_widget)
         
         # Adding Line DataFrame from pandapower network:
-        df_line_widget = TableWidget(self.net.res_line)
+        df_line_widget = TableWidgetWithCopy(self.net.res_line)
         self.w.layout_line.addWidget(df_line_widget)
         
         # Adding DC Line DataFrame from pandapower network:
-        df_dcline_widget = TableWidget(self.net.res_dcline)
+        df_dcline_widget = TableWidgetWithCopy(self.net.res_dcline)
         self.w.layout_dcline.addWidget(df_dcline_widget)
         
         # Adding Impedance DataFrame from pandapower network:
-        df_impedance_widget = TableWidget(self.net.res_impedance)
+        df_impedance_widget = TableWidgetWithCopy(self.net.res_impedance)
         self.w.layout_impedance.addWidget(df_impedance_widget)
         
         # Adding Two Winding Transformer DataFrame from pandapower network:
-        df_trafo_widget = TableWidget(self.net.res_trafo)
+        df_trafo_widget = TableWidgetWithCopy(self.net.res_trafo)
         self.w.layout_trafo.addWidget(df_trafo_widget)
         
         # Adding Three Winding Transformer DataFrame from pandapower network:
-        df_trafo3w_widget = TableWidget(self.net.res_trafo3w)
+        df_trafo3w_widget = TableWidgetWithCopy(self.net.res_trafo3w)
         self.w.layout_trafo3w.addWidget(df_trafo3w_widget)
         
         # Adding Generator DataFrame from pandapower network:
-        df_gen_widget = TableWidget(self.net.res_gen)
+        df_gen_widget = TableWidgetWithCopy(self.net.res_gen)
         self.w.layout_gen.addWidget(df_gen_widget)
         
         # Adding Static Generator DataFrame from pandapower network:
-        df_sgen_widget = TableWidget(self.net.res_sgen)
+        df_sgen_widget = TableWidgetWithCopy(self.net.res_sgen)
         self.w.layout_sgen.addWidget(df_sgen_widget)
         
         # Adding Asymmetric Static Generator DataFrame from pandapower network:
-        df_asgen_widget = TableWidget(self.net.res_asymmetric_sgen)
+        df_asgen_widget = TableWidgetWithCopy(self.net.res_asymmetric_sgen)
         self.w.layout_asgen.addWidget(df_asgen_widget)
         
         # Adding External Grid DataFrame from pandapower network:
-        df_ext_grid_widget = TableWidget(self.net.res_ext_grid)
+        df_ext_grid_widget = TableWidgetWithCopy(self.net.res_ext_grid)
         self.w.layout_ext_grid.addWidget(df_ext_grid_widget)
         
         # Adding Symmetric Load DataFrame from pandapower network:
-        df_load_widget = TableWidget(self.net.res_load)
+        df_load_widget = TableWidgetWithCopy(self.net.res_load)
         self.w.layout_load.addWidget(df_load_widget)
         
         # Adding Asymmetric Load DataFrame from pandapower network:
-        df_aload_widget = TableWidget(self.net.res_asymmetric_load)
+        df_aload_widget = TableWidgetWithCopy(self.net.res_asymmetric_load)
         self.w.layout_aload.addWidget(df_aload_widget)
         
         # Adding Shunt DataFrame from pandapower network:
-        df_shunt_widget = TableWidget(self.net.res_shunt)
+        df_shunt_widget = TableWidgetWithCopy(self.net.res_shunt)
         self.w.layout_shunt.addWidget(df_shunt_widget)
         
         # Adding Motor DataFrame from pandapower network:
-        df_motor_widget = TableWidget(self.net.res_motor)
+        df_motor_widget = TableWidgetWithCopy(self.net.res_motor)
         self.w.layout_motor.addWidget(df_motor_widget)
         
         # Adding Ward DataFrame from pandapower network:
-        df_ward_widget = TableWidget(self.net.res_ward)
+        df_ward_widget = TableWidgetWithCopy(self.net.res_ward)
         self.w.layout_ward.addWidget(df_ward_widget)
         
         # Adding Extended Ward DataFrame from pandapower network:
-        df_xward_widget = TableWidget(self.net.res_xward)
+        df_xward_widget = TableWidgetWithCopy(self.net.res_xward)
         self.w.layout_xward.addWidget(df_xward_widget)
         
         # Adding Storage DataFrame from pandapower network:
-        df_storage_widget = TableWidget(self.net.res_storage)
+        df_storage_widget = TableWidgetWithCopy(self.net.res_storage)
         self.w.layout_storage.addWidget(df_storage_widget)
         
         # Adding Switch DataFrame from pandapower network:
-        df_switch_widget = TableWidget(self.net.res_switch)
+        df_switch_widget = TableWidgetWithCopy(self.net.res_switch)
         self.w.layout_switch.addWidget(df_switch_widget)
         
     def update_dataframes(self):
@@ -1349,109 +1349,109 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         # Adding Bus DataFrame from pandapower network:
         old_bus_table = self.w.layout_bus.itemAt(0).widget()
         old_bus_table.setParent(None)
-        df_bus_widget = TableWidget(self.net.res_bus)
+        df_bus_widget = TableWidgetWithCopy(self.net.res_bus)
         self.w.layout_bus.addWidget(df_bus_widget)
         
         # Adding Line DataFrame from pandapower network:
         old_line_table = self.w.layout_line.itemAt(0).widget()
         old_line_table.setParent(None)
-        df_line_widget = TableWidget(self.net.res_line)
+        df_line_widget = TableWidgetWithCopy(self.net.res_line)
         self.w.layout_line.addWidget(df_line_widget)
         
         # Adding DC Line DataFrame from pandapower network:
         old_dcline_table = self.w.layout_dcline.itemAt(0).widget()
         old_dcline_table.setParent(None)
-        df_dcline_widget = TableWidget(self.net.res_dcline)
+        df_dcline_widget = TableWidgetWithCopy(self.net.res_dcline)
         self.w.layout_dcline.addWidget(df_dcline_widget)
         
         # Adding Impedance DataFrame from pandapower network:
         old_impedance_table = self.w.layout_impedance.itemAt(0).widget()
         old_impedance_table.setParent(None)
-        df_impedance_widget = TableWidget(self.net.res_impedance)
+        df_impedance_widget = TableWidgetWithCopy(self.net.res_impedance)
         self.w.layout_impedance.addWidget(df_impedance_widget)
         
         # Adding Two Winding Transformer DataFrame from pandapower network:
         old_trafo_table = self.w.layout_trafo.itemAt(0).widget()
         old_trafo_table.setParent(None)
-        df_trafo_widget = TableWidget(self.net.res_trafo)
+        df_trafo_widget = TableWidgetWithCopy(self.net.res_trafo)
         self.w.layout_trafo.addWidget(df_trafo_widget)
         
         # Adding Three Winding Transformer DataFrame from pandapower network:
         old_trafo3w_table = self.w.layout_trafo3w.itemAt(0).widget()
         old_trafo3w_table.setParent(None)
-        df_trafo3w_widget = TableWidget(self.net.res_trafo3w)
+        df_trafo3w_widget = TableWidgetWithCopy(self.net.res_trafo3w)
         self.w.layout_trafo3w.addWidget(df_trafo3w_widget)
         
         # Adding Generator DataFrame from pandapower network:
         old_gen_table = self.w.layout_gen.itemAt(0).widget()
         old_gen_table.setParent(None)
-        df_gen_widget = TableWidget(self.net.res_gen)
+        df_gen_widget = TableWidgetWithCopy(self.net.res_gen)
         self.w.layout_gen.addWidget(df_gen_widget)
         
         # Adding Static Generator DataFrame from pandapower network:
         old_sgen_table = self.w.layout_sgen.itemAt(0).widget()
         old_sgen_table.setParent(None)
-        df_sgen_widget = TableWidget(self.net.res_sgen)
+        df_sgen_widget = TableWidgetWithCopy(self.net.res_sgen)
         self.w.layout_sgen.addWidget(df_sgen_widget)
         
         # Adding Asymmetric Static Generator DataFrame from pandapower network:
         old_asgen_table = self.w.layout_asgen.itemAt(0).widget()
         old_asgen_table.setParent(None)
-        df_asgen_widget = TableWidget(self.net.res_asymmetric_sgen)
+        df_asgen_widget = TableWidgetWithCopy(self.net.res_asymmetric_sgen)
         self.w.layout_asgen.addWidget(df_asgen_widget)
         
         # Adding External Grid DataFrame from pandapower network:
         old_ext_grid_table = self.w.layout_ext_grid.itemAt(0).widget()
         old_ext_grid_table.setParent(None)
-        df_ext_grid_widget = TableWidget(self.net.res_ext_grid)
+        df_ext_grid_widget = TableWidgetWithCopy(self.net.res_ext_grid)
         self.w.layout_ext_grid.addWidget(df_ext_grid_widget)
         
         # Adding Symmetric Load DataFrame from pandapower network:
         old_load_table = self.w.layout_load.itemAt(0).widget()
         old_load_table.setParent(None)
-        df_load_widget = TableWidget(self.net.res_load)
+        df_load_widget = TableWidgetWithCopy(self.net.res_load)
         self.w.layout_load.addWidget(df_load_widget)
         
         # Adding Asymmetric Load DataFrame from pandapower network:
         old_aload_table = self.w.layout_aload.itemAt(0).widget()
         old_aload_table.setParent(None)
-        df_aload_widget = TableWidget(self.net.res_asymmetric_load)
+        df_aload_widget = TableWidgetWithCopy(self.net.res_asymmetric_load)
         self.w.layout_aload.addWidget(df_aload_widget)
         
         # Adding Shunt DataFrame from pandapower network:
         old_shunt_table = self.w.layout_shunt.itemAt(0).widget()
         old_shunt_table.setParent(None)
-        df_shunt_widget = TableWidget(self.net.res_shunt)
+        df_shunt_widget = TableWidgetWithCopy(self.net.res_shunt)
         self.w.layout_shunt.addWidget(df_shunt_widget)
         
         # Adding Motor DataFrame from pandapower network:
         old_motor_table = self.w.layout_motor.itemAt(0).widget()
         old_motor_table.setParent(None)
-        df_motor_widget = TableWidget(self.net.res_motor)
+        df_motor_widget = TableWidgetWithCopy(self.net.res_motor)
         self.w.layout_motor.addWidget(df_motor_widget)
         
         # Adding Ward DataFrame from pandapower network:
         old_ward_table = self.w.layout_ward.itemAt(0).widget()
         old_ward_table.setParent(None)
-        df_ward_widget = TableWidget(self.net.res_ward)
+        df_ward_widget = TableWidgetWithCopy(self.net.res_ward)
         self.w.layout_ward.addWidget(df_ward_widget)
         
         # Adding Extended Ward DataFrame from pandapower network:
         old_xward_table = self.w.layout_xward.itemAt(0).widget()
         old_xward_table.setParent(None)
-        df_xward_widget = TableWidget(self.net.res_xward)
+        df_xward_widget = TableWidgetWithCopy(self.net.res_xward)
         self.w.layout_xward.addWidget(df_xward_widget)
         
         # Adding Storage DataFrame from pandapower network:
         old_storage_table = self.w.layout_storage.itemAt(0).widget()
         old_storage_table.setParent(None)
-        df_storage_widget = TableWidget(self.net.res_storage)
+        df_storage_widget = TableWidgetWithCopy(self.net.res_storage)
         self.w.layout_storage.addWidget(df_storage_widget)
         
         # Adding Switch DataFrame from pandapower network:
         old_switch_table = self.w.layout_switch.itemAt(0).widget()
         old_switch_table.setParent(None)
-        df_switch_widget = TableWidget(self.net.res_switch)
+        df_switch_widget = TableWidgetWithCopy(self.net.res_switch)
         self.w.layout_switch.addWidget(df_switch_widget)
 
     def build_plots_page(self):

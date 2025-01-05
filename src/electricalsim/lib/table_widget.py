@@ -123,14 +123,53 @@ class TableWidgetWithMenu(TableWidget):
         """
         itemSelectionModel = self.table.selectionModel()
         selected_indexes = itemSelectionModel.selectedIndexes()
-        first_selected = selected_indexes[0]
-        last_selected = selected_indexes[-1]
+        # first_selected = selected_indexes[0]
+        # last_selected = selected_indexes[-1]
 
-        from_row = first_selected.row()
-        to_row = last_selected.row()
+        rows = set()
+        cols = set()
+        for item in selected_indexes:
+            rows.add(item.row())
+            cols.add(item.column())
 
-        from_column = first_selected.column()
-        to_column = last_selected.column()
+        # from_row = first_selected.row()
+        # to_row = last_selected.row()
 
-        data_portion = self.model.get_data().iloc[from_row:to_row+1, from_column:to_column+1]
+        # from_column = first_selected.column()
+        # to_column = last_selected.column()
+
+        # data_portion = self.model.get_data().iloc[from_row:to_row+1, from_column:to_column+1]
+        data_portion = self.model.get_data().iloc[list(rows), list(cols)]
         data_portion.to_clipboard()
+
+
+class TableWidgetWithCopy(TableWidgetWithMenu):
+    """
+    Same as the TableWidgetWithMenu class, but the context menu only has the 'copy' option.
+    """
+    def __init__(self, data):
+        super().__init__(data, graph=None)
+
+    @QtCore.Slot(QtCore.QPoint)
+    def generate_menu(self, pos):
+        """
+        Show a context menu when right-clicking.
+        """
+        index = self.table.indexAt(pos)
+        if index.isValid():
+            self.row = index.row()
+            self.column = index.column()
+
+            self.menu = QtWidgets.QMenu(self)  # Context menu
+            self.menu.setStyleSheet('border: 1px solid #d3d3d3')
+
+            copy_action = QtGui.QAction('Copy', self)
+            copy_action.setText('Copy')
+            copy_action.triggered.connect(self.copy)
+            copy_action.setIcon(qta.icon('mdi6.content-copy'))
+            self.menu.addAction(copy_action)
+
+            self.menu.popup(QtGui.QCursor.pos())
+
+    def show_component(self):
+        pass
