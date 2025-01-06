@@ -800,6 +800,14 @@ def connecting_buses_dialog():
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.option = None  # Element selected
 
+    # Adding transparency and shadow...
+    dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+    effect = QtWidgets.QGraphicsDropShadowEffect(parent=dialog)
+    effect.setBlurRadius(30)
+    effect.setColor(QtGui.QColor(0, 0, 0, 160))
+    effect.setOffset(0)
+    dialog.frame.setGraphicsEffect(effect)
+
     def line():
         dialog.option = 'line'
         dialog.accept()
@@ -910,6 +918,14 @@ def search_node_dialog(all_nodes):
     dialog.label.setStyleSheet('font-size: 16px')
     # dialog.frame.setStyleSheet('border: 1px solid #d3d3d3')
 
+    # Adding transparency and shadow...
+    dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+    effect = QtWidgets.QGraphicsDropShadowEffect(parent=dialog)
+    effect.setBlurRadius(30)
+    effect.setColor(QtGui.QColor(0, 0, 0, 160))
+    effect.setOffset(0)
+    dialog.frame.setGraphicsEffect(effect)
+
     class SaveNodeName:
         def __init__(self, name):
             self.name = name
@@ -1006,6 +1022,14 @@ def export_dialog():
     dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.option = None  # Export option selected
+
+    # Adding transparency and shadow...
+    dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+    effect = QtWidgets.QGraphicsDropShadowEffect(parent=dialog)
+    effect.setBlurRadius(30)
+    effect.setColor(QtGui.QColor(0, 0, 0, 160))
+    effect.setOffset(0)
+    dialog.setGraphicsEffect(effect)
 
     def json_():
         dialog.option = 'json'
