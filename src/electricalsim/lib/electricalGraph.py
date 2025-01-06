@@ -4,6 +4,7 @@ import os
 import warnings
 from math import isnan, nan
 import pickle
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 from PySide6 import QtGui, QtWidgets, QtCore
@@ -24,7 +25,8 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  WardNode, XWardNode, StorageNode,
                                  SwitchNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
-                           simulate_ESC_key, four_ports_on_buses)  # , show_WIP)
+                           simulate_ESC_key, four_ports_on_buses,
+                           check_new_version)  # , show_WIP)
 from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         stdline_dialog,
                         dcline_dialog, impedance_dialog,
@@ -69,6 +71,10 @@ allowed_connections = (
     {'BusNode.BusNode', 'XWardNode.XWardNode'},
     {'BusNode.BusNode', 'StorageNode.StorageNode'}
         )
+
+
+class WorkerSignals(QtCore.QObject):
+    update_check_done = QtCore.Signal(object)
 
 
 class ElectricalGraph(NodeGraph):
@@ -146,6 +152,14 @@ class ElectricalGraph(NodeGraph):
 
         self.set_file_name_status()
         self._viewer.setViewportUpdateMode(QtWidgets.QGraphicsView.BoundingRectViewportUpdate)
+
+        if self.config['general']['check_for_updates'] == 'True':
+            self.executor = ThreadPoolExecutor(max_workers=1)
+            self.signals = WorkerSignals()
+            self.signals.update_check_done.connect(self.update_check_ended)
+            QtCore.QCoreApplication.processEvents()
+            future = self.executor.submit(check_new_version)  # Check for updates in a secondary thread
+            future.add_done_callback(self._callback_updates_finished)
 
     def set_file_name_status(self, file_name=None):
         """
@@ -4924,3 +4938,37 @@ class ElectricalGraph(NodeGraph):
         
         toast.applyPreset(preset)  # Apply style preset
         toast.show()
+
+    def _callback_updates_finished(self, future):
+        self.signals.update_check_done.emit(future.result())
+
+    def update_check_ended(self, result):
+        """
+        Executed after checking for updates.
+        """
+        if result[0] is True:
+            self.show_notification('Updates',
+                                   f'A new version of EGS is available for download (v{result[1]}).',
+                                   duration=20000,
+                                   type_='INFORMATION')
+        elif result[0] is False:
+            self.show_notification('Updates',
+                                   'EGS is up to date.',
+                                   duration=10000,
+                                   type_='INFORMATION')
+        else:
+            self.show_notification('Updates',
+                                    'ERROR: No Internet connection to check for updates.',
+                                    duration=10000,
+                                    type_='ERROR')
+            
+    def check_for_updates(self):
+        """
+        Check for updates.
+        """
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.signals = WorkerSignals()
+        self.signals.update_check_done.connect(self.update_check_ended)
+        QtCore.QCoreApplication.processEvents()
+        future = self.executor.submit(check_new_version)  # Check for updates in a secondary thread
+        future.add_done_callback(self._callback_updates_finished)

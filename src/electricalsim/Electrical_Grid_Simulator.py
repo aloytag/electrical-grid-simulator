@@ -396,6 +396,12 @@ def main():
     about_action.triggered.connect(graph.about)
     about_action.setIcon(qta.icon('mdi6.information-outline'))
     help_menu.addAction(about_action)
+
+    updates_action = QtGui.QAction('Check for updates')
+    updates_action.setText('Check for updates')
+    updates_action.triggered.connect(graph.check_for_updates)
+    updates_action.setIcon(qta.icon('mdi6.update'))
+    help_menu.addAction(updates_action)
         
     def page_changed_on_toolbox(index):
         """

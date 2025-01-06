@@ -4,12 +4,15 @@ import os
 import configparser
 import re
 
+import requests
 from PySide6 import QtWidgets, QtGui
 import qtawesome as qta
 from pynput.keyboard import Key, Controller
 from platformdirs import user_config_dir
 
 from NodeGraphQt6.constants import PortEnum
+
+from version import VERSION
 
 directory = os.path.dirname(__file__)
 root_dir, _ = os.path.split(directory)
@@ -704,3 +707,24 @@ def four_ports_on_buses(node):
     current_y = pos.y()
     pos.setY(current_y - current_height/4 - PortEnum.SIZE.value/1.8/2)
     input_port2.view.setPos(pos)
+
+
+def check_new_version():
+    """
+    Checks for available program updates. Returns a first argument True if so,
+    and False otherwise. The second argument is the latest version available.
+    The first output argument is None if there is a connection problem.
+    """
+    url = 'https://pypi.org/pypi/electricalsim/json'
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            latest_version = response.json()["info"]["version"]
+            if latest_version != VERSION:
+                return True, latest_version
+            else:
+                return False, latest_version
+        else:
+            return None, VERSION
+    except requests.exceptions.ConnectionError:
+        return None, VERSION

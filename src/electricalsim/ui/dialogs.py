@@ -1964,6 +1964,10 @@ class Settings_Dialog:
         pipe_style_options = 'curved', 'straight', 'angle'
         index_pipe_style = pipe_style_options.index(self.config['general']['pipe_style'])
         self.dialog.pipe_style.setCurrentIndex(index_pipe_style)
+        if self.config['general']['check_for_updates']=='True':
+            self.dialog.checkForUpdates.setChecked(True)
+        else:
+            self.dialog.checkForUpdates.setChecked(False)
         default_path = self.config['general']['default_path']
         if os.path.exists(default_path):
             self.dialog.default_path.setPlainText(default_path)
@@ -2960,6 +2964,10 @@ class Settings_Dialog:
             else:
                 self.config['general']['grid'] = 'False'
             self.config['general']['default_path'] = self.dialog.default_path.toPlainText()
+            if self.dialog.checkForUpdates.isChecked():
+                self.config['general']['check_for_updates'] = 'True'
+            else:
+                self.config['general']['check_for_updates'] = 'False'
             
             # Network page-----------------------------------------------------------
             self.config['network']['name'] = network.name.text()
