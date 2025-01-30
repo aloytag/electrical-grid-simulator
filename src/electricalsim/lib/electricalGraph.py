@@ -23,7 +23,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  SGenNode, ASGenNode, ExtGridNode,
                                  LoadNode, ALoadNode, ShuntNode, MotorNode,
                                  WardNode, XWardNode, StorageNode,
-                                 SwitchNode)
+                                 SwitchNode, SVCNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
                            simulate_ESC_key, four_ports_on_buses,
                            check_new_version)  # , show_WIP)
@@ -39,6 +39,7 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         shunt_dialog, motor_dialog, about_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
+                        choose_facts_dialog, svc_dialog,
                         network_settings_dialog, Settings_Dialog,
                         connecting_buses_dialog, search_node_dialog,
                         export_dialog)
@@ -69,7 +70,8 @@ allowed_connections = (
     {'BusNode.BusNode', 'MotorNode.MotorNode'},
     {'BusNode.BusNode', 'WardNode.WardNode'},
     {'BusNode.BusNode', 'XWardNode.XWardNode'},
-    {'BusNode.BusNode', 'StorageNode.StorageNode'}
+    {'BusNode.BusNode', 'StorageNode.StorageNode'},
+    {'BusNode.BusNode', 'SVCNode.SVCNode'}
         )
 
 
@@ -100,7 +102,7 @@ class ElectricalGraph(NodeGraph):
                              SGenNode, ASGenNode, ExtGridNode,
                              LoadNode, ALoadNode, ShuntNode, MotorNode,
                              WardNode, XWardNode, StorageNode,
-                             SwitchNode])
+                             SwitchNode, SVCNode])
 
         settings = self.config['network']
         self.net = pp.create_empty_network(settings['name'],
@@ -1667,6 +1669,72 @@ class ElectricalGraph(NodeGraph):
         
         self.update_bus_ports()
 
+    def add_facts(self, **kwargs):
+        """
+        Adds a FACTS device to the graph: static var compensator (SVC), thyristor-controlled
+        series capacitor (TCSC), static sunchronous compensator (SSC, also known as STATCOM).
+        """
+        dialog = choose_facts_dialog()
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        if dialog.exec():
+            center_coordinates = self.viewer().scene_center()
+
+            if dialog.radioSVC.isChecked():
+                node = self.create_node('SVCNode.SVCNode', name='SVC 0',
+                                        pos=center_coordinates,
+                                        push_undo=False)
+                settings = self.config['svc']
+                for name, value in settings.items():
+                    if name=='controllable' and value=='True':
+                        node.set_property(name, True, push_undo=False)  # bool
+                    elif name=='controllable' and value=='False':
+                        node.set_property(name, False, push_undo=False)  # bool
+                    else:
+                        node.set_property(name, float(value), push_undo=False)  # float
+
+            elif dialog.radioTCSC.isChecked():
+                # node = self.create_node('ALoadNode.ALoadNode',
+                #                         name='Asymmetric Load 0',
+                #                         pos=center_coordinates,
+                #                         push_undo=False)
+                # settings = self.config['asymmetric_load']
+                # for name, value in settings.items():
+                #     if name=='type':
+                #         node.set_property(name, value, push_undo=False)  # str
+                #     else:
+                #         node.set_property(name, float(value), push_undo=False)  # float
+                self.show_notification(title='Not yet implemented',
+                                       message='TCSC component is not yet implemented.',
+                                       duration=5000, type_='ERROR')
+
+            elif dialog.radioSSC.isChecked():
+                # node = self.create_node('ShuntNode.ShuntNode', name='Shunt 0',
+                #                         pos=center_coordinates,
+                #                         push_undo=False)
+                # settings = self.config['shunt']
+                # for name, value in settings.items():
+                #     if name=='vn_kv' and value=='None':
+                #         node.set_property(name, None, push_undo=False)  # Nonetype
+                #     elif name in ('step', 'max_step'):
+                #         node.set_property(name, int(value), push_undo=False)  # int
+                #     else:
+                #         node.set_property(name, float(value), push_undo=False)  # float
+
+                # node.step_widget.get_custom_widget().setMaximum(node.get_property('max_step'))
+                self.show_notification(title='Not yet implemented',
+                                       message='SSC component is not yet implemented.',
+                                       duration=5000, type_='ERROR')
+                
+
+            self.set_vertical_layout_prop(node)
+            node.set_layout_direction(1)
+            theme = self.config['general']['theme']
+            if theme=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                node.update()
+
+        self.update_bus_ports()
+
     def disconnect_component(self, port0, port1):
         """
         Removes the corresponding pandapower component if one of its
@@ -1788,6 +1856,8 @@ class ElectricalGraph(NodeGraph):
                     self.remove_storage(node)
                 elif node.type_=='SwitchNode.SwitchNode':
                     self.remove_switch(node)
+                elif node.type_=='SVCNode.SVCNode':
+                    self.remove_svc(node)
 
         for pipe in connected:
             # print('Connected:', pipe)
@@ -3009,6 +3079,33 @@ class ElectricalGraph(NodeGraph):
                     node_to.set_property('storage_index', storage_index, push_undo=False)
                 # print(self.net.storage)
             
+            
+            # Adding an SVC to pandapower network
+            if node_from.type_=='SVCNode.SVCNode' and node_to.type_=='BusNode.BusNode':
+                node_from_copy = node_from
+                node_to_copy = node_to
+                node_from = node_to_copy
+                node_to = node_from_copy
+            if node_to.type_=='SVCNode.SVCNode' and node_from.type_=='BusNode.BusNode':
+                # print(node_to.connected_input_nodes())
+                bus = node_from.get_property('bus_index')
+                svc_index = pp.create.create_svc(self.net, bus=bus,
+                                                 x_l_ohm=node_to.get_property('x_l_ohm'),
+                                                 x_cvar_ohm=node_to.get_property('x_cvar_ohm'),
+                                                 set_vm_pu=node_to.get_property('set_vm_pu'),
+                                                 thyristor_firing_angle_degree=node_to.get_property('thyristor_firing_angle_degree'),
+                                                 name=node_to.name(),
+                                                 controllable=node_to.get_property('controllable'),
+                                                 in_service=not node_to.disabled(),
+                                                 min_angle_degree=node_to.get_property('min_angle_degree'),
+                                                 max_angle_degree=node_to.get_property('max_angle_degree'))
+
+                try:
+                    node_to.create_property('svc_index', svc_index)
+                except errors.NodePropertyError:
+                    node_to.set_property('svc_index', svc_index, push_undo=False)
+                # print(self.net.svc)
+
     def open_options_dialog(self, node):
         """
         Executed function when a node is double clicked.
@@ -3055,6 +3152,8 @@ class ElectricalGraph(NodeGraph):
             self.storage_options(node)
         elif node.type_=='SwitchNode.SwitchNode':
             self.switch_options(node)
+        elif node.type_=='SVCNode.SVCNode':
+            self.svc_options(node)
 
     def bus_options(self, node):
         """
@@ -3991,6 +4090,43 @@ class ElectricalGraph(NodeGraph):
 
             self.session_change_warning()
 
+    def svc_options(self, node):
+        """
+        Executed function when an SVC node is double clicked.
+        """
+        dialog = svc_dialog()
+        dialog.setWindowTitle(node.get_property('name'))
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+
+        dialog.set_vm_pu.setValue(node.get_property('set_vm_pu'))
+        dialog.x_l_ohm.setValue(node.get_property('x_l_ohm'))
+        dialog.x_cvar_ohm.setValue(node.get_property('x_cvar_ohm'))
+        dialog.thyristor_firing_angle_degree.setValue(node.get_property('thyristor_firing_angle_degree'))
+        dialog.min_angle_degree.setValue(node.get_property('min_angle_degree'))
+        dialog.max_angle_degree.setValue(node.get_property('max_angle_degree'))
+
+        dialog.controllable.setChecked(node.get_property('controllable'))
+
+        if dialog.exec():
+            node.set_property('set_vm_pu', np.round(dialog.set_vm_pu.value(), 4), push_undo=False)
+            node.set_property('x_l_ohm', np.round(dialog.x_l_ohm.value(), 5), push_undo=False)
+            node.set_property('x_cvar_ohm', np.round(dialog.x_cvar_ohm.value(), 5), push_undo=False)
+            node.set_property('thyristor_firing_angle_degree',
+                              np.round(dialog.thyristor_firing_angle_degree.value(), 2), push_undo=False)
+            node.set_property('min_angle_degree', np.round(dialog.min_angle_degree.value(), 2), push_undo=False)
+            node.set_property('max_angle_degree', np.round(dialog.max_angle_degree.value(), 2), push_undo=False)
+
+            node.set_property('controllable', dialog.controllable.isChecked(), push_undo=False)
+
+            node.vm_pu_widget.get_custom_widget().setValue(node.get_property('set_vm_pu'))
+
+            svc_index = node.get_property('svc_index')
+            if svc_index is not None and node.connected_to_network():
+                for name in node.electrical_properties:
+                    self.net.svc.loc[svc_index, name] = node.get_property(name)
+
+            self.session_change_warning()
+
     def aload_options(self, node):
         """
         Executed function when an Asymmetric Load node is double clicked.
@@ -4644,7 +4780,19 @@ class ElectricalGraph(NodeGraph):
             storage_index = node.get_property('storage_index')
             if storage_index is not None and storage_index in self.net.storage.index:
                 pp.drop_elements_simple(self.net, 'storage', storage_index)
-            
+
+    def remove_svc(self, node):
+        """
+        Remove an SVC from the pandapower network when its corresponding
+        node in the graph is removed.
+        """
+        svc_name = node.get_property('name')
+        svc_row = self.net.svc[self.net.svc['name'] == svc_name]
+        if not svc_row.empty:
+            svc_index = node.get_property('svc_index')
+            if svc_index is not None:
+                pp.drop_elements_simple(self.net, 'svc', svc_index)
+
     def remove_switch(self, node, directly_removed=True):
         """
         Remove a switch from the pandapower network when its corresponding

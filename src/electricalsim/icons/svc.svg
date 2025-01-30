@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="28.300823mm"
+   height="12.017269mm"
+   viewBox="0 0 28.300823 12.017269"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="svc.svg"
+   inkscape:export-filename="/home/usuario/Documentos/Inquietudes/Electrical Grid Simulator/src/electricalsim/icons/transformer.png"
+   inkscape:export-xdpi="384"
+   inkscape:export-ydpi="384"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="6.9250548"
+     inkscape:cx="78.338731"
+     inkscape:cy="24.115333"
+     inkscape:document-units="mm"
+     inkscape:current-layer="text834"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(4.1832468,-56.531689)">
+    <g
+       aria-label="G"
+       id="text834"
+       style="font-size:15.6982px;line-height:1.25;font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans';stroke-width:2.28337">
+      <g
+         aria-label="SVC"
+         id="text290"
+         style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:center;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0.365001;stroke-linejoin:round;stop-color:#000000"
+         transform="matrix(3.5506338,0,0,3.5506338,10.66993,-144.19164)">
+        <path
+           d="m -2.0965716,58.948565 c 0,-0.298096 -0.1421691,-0.518229 -0.2430633,-0.628295 -0.2155467,-0.229306 -0.366888,-0.27058 -0.7888092,-0.376061 -0.2659938,-0.06421 -0.3393714,-0.08255 -0.4769544,-0.201788 -0.032103,-0.02752 -0.1605135,-0.160514 -0.1605135,-0.362302 0,-0.27058 0.2476494,-0.545746 0.6695706,-0.545746 0.3852324,0 0.6053652,0.151341 0.7750509,0.29351 l 0.068792,-0.366888 C -2.5047345,56.609654 -2.75697,56.53169 -3.0917553,56.53169 c -0.6374679,0 -1.0364586,0.449438 -1.0364586,0.903462 0,0.197202 0.064205,0.389819 0.2476494,0.582435 0.1926162,0.206374 0.3944046,0.261408 0.6649845,0.325613 0.3898185,0.09631 0.4356795,0.110066 0.5640903,0.224719 0.091722,0.07796 0.1926162,0.229305 0.1926162,0.426507 0,0.302683 -0.2522355,0.605365 -0.6695706,0.605365 -0.1880301,0 -0.6007791,-0.04586 -0.9860115,-0.371474 l -0.068791,0.371474 c 0.4035768,0.252236 0.7704648,0.316441 1.0593891,0.316441 0.6053652,0 1.0272864,-0.463196 1.0272859,-0.967667 z"
+           style="font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans';fill:#000000;stroke:none;stroke-width:0.365"
+           id="path394" />
+        <path
+           d="M 1.1549722,56.632585 H 0.79725643 l -0.60995131,1.568446 c -0.0733776,0.18803 -0.41733511,1.073147 -0.45861001,1.284108 h -0.004586 C -0.31257979,59.301695 -0.5097821,58.797224 -0.551057,58.687158 l -0.7933953,-2.054573 h -0.4265073 l 1.2520053,3.182753 h 0.42192121 z"
+           style="font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans';fill:#000000;stroke:none;stroke-width:0.365"
+           id="path396" />
+        <path
+           d="m 3.7873934,59.608964 -0.027517,-0.316441 c -0.1329969,0.09172 -0.2659938,0.178858 -0.4219212,0.224719 -0.1467552,0.05045 -0.3072687,0.05503 -0.4631961,0.05503 -0.2980965,0 -0.5686764,-0.160514 -0.7567065,-0.394405 -0.2109606,-0.27058 -0.3118548,-0.609951 -0.3118548,-0.953909 0,-0.343957 0.1008942,-0.687915 0.3118548,-0.958495 0.1880301,-0.233891 0.45861,-0.394404 0.7567065,-0.394404 0.137583,0 0.2797521,0.01376 0.412749,0.05503 0.137583,0.04128 0.2659938,0.110066 0.3852324,0.192616 l 0.064205,-0.37606 C 3.5993633,56.687618 3.4571942,56.641757 3.310439,56.61424 3.1682699,56.58672 3.0215147,56.57755 2.8747595,56.57755 c -0.4035768,0 -0.7750509,0.183444 -1.0456308,0.481541 -0.2843382,0.321027 -0.4310934,0.738362 -0.4310934,1.164869 0,0.426508 0.1467552,0.843843 0.4310934,1.160284 0.2705799,0.298096 0.642054,0.48154 1.0456308,0.48154 0.1605135,0 0.321027,-0.0046 0.4769544,-0.05045 0.1559274,-0.04127 0.2980965,-0.123825 0.4356795,-0.206374 z"
+           style="font-family:'Latin Modern Sans';-inkscape-font-specification:'Latin Modern Sans';fill:#000000;stroke:none;stroke-width:0.365"
+           id="path398" />
+      </g>
+    </g>
+  </g>
+</svg>

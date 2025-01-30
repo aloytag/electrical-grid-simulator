@@ -1335,7 +1335,7 @@ class ExtGridNode(BaseNode2):
             
     def update_vm_pu(self, value):
         """
-        Updates 'vm_pu' property when changing the generated active power from the node widget.
+        Updates 'vm_pu' property when changing the value from the node widget.
         
         Updates the 'vm_pu' parameter on the pandapower network too.
         """
@@ -2117,3 +2117,98 @@ class SwitchNode(BaseNode2):
             if node.type_ in ('Trafo3wNode.Trafo3wNode', 'StdTrafo3wNode.StdTrafo3wNode'):
                 trafos.append(node)
         return trafos
+
+
+class SVCNode(BaseNode2):
+    __identifier__ = 'SVCNode'
+    NODE_NAME = 'SVCNode'
+    
+    def __init__(self):
+        super().__init__()
+        self.input_port = self.add_input(name='')
+        self.input_port.port_deletion_allowed = True
+        self.output_port = None
+        self.set_port_deletion_allowed(True)
+        self.set_color(255, 170, 127)
+        
+        fliped = self.get_property('fliped')
+        if fliped is not None:
+            self.flip()
+        else:
+            self.create_property('fliped', False)
+        
+        self.electrical_properties = ('x_l_ohm', 'x_cvar_ohm', 'set_vm_pu',
+                                      'thyristor_firing_angle_degree',
+                                      'min_angle_degree', 'controllable',
+                                      'max_angle_degree')
+        
+        for name in self.electrical_properties:
+            if name!='set_vm_pu':
+                self.create_property(name, None)
+                
+        self.create_property('svc_index', None)
+        
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        # icon_path = os.path.join(icons_dir, 'demand.svg')
+        # style = f"image: url('{icon_path}')"
+        style = "image: url(:/svc.svg);"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
+                
+        # add custom widget to node with "node.view" as the parent.
+        self.vm_pu_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
+        self.vm_pu_widget.set_name('set_vm_pu')
+        self.vm_pu_widget.set_label('Vm (p.u.)')
+        self.vm_pu_widget.get_custom_widget().valueChanged.connect(self.update_vm_pu)
+        self.vm_pu_widget.get_custom_widget().setDecimals(4)
+        self.vm_pu_widget.get_custom_widget().setMinimum(0.0)
+        self.vm_pu_widget.get_custom_widget().setMaximum(2.0)
+        self.vm_pu_widget.get_custom_widget().setSingleStep(0.01)
+        self.add_custom_widget(self.vm_pu_widget, tab=None)  # Adds the 'vm_pu' property.
+            
+    def update_vm_pu(self, value):
+        """
+        Updates 'set_vm_pu' property when changing the value from the node widget.
+        
+        Updates the 'set_vm_pu' parameter on the pandapower network too.
+        """
+        self.set_property('set_vm_pu', value, push_undo=False)
+        
+        svc_index = self.get_property('svc_index')
+        if svc_index is not None and self.connected_to_network():
+            self.graph.net.svc.loc[svc_index, 'set_vm_pu'] = value
+    
+    def flip(self):
+        """
+        Flip the node (change the input ports by an output port, or Vice versa).
+        """
+        try:
+            output_port = self.output_ports()[0]
+            output_port.clear_connections(push_undo=False)
+            self.delete_output(0)
+            self.output_port = None
+            self.input_port = self.add_input(name='')
+            self.input_port.port_deletion_allowed = True
+            self.set_property('fliped', False, push_undo=False)
+        except IndexError:
+            input_port = self.input_ports()[0]
+            input_port.clear_connections(push_undo=False)
+            self.delete_input(0)
+            self.input_port = None
+            self.output_port = self.add_output(name='', multi_output=False)
+            self.output_port.port_deletion_allowed = True
+            self.set_property('fliped', True, push_undo=False)
+            
+    def connected_to_network(self):
+        """
+        Returns True if the SVC node is connected to the network (to a bus).
+        Returns False otherwise.
+        """        
+        try:
+            connections = len(self.connected_output_nodes()[self.output_ports()[0]])
+        except IndexError:
+            connections = len(self.connected_input_nodes()[self.input_ports()[0]])
+        return connections

@@ -593,8 +593,8 @@ def ext_grid_dialog():
 
 def choose_load_dialog():
     """
-    Returns the symmetric load, asymmetric load, shunt element, motor,
-    ward or extended ward).
+    Returns a dialog to choose: symmetric load, asymmetric load, shunt element, motor,
+    ward or extended ward.
     """
     ui_file = os.path.join(directory, 'choose_load_type.ui')
     ui_file_ = QtCore.QFile(ui_file)
@@ -758,6 +758,20 @@ def storage_dialog():
     return dialog
 
 
+def choose_facts_dialog():
+    """
+    Returns a dialog to choose: static var compensator (SVC), thyristor-controlled
+    series capacitor (TCSC), static synchronous compensator (SSC, also known as STATCOM).
+    """
+    ui_file = os.path.join(directory, 'choose_facts_type.ui')
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    # return QtCompat.loadUi(uifile=ui_file)
+    return dialog
+
+
 def switch_dialog():
     """
     Returns the switch dialog.
@@ -768,6 +782,31 @@ def switch_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+    
+    return dialog
+
+
+def svc_dialog():
+    """
+    Returns the SVC dialog.
+    """
+    ui_file = os.path.join(directory, 'svc_dialog.ui')
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    
+    def min_angle_degree_changed(value):
+        dialog.thyristor_firing_angle_degree.setMinimum(value)
+        dialog.max_angle_degree.setMinimum(value)
+        
+    def max_angle_degree_changed(value):
+        dialog.thyristor_firing_angle_degree.setMaximum(value)
+        dialog.min_angle_degree.setMaximum(value)
+    
+    dialog.min_angle_degree.valueChanged.connect(min_angle_degree_changed)
+    dialog.max_angle_degree.valueChanged.connect(max_angle_degree_changed)
     
     return dialog
 
@@ -2951,6 +2990,36 @@ class Settings_Dialog:
         layout_storage.addWidget(storage)
         layout_storage.addStretch()
         self.dialog.page_storage.setLayout(layout_storage)
+
+        # SVC page--------------------------------------------------------
+        ui_file_svc = os.path.join(directory, 'svc_dialog.ui')
+        svc = return_qtwindow(ui_file_svc)
+        svc.buttonBox.setParent(None)  # remove the button box
+        
+        def min_angle_degree_changed(value):
+            svc.thyristor_firing_angle_degree.setMinimum(value)
+            svc.max_angle_degree.setMinimum(value)
+            
+        def max_angle_degree_changed(value):
+            svc.thyristor_firing_angle_degree.setMaximum(value)
+            svc.min_angle_degree.setMaximum(value)
+        
+        svc.min_angle_degree.valueChanged.connect(min_angle_degree_changed)
+        svc.max_angle_degree.valueChanged.connect(max_angle_degree_changed)
+        
+        settings = self.config['svc']
+        svc.x_l_ohm.setValue(float(settings['x_l_ohm']))
+        svc.x_cvar_ohm.setValue(float(settings['x_cvar_ohm']))
+        svc.set_vm_pu.setValue(float(settings['set_vm_pu']))
+        svc.thyristor_firing_angle_degree.setValue(float(settings['thyristor_firing_angle_degree']))
+        svc.min_angle_degree.setValue(float(settings['min_angle_degree']))
+        svc.max_angle_degree.setValue(float(settings['max_angle_degree']))
+        svc.controllable.setChecked(True if settings['controllable']=='True' else False)
+        
+        layout_svc = QtWidgets.QVBoxLayout()
+        layout_svc.addWidget(svc)
+        layout_svc.addStretch()
+        self.dialog.page_svc.setLayout(layout_svc)
         
         # Switch page------------------------------------------------------
         ui_file_switch = os.path.join(directory, 'switch_dialog.ui')
@@ -3293,6 +3362,15 @@ class Settings_Dialog:
             self.config['storage']['min_q_mvar'] = str(storage.min_q_mvar.value())
             self.config['storage']['controllable'] = 'True' if storage.controllable.isChecked() else 'False'
             self.config['storage']['type'] = storage.type.text()
+
+            # SVC page--------------------------------------------------------------
+            self.config['svc']['x_l_ohm'] = str(svc.x_l_ohm.value())
+            self.config['svc']['x_cvar_ohm'] = str(svc.x_cvar_ohm.value())
+            self.config['svc']['set_vm_pu'] = str(svc.set_vm_pu.value())
+            self.config['svc']['thyristor_firing_angle_degree'] = str(svc.thyristor_firing_angle_degree.value())
+            self.config['svc']['min_angle_degree'] = str(svc.min_angle_degree.value())
+            self.config['svc']['max_angle_degree'] = str(svc.max_angle_degree.value())
+            self.config['svc']['controllable'] = 'True' if svc.controllable.isChecked() else 'False'
             
             # Switch page------------------------------------------------------------
             self.config['switch']['closed'] = 'True' if switch.closed.isChecked() else 'False'
@@ -3329,7 +3407,7 @@ class Settings_Dialog:
                               'Asymmetric static generator', 'External grid',
                               'Symmetric load', 'Asymmetric load', 'Shunt element',
                               'Motor', 'Ward equivalent', 'Extended ward equivalent',
-                              'Storage', 'Switch']
+                              'Storage', 'Static Var Compensator (SVC)', 'Switch']
         model_view2 = QtGui.QStandardItemModel()
         self.dialog.listView_components.setModel(model_view2)
         for name in list_view2_options:

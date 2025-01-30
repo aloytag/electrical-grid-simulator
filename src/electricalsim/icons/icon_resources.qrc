@@ -14,5 +14,6 @@
         <file>ward.svg</file>
         <file>xward.svg</file>
         <file>3w-transformer.svg</file>
+        <file>svc.svg</file>
     </qresource>
 </RCC>

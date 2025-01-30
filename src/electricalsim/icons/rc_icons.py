@@ -1541,6 +1541,345 @@ inkscape:current\
 6 h -3 v 6 z\x22\x0a  \
    id=\x22path2\x22 />\
 \x0a</svg>\x0a\
+\x00\x00\x15\x09\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<svg\x0a   wi\
+dth=\x2228.300823mm\
+\x22\x0a   height=\x2212.\
+017269mm\x22\x0a   vie\
+wBox=\x220 0 28.300\
+823 12.017269\x22\x0a \
+  version=\x221.1\x22\x0a\
+   id=\x22svg8\x22\x0a   \
+inkscape:version\
+=\x221.2.2 (b0a8486\
+541, 2022-12-01)\
+\x22\x0a   sodipodi:do\
+cname=\x22svc.svg\x22\x0a\
+   inkscape:expo\
+rt-filename=\x22/ho\
+me/usuario/Docum\
+entos/Inquietude\
+s/Electrical Gri\
+d Simulator/src/\
+electricalsim/ic\
+ons/transformer.\
+png\x22\x0a   inkscape\
+:export-xdpi=\x2238\
+4\x22\x0a   inkscape:e\
+xport-ydpi=\x22384\x22\
+\x0a   xmlns:inksca\
+pe=\x22http://www.i\
+nkscape.org/name\
+spaces/inkscape\x22\
+\x0a   xmlns:sodipo\
+di=\x22http://sodip\
+odi.sourceforge.\
+net/DTD/sodipodi\
+-0.dtd\x22\x0a   xmlns\
+=\x22http://www.w3.\
+org/2000/svg\x22\x0a  \
+ xmlns:svg=\x22http\
+://www.w3.org/20\
+00/svg\x22\x0a   xmlns\
+:rdf=\x22http://www\
+.w3.org/1999/02/\
+22-rdf-syntax-ns\
+#\x22\x0a   xmlns:cc=\x22\
+http://creativec\
+ommons.org/ns#\x22\x0a\
+   xmlns:dc=\x22htt\
+p://purl.org/dc/\
+elements/1.1/\x22>\x0a\
+  <defs\x0a     id=\
+\x22defs2\x22 />\x0a  <so\
+dipodi:namedview\
+\x0a     id=\x22base\x22\x0a\
+     pagecolor=\x22\
+#ffffff\x22\x0a     bo\
+rdercolor=\x22#6666\
+66\x22\x0a     bordero\
+pacity=\x221.0\x22\x0a   \
+  inkscape:pageo\
+pacity=\x220.0\x22\x0a   \
+  inkscape:pages\
+hadow=\x222\x22\x0a     i\
+nkscape:zoom=\x226.\
+9250548\x22\x0a     in\
+kscape:cx=\x2278.33\
+8731\x22\x0a     inksc\
+ape:cy=\x2224.11533\
+3\x22\x0a     inkscape\
+:document-units=\
+\x22mm\x22\x0a     inksca\
+pe:current-layer\
+=\x22text834\x22\x0a     \
+inkscape:documen\
+t-rotation=\x220\x22\x0a \
+    showgrid=\x22fa\
+lse\x22\x0a     inksca\
+pe:window-width=\
+\x221920\x22\x0a     inks\
+cape:window-heig\
+ht=\x221007\x22\x0a     i\
+nkscape:window-x\
+=\x220\x22\x0a     inksca\
+pe:window-y=\x220\x22\x0a\
+     inkscape:wi\
+ndow-maximized=\x22\
+1\x22\x0a     fit-marg\
+in-top=\x220\x22\x0a     \
+fit-margin-left=\
+\x220\x22\x0a     fit-mar\
+gin-right=\x220\x22\x0a  \
+   fit-margin-bo\
+ttom=\x220\x22\x0a     in\
+kscape:showpages\
+hadow=\x222\x22\x0a     i\
+nkscape:pagechec\
+kerboard=\x220\x22\x0a   \
+  inkscape:deskc\
+olor=\x22#d1d1d1\x22 /\
+>\x0a  <metadata\x0a  \
+   id=\x22metadata5\
+\x22>\x0a    <rdf:RDF>\
+\x0a      <cc:Work\x0a\
+         rdf:abo\
+ut=\x22\x22>\x0a        <\
+dc:format>image/\
+svg+xml</dc:form\
+at>\x0a        <dc:\
+type\x0a           \
+rdf:resource=\x22ht\
+tp://purl.org/dc\
+/dcmitype/StillI\
+mage\x22 />\x0a      <\
+/cc:Work>\x0a    </\
+rdf:RDF>\x0a  </met\
+adata>\x0a  <g\x0a    \
+ inkscape:label=\
+\x22Capa 1\x22\x0a     in\
+kscape:groupmode\
+=\x22layer\x22\x0a     id\
+=\x22layer1\x22\x0a     t\
+ransform=\x22transl\
+ate(4.1832468,-5\
+6.531689)\x22>\x0a    \
+<g\x0a       aria-l\
+abel=\x22G\x22\x0a       \
+id=\x22text834\x22\x0a   \
+    style=\x22font-\
+size:15.6982px;l\
+ine-height:1.25;\
+font-family:'Lat\
+in Modern Sans';\
+-inkscape-font-s\
+pecification:'La\
+tin Modern Sans'\
+;stroke-width:2.\
+28337\x22>\x0a      <g\
+\x0a         aria-l\
+abel=\x22SVC\x22\x0a     \
+    id=\x22text290\x22\
+\x0a         style=\
+\x22font-size:4.586\
+1px;font-family:\
+'Times New Roman\
+';-inkscape-font\
+-specification:'\
+Times New Roman,\
+ ';text-align:ce\
+nter;text-anchor\
+:middle;fill:#ff\
+ffff;stroke:#fff\
+fff;stroke-width\
+:0.365001;stroke\
+-linejoin:round;\
+stop-color:#0000\
+00\x22\x0a         tra\
+nsform=\x22matrix(3\
+.5506338,0,0,3.5\
+506338,10.66993,\
+-144.19164)\x22>\x0a  \
+      <path\x0a    \
+       d=\x22m -2.0\
+965716,58.948565\
+ c 0,-0.298096 -\
+0.1421691,-0.518\
+229 -0.2430633,-\
+0.628295 -0.2155\
+467,-0.229306 -0\
+.366888,-0.27058\
+ -0.7888092,-0.3\
+76061 -0.2659938\
+,-0.06421 -0.339\
+3714,-0.08255 -0\
+.4769544,-0.2017\
+88 -0.032103,-0.\
+02752 -0.1605135\
+,-0.160514 -0.16\
+05135,-0.362302 \
+0,-0.27058 0.247\
+6494,-0.545746 0\
+.6695706,-0.5457\
+46 0.3852324,0 0\
+.6053652,0.15134\
+1 0.7750509,0.29\
+351 l 0.068792,-\
+0.366888 C -2.50\
+47345,56.609654 \
+-2.75697,56.5316\
+9 -3.0917553,56.\
+53169 c -0.63746\
+79,0 -1.0364586,\
+0.449438 -1.0364\
+586,0.903462 0,0\
+.197202 0.064205\
+,0.389819 0.2476\
+494,0.582435 0.1\
+926162,0.206374 \
+0.3944046,0.2614\
+08 0.6649845,0.3\
+25613 0.3898185,\
+0.09631 0.435679\
+5,0.110066 0.564\
+0903,0.224719 0.\
+091722,0.07796 0\
+.1926162,0.22930\
+5 0.1926162,0.42\
+6507 0,0.302683 \
+-0.2522355,0.605\
+365 -0.6695706,0\
+.605365 -0.18803\
+01,0 -0.6007791,\
+-0.04586 -0.9860\
+115,-0.371474 l \
+-0.068791,0.3714\
+74 c 0.4035768,0\
+.252236 0.770464\
+8,0.316441 1.059\
+3891,0.316441 0.\
+6053652,0 1.0272\
+864,-0.463196 1.\
+0272859,-0.96766\
+7 z\x22\x0a           \
+style=\x22font-fami\
+ly:'Latin Modern\
+ Sans';-inkscape\
+-font-specificat\
+ion:'Latin Moder\
+n Sans';fill:#00\
+0000;stroke:none\
+;stroke-width:0.\
+365\x22\x0a           \
+id=\x22path394\x22 />\x0a\
+        <path\x0a  \
+         d=\x22M 1.\
+1549722,56.63258\
+5 H 0.79725643 l\
+ -0.60995131,1.5\
+68446 c -0.07337\
+76,0.18803 -0.41\
+733511,1.073147 \
+-0.45861001,1.28\
+4108 h -0.004586\
+ C -0.31257979,5\
+9.301695 -0.5097\
+821,58.797224 -0\
+.551057,58.68715\
+8 l -0.7933953,-\
+2.054573 h -0.42\
+65073 l 1.252005\
+3,3.182753 h 0.4\
+2192121 z\x22\x0a     \
+      style=\x22fon\
+t-family:'Latin \
+Modern Sans';-in\
+kscape-font-spec\
+ification:'Latin\
+ Modern Sans';fi\
+ll:#000000;strok\
+e:none;stroke-wi\
+dth:0.365\x22\x0a     \
+      id=\x22path39\
+6\x22 />\x0a        <p\
+ath\x0a           d\
+=\x22m 3.7873934,59\
+.608964 -0.02751\
+7,-0.316441 c -0\
+.1329969,0.09172\
+ -0.2659938,0.17\
+8858 -0.4219212,\
+0.224719 -0.1467\
+552,0.05045 -0.3\
+072687,0.05503 -\
+0.4631961,0.0550\
+3 -0.2980965,0 -\
+0.5686764,-0.160\
+514 -0.7567065,-\
+0.394405 -0.2109\
+606,-0.27058 -0.\
+3118548,-0.60995\
+1 -0.3118548,-0.\
+953909 0,-0.3439\
+57 0.1008942,-0.\
+687915 0.3118548\
+,-0.958495 0.188\
+0301,-0.233891 0\
+.45861,-0.394404\
+ 0.7567065,-0.39\
+4404 0.137583,0 \
+0.2797521,0.0137\
+6 0.412749,0.055\
+03 0.137583,0.04\
+128 0.2659938,0.\
+110066 0.3852324\
+,0.192616 l 0.06\
+4205,-0.37606 C \
+3.5993633,56.687\
+618 3.4571942,56\
+.641757 3.310439\
+,56.61424 3.1682\
+699,56.58672 3.0\
+215147,56.57755 \
+2.8747595,56.577\
+55 c -0.4035768,\
+0 -0.7750509,0.1\
+83444 -1.0456308\
+,0.481541 -0.284\
+3382,0.321027 -0\
+.4310934,0.73836\
+2 -0.4310934,1.1\
+64869 0,0.426508\
+ 0.1467552,0.843\
+843 0.4310934,1.\
+160284 0.2705799\
+,0.298096 0.6420\
+54,0.48154 1.045\
+6308,0.48154 0.1\
+605135,0 0.32102\
+7,-0.0046 0.4769\
+544,-0.05045 0.1\
+559274,-0.04127 \
+0.2980965,-0.123\
+825 0.4356795,-0\
+.206374 z\x22\x0a     \
+      style=\x22fon\
+t-family:'Latin \
+Modern Sans';-in\
+kscape-font-spec\
+ification:'Latin\
+ Modern Sans';fi\
+ll:#000000;strok\
+e:none;stroke-wi\
+dth:0.365\x22\x0a     \
+      id=\x22path39\
+8\x22 />\x0a      </g>\
+\x0a    </g>\x0a  </g>\
+\x0a</svg>\x0a\
 \x00\x00\x0aV\
 <\
 ?xml version=\x221.\
@@ -2687,6 +3026,10 @@ qt_resource_name = b"\
 \x07%7\xc7\
 \x00s\
 \x00t\x00o\x00r\x00a\x00g\x00e\x00.\x00s\x00v\x00g\
+\x00\x07\
+\x0a\xc6Z'\
+\x00s\
+\x00v\x00c\x00.\x00s\x00v\x00g\
 \x00\x11\
 \x06\x10\x0a\xe7\
 \x00s\
@@ -2711,30 +3054,32 @@ qt_resource_name = b"\
 "
 
 qt_resource_struct = b"\
-\x00\x00\x00\x00\x00\x02\x00\x00\x00\x0e\x00\x00\x00\x01\
+\x00\x00\x00\x00\x00\x02\x00\x00\x00\x0f\x00\x00\x00\x01\
 \x00\x00\x00\x00\x00\x00\x00\x00\
 \x00\x00\x00\xa8\x00\x00\x00\x00\x00\x01\x00\x001w\
 \x00\x00\x01\x8c\xd6\xec\x89\xcb\
 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
 \x00\x00\x01\x8c\xd6\xb8\xb5D\
-\x00\x00\x01\x8e\x00\x00\x00\x00\x00\x01\x00\x00\x96\xe5\
+\x00\x00\x01\xa2\x00\x00\x00\x00\x00\x01\x00\x00\xab\xf2\
 \x00\x00\x01\x8c\xe4\xd8b}\
-\x00\x00\x01X\x00\x00\x00\x00\x00\x01\x00\x00xc\
+\x00\x00\x01l\x00\x00\x00\x00\x00\x01\x00\x00\x8dp\
 \x00\x00\x01\x8c\xe4\xc9\x04\xd9\
 \x00\x00\x00$\x00\x00\x00\x00\x00\x01\x00\x00\x09\xbc\
 \x00\x00\x01\x8c\xd6\xe7\x5c\xf8\
-\x00\x00\x01\x12\x00\x00\x00\x00\x00\x01\x00\x00^\xa9\
+\x00\x00\x01&\x00\x00\x00\x00\x00\x01\x00\x00s\xb6\
 \x00\x00\x01\x8c\xe5\x19o?\
 \x00\x00\x00\xf6\x00\x00\x00\x00\x00\x01\x00\x00W\x0c\
 \x00\x00\x01\x8c\xe4\xd2&X\
-\x00\x00\x01:\x00\x01\x00\x00\x00\x01\x00\x00i\x03\
+\x00\x00\x01N\x00\x01\x00\x00\x00\x01\x00\x00~\x10\
 \x00\x00\x01\x89\x0f\x89\xde+\
 \x00\x00\x00\x8e\x00\x00\x00\x00\x00\x01\x00\x00'\xa9\
 \x00\x00\x01\x8c\xd7\x93\x80\xcf\
 \x00\x00\x00\xe0\x00\x01\x00\x00\x00\x01\x00\x00KS\
 \x00\x00\x01\x8c\xf1I\x88\x22\
-\x00\x00\x01v\x00\x01\x00\x00\x00\x01\x00\x00\x89\x83\
+\x00\x00\x01\x8a\x00\x01\x00\x00\x00\x01\x00\x00\x9e\x90\
 \x00\x00\x01\x8c\xf1MM\x8a\
+\x00\x00\x01\x12\x00\x00\x00\x00\x00\x01\x00\x00^\xa9\
+\x00\x00\x01\x94\xb2\x8c\xfa\x1d\
 \x00\x00\x00N\x00\x00\x00\x00\x00\x01\x00\x00\x159\
 \x00\x00\x01\x8c\xe5\x16\x9d#\
 \x00\x00\x00\xc8\x00\x00\x00\x00\x00\x01\x00\x00>\xa2\

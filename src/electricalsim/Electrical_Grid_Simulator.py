@@ -148,6 +148,13 @@ def main():
     addStorage_action.triggered.connect(graph.add_storage)
     addStorage_action.setIcon(qta.icon('mdi6.battery-medium'))
     main_window.toolBar.addAction(addStorage_action)
+
+    addFACTS_action = QtGui.QAction('addFACTS')
+    addFACTS_action.setText('FACTS')
+    addFACTS_action.setToolTip('Add a FACTS device')
+    addFACTS_action.triggered.connect(graph.add_facts)
+    addFACTS_action.setIcon(qta.icon('ph.flow-arrow'))
+    main_window.toolBar.addAction(addFACTS_action)
     
     addSwitch_action = QtGui.QAction('addSwitch')
     addSwitch_action.setText('Switch')
@@ -230,6 +237,18 @@ def main():
     # Adding Switch DataFrame from pandapower network for the first time:
     df_switch_widget = TableWidgetWithMenu(graph.net.switch, graph)
     main_window.layout_switch.addWidget(df_switch_widget)
+
+    # Adding SVC DataFrame from pandapower network for the first time:
+    df_svc_widget = TableWidgetWithMenu(graph.net.svc, graph)
+    main_window.layout_svc.addWidget(df_svc_widget)
+
+    # Adding TCSC DataFrame from pandapower network for the first time:
+    df_tcsc_widget = TableWidgetWithMenu(graph.net.tcsc, graph)
+    main_window.layout_tcsc.addWidget(df_tcsc_widget)
+
+    # Adding SSC DataFrame from pandapower network for the first time:
+    df_ssc_widget = TableWidgetWithMenu(graph.net.ssc, graph)
+    main_window.layout_ssc.addWidget(df_ssc_widget)
     
     main_window.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
     
@@ -521,6 +540,24 @@ def main():
             old_switch_table.setParent(None)
             df_switch_widget = TableWidgetWithMenu(graph.net.switch.copy(deep=True), graph)
             main_window.layout_switch.addWidget(df_switch_widget)
+
+            # Adding SVC DataFrame from pandapower network:
+            old_svc_table = main_window.layout_svc.itemAt(0).widget()
+            old_svc_table.setParent(None)
+            df_svc_widget = TableWidgetWithMenu(graph.net.svc.copy(deep=True), graph)
+            main_window.layout_svc.addWidget(df_svc_widget)
+
+            # Adding TCSC DataFrame from pandapower network:
+            old_tcsc_table = main_window.layout_tcsc.itemAt(0).widget()
+            old_tcsc_table.setParent(None)
+            df_tcsc_widget = TableWidgetWithMenu(graph.net.tcsc.copy(deep=True), graph)
+            main_window.layout_tcsc.addWidget(df_tcsc_widget)
+
+            # Adding SSC DataFrame from pandapower network:
+            old_ssc_table = main_window.layout_ssc.itemAt(0).widget()
+            old_ssc_table.setParent(None)
+            df_ssc_widget = TableWidgetWithMenu(graph.net.ssc.copy(deep=True), graph)
+            main_window.layout_ssc.addWidget(df_ssc_widget)
             
     main_window.toolBox.currentChanged.connect(page_changed_on_toolbox)
     graph.page_changed_on_toolbox = page_changed_on_toolbox
