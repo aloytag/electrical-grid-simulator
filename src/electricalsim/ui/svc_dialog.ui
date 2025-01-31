@@ -283,6 +283,9 @@
      </item>
      <item>
       <widget class="QLabel" name="label_6">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Lato','proxima-nova','Helvetica Neue','Arial','sans-serif'; font-size:16px; color:#404040; background-color:#fcfcfc;&quot;&gt;Used if the device is not controllable, otherwise it is the starting point in the power flow calculation.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Thyristor firing angle (degree):</string>
        </property>
@@ -294,7 +297,7 @@
      <item>
       <widget class="QDoubleSpinBox" name="thyristor_firing_angle_degree">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="minimumSize">
         <size>
@@ -495,8 +498,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>260</x>
-     <y>468</y>
+     <x>266</x>
+     <y>511</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -511,8 +514,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>328</x>
-     <y>468</y>
+     <x>334</x>
+     <y>511</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -523,16 +526,16 @@
   <connection>
    <sender>controllable</sender>
    <signal>clicked(bool)</signal>
-   <receiver>thyristor_firing_angle_degree</receiver>
-   <slot>setDisabled(bool)</slot>
+   <receiver>set_vm_pu</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>228</x>
-     <y>421</y>
+     <x>181</x>
+     <y>457</y>
     </hint>
     <hint type="destinationlabel">
-     <x>570</x>
-     <y>243</y>
+     <x>546</x>
+     <y>38</y>
     </hint>
    </hints>
   </connection>
