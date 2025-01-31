@@ -391,7 +391,8 @@ def main():
     component_menu = main_window.menubar.addMenu('Add component')
     component_actions = [addBus_action, addLine_action, addImpedance_action,
                          addTrafo_action, addGenerator_action, addGrid_action,
-                         addLoad_action, addStorage_action, addSwitch_action]
+                         addLoad_action, addStorage_action, addFACTS_action,
+                         addSwitch_action]
     for component in component_actions:
         component_menu.addAction(component)
         
