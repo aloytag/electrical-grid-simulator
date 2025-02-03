@@ -619,6 +619,11 @@ class PropertyChangedCmd(QtGui.QUndoCommand):
             if not svc_row.empty:
                 svc_index = svc_row.index[0]
                 self.graph.net.svc.loc[svc_index, 'in_service'] ^= True
+        elif self.node.type_=='SSCNode.SSCNode' and self.name=='disabled':
+            ssc_row = self.graph.net.ssc[self.graph.net.ssc['name']==self.node.name()]
+            if not ssc_row.empty:
+                ssc_index = ssc_row.index[0]
+                self.graph.net.ssc.loc[ssc_index, 'in_service'] ^= True
 
 
 def return_config(app_root_dir):

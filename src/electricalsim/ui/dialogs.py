@@ -811,6 +811,20 @@ def svc_dialog():
     return dialog
 
 
+def ssc_dialog():
+    """
+    Returns the SSC dialog.
+    """
+    ui_file = os.path.join(directory, 'ssc_dialog.ui')
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    
+    return dialog
+
+
 def network_settings_dialog():
     """
     Returns the network settings dialog.
@@ -3020,6 +3034,24 @@ class Settings_Dialog:
         layout_svc.addWidget(svc)
         layout_svc.addStretch()
         self.dialog.page_svc.setLayout(layout_svc)
+
+        # SSC page--------------------------------------------------------
+        ui_file_ssc = os.path.join(directory, 'ssc_dialog.ui')
+        ssc = return_qtwindow(ui_file_ssc)
+        ssc.buttonBox.setParent(None)  # remove the button box
+        
+        settings = self.config['ssc']
+        ssc.r_ohm.setValue(float(settings['r_ohm']))
+        ssc.x_ohm.setValue(float(settings['x_ohm']))
+        ssc.set_vm_pu.setValue(float(settings['set_vm_pu']))
+        ssc.vm_internal_pu.setValue(float(settings['vm_internal_pu']))
+        ssc.va_internal_degree.setValue(float(settings['va_internal_degree']))
+        ssc.controllable.setChecked(True if settings['controllable']=='True' else False)
+        
+        layout_ssc = QtWidgets.QVBoxLayout()
+        layout_ssc.addWidget(ssc)
+        layout_ssc.addStretch()
+        self.dialog.page_ssc.setLayout(layout_ssc)
         
         # Switch page------------------------------------------------------
         ui_file_switch = os.path.join(directory, 'switch_dialog.ui')
@@ -3371,6 +3403,14 @@ class Settings_Dialog:
             self.config['svc']['min_angle_degree'] = str(svc.min_angle_degree.value())
             self.config['svc']['max_angle_degree'] = str(svc.max_angle_degree.value())
             self.config['svc']['controllable'] = 'True' if svc.controllable.isChecked() else 'False'
+
+            # SSC page--------------------------------------------------------------
+            self.config['ssc']['r_ohm'] = str(ssc.r_ohm.value())
+            self.config['ssc']['x_ohm'] = str(ssc.x_ohm.value())
+            self.config['ssc']['set_vm_pu'] = str(ssc.set_vm_pu.value())
+            self.config['ssc']['vm_internal_pu'] = str(ssc.vm_internal_pu.value())
+            self.config['ssc']['va_internal_degree'] = str(ssc.va_internal_degree.value())
+            self.config['ssc']['controllable'] = 'True' if ssc.controllable.isChecked() else 'False'
             
             # Switch page------------------------------------------------------------
             self.config['switch']['closed'] = 'True' if switch.closed.isChecked() else 'False'
@@ -3407,7 +3447,8 @@ class Settings_Dialog:
                               'Asymmetric static generator', 'External grid',
                               'Symmetric load', 'Asymmetric load', 'Shunt element',
                               'Motor', 'Ward equivalent', 'Extended ward equivalent',
-                              'Storage', 'Static Var Compensator (SVC)', 'Switch']
+                              'Storage', 'Static Var Compensator (SVC)',
+                              'Static Synchronous Compensator (SSC)', 'Switch']
         model_view2 = QtGui.QStandardItemModel()
         self.dialog.listView_components.setModel(model_view2)
         for name in list_view2_options:

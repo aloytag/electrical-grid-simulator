@@ -414,6 +414,7 @@
        <widget class="QWidget" name="page_xward"/>
        <widget class="QWidget" name="page_storage"/>
        <widget class="QWidget" name="page_svc"/>
+       <widget class="QWidget" name="page_ssc"/>
        <widget class="QWidget" name="page_switch"/>
       </widget>
      </item>
