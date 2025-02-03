@@ -16,5 +16,6 @@
         <file>3w-transformer.svg</file>
         <file>svc.svg</file>
         <file>ssc.svg</file>
+        <file>tcsc.svg</file>
     </qresource>
 </RCC>

@@ -2307,3 +2307,69 @@ class SSCNode(BaseNode2):
         except IndexError:
             connections = len(self.connected_input_nodes()[self.input_ports()[0]])
         return connections
+
+
+class TCSCNode(BaseNode2):
+    __identifier__ = 'TCSCNode'
+    NODE_NAME = 'TCSCNode'
+    
+    def __init__(self):
+        super().__init__()
+        self.input_port = self.add_input(name='from')
+        self.output_port = self.add_output(name='to', multi_output=False)
+        self.set_color(255, 170, 127)
+        
+        self.electrical_properties = ('x_l_ohm', 'x_cvar_ohm', 'set_p_to_mw',
+                                      'thyristor_firing_angle_degree',
+                                      'min_angle_degree', 'controllable',
+                                      'max_angle_degree')
+        
+        for name in self.electrical_properties:
+            if name!='set_p_to_mw':
+                self.create_property(name, None)
+                
+        self.create_property('tcsc_index', None)
+        
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        # icon_path = os.path.join(icons_dir, 'demand.svg')
+        # style = f"image: url('{icon_path}')"
+        style = "image: url(:/tcsc.svg);"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
+            
+        # add custom widget to node with "node.view" as the parent.
+        self.p_mw_widget = QSpinBoxWrapper(self.view, widget_type=QtWidgets.QDoubleSpinBox())
+        self.p_mw_widget.set_name('set_p_to_mw')
+        self.p_mw_widget.set_label('P (MW)')
+        # self.p_mw_widget.set_custom_widget(QtWidgets.QDoubleSpinBox())
+        # self.p_mw_widget.get_custom_widget().valueChanged.connect(self.set_p_to_mw)
+        self.p_mw_widget.get_custom_widget().setDecimals(4)
+        self.p_mw_widget.get_custom_widget().setMinimum(-5000.0)
+        self.p_mw_widget.get_custom_widget().setMaximum(5000.0)
+        self.add_custom_widget(self.p_mw_widget, tab=None)  # Adds the 'set_p_to_mw' property.
+        self.p_mw_widget.get_custom_widget().valueChanged.connect(self.update_p_to_mw)
+            
+    def update_p_to_mw(self, value):
+        """
+        Updates 'set_p_to_mw' property when changing the power transmission widget from the node.
+        
+        Updates the 'set_p_to_mw' parameter on the pandapower network too.
+        """
+        self.set_property('set_p_to_mw', value, push_undo=False)
+        
+        tcsc_index = self.get_property('tcsc_index')
+        if tcsc_index is not None and self.connected_to_network():
+            self.graph.net.tcsc.loc[tcsc_index, 'set_p_to_mw'] = value
+            
+    def connected_to_network(self):
+        """
+        Returns True if the TCSC node is connected to the network (to buses).
+        Returns False otherwise.
+        """
+        inputs_connected = len(self.connected_input_nodes()[self.input_port])
+        outputs_connected = len(self.connected_output_nodes()[self.output_port])
+        
+        return inputs_connected * outputs_connected

@@ -825,6 +825,31 @@ def ssc_dialog():
     return dialog
 
 
+def tcsc_dialog():
+    """
+    Returns the TCSC dialog.
+    """
+    ui_file = os.path.join(directory, 'tcsc_dialog.ui')
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+    
+    def min_angle_degree_changed(value):
+        dialog.thyristor_firing_angle_degree.setMinimum(value)
+        dialog.max_angle_degree.setMinimum(value)
+        
+    def max_angle_degree_changed(value):
+        dialog.thyristor_firing_angle_degree.setMaximum(value)
+        dialog.min_angle_degree.setMaximum(value)
+    
+    dialog.min_angle_degree.valueChanged.connect(min_angle_degree_changed)
+    dialog.max_angle_degree.valueChanged.connect(max_angle_degree_changed)
+    
+    return dialog
+
+
 def network_settings_dialog():
     """
     Returns the network settings dialog.
@@ -885,6 +910,10 @@ def connecting_buses_dialog():
         dialog.option = 'stdtrafo'
         dialog.accept()
 
+    def tcsc():
+        dialog.option = 'tcsc'
+        dialog.accept()
+
     def switch():
         dialog.option = 'switch'
         dialog.accept()
@@ -925,6 +954,11 @@ def connecting_buses_dialog():
     dialog.btnStdTrafo.clicked.connect(stdtrafo)
     dialog.btnStdTrafo.setIconSize(icon_size)
 
+    dialog.btnTCSC.setIcon(qta.icon('ph.flow-arrow'))
+    dialog.btnTCSC.setText('Thyristor-Controlled Series Capacitor (TCSC)')
+    dialog.btnTCSC.clicked.connect(tcsc)
+    dialog.btnTCSC.setIconSize(icon_size)
+
     dialog.btnSwitch.setIcon(qta.icon('mdi6.electric-switch'))
     dialog.btnSwitch.setText('Switch')
     dialog.btnSwitch.clicked.connect(switch)
@@ -933,7 +967,7 @@ def connecting_buses_dialog():
     # dialog.widget_container.setStyleSheet('border: 1px solid #d3d3d3')
     # dialog.widget_container.setStyleSheet('QWidget {border-left: 10px solid blue;}')
     # dialog.widget_container.setStyleSheet('background-color: #d3d3d3')
-    dialog.setStyleSheet('font-size: 20px')
+    dialog.setStyleSheet('font-size: 16px')
     dialog.label.setStyleSheet('font-size: 16px')
 
     return dialog
@@ -3052,6 +3086,36 @@ class Settings_Dialog:
         layout_ssc.addWidget(ssc)
         layout_ssc.addStretch()
         self.dialog.page_ssc.setLayout(layout_ssc)
+
+        # TCSC page--------------------------------------------------------
+        ui_file_tcsc = os.path.join(directory, 'tcsc_dialog.ui')
+        tcsc = return_qtwindow(ui_file_tcsc)
+        tcsc.buttonBox.setParent(None)  # remove the button box
+        
+        def min_angle_degree_changed(value):
+            tcsc.thyristor_firing_angle_degree.setMinimum(value)
+            tcsc.max_angle_degree.setMinimum(value)
+            
+        def max_angle_degree_changed(value):
+            tcsc.thyristor_firing_angle_degree.setMaximum(value)
+            tcsc.min_angle_degree.setMaximum(value)
+        
+        tcsc.min_angle_degree.valueChanged.connect(min_angle_degree_changed)
+        tcsc.max_angle_degree.valueChanged.connect(max_angle_degree_changed)
+        
+        settings = self.config['tcsc']
+        tcsc.x_l_ohm.setValue(float(settings['x_l_ohm']))
+        tcsc.x_cvar_ohm.setValue(float(settings['x_cvar_ohm']))
+        tcsc.set_p_to_mw.setValue(float(settings['set_p_to_mw']))
+        svc.thyristor_firing_angle_degree.setValue(float(settings['thyristor_firing_angle_degree']))
+        tcsc.min_angle_degree.setValue(float(settings['min_angle_degree']))
+        tcsc.max_angle_degree.setValue(float(settings['max_angle_degree']))
+        tcsc.controllable.setChecked(True if settings['controllable']=='True' else False)
+        
+        layout_tcsc = QtWidgets.QVBoxLayout()
+        layout_tcsc.addWidget(tcsc)
+        layout_tcsc.addStretch()
+        self.dialog.page_tcsc.setLayout(layout_tcsc)
         
         # Switch page------------------------------------------------------
         ui_file_switch = os.path.join(directory, 'switch_dialog.ui')
@@ -3412,6 +3476,15 @@ class Settings_Dialog:
             self.config['ssc']['va_internal_degree'] = str(ssc.va_internal_degree.value())
             self.config['ssc']['controllable'] = 'True' if ssc.controllable.isChecked() else 'False'
             
+            # TCSC page--------------------------------------------------------------
+            self.config['tcsc']['x_l_ohm'] = str(tcsc.x_l_ohm.value())
+            self.config['tcsc']['x_cvar_ohm'] = str(tcsc.x_cvar_ohm.value())
+            self.config['tcsc']['set_p_to_mw'] = str(tcsc.set_p_to_mw.value())
+            self.config['tcsc']['thyristor_firing_angle_degree'] = str(tcsc.thyristor_firing_angle_degree.value())
+            self.config['tcsc']['min_angle_degree'] = str(tcsc.min_angle_degree.value())
+            self.config['tcsc']['max_angle_degree'] = str(tcsc.max_angle_degree.value())
+            self.config['tcsc']['controllable'] = 'True' if tcsc.controllable.isChecked() else 'False'
+            
             # Switch page------------------------------------------------------------
             self.config['switch']['closed'] = 'True' if switch.closed.isChecked() else 'False'
             self.config['switch']['type'] = switch_type_options[switch.type.currentIndex()]
@@ -3448,6 +3521,7 @@ class Settings_Dialog:
                               'Symmetric load', 'Asymmetric load', 'Shunt element',
                               'Motor', 'Ward equivalent', 'Extended ward equivalent',
                               'Storage', 'Static Var Compensator (SVC)',
+                              'Thyristor-Controlled Series Capacitor (TCSC)',
                               'Static Synchronous Compensator (SSC)', 'Switch']
         model_view2 = QtGui.QStandardItemModel()
         self.dialog.listView_components.setModel(model_view2)

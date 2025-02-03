@@ -23,7 +23,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  SGenNode, ASGenNode, ExtGridNode,
                                  LoadNode, ALoadNode, ShuntNode, MotorNode,
                                  WardNode, XWardNode, StorageNode,
-                                 SwitchNode, SVCNode, SSCNode)
+                                 SwitchNode, SVCNode, SSCNode, TCSCNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
                            simulate_ESC_key, four_ports_on_buses,
                            check_new_version)  # , show_WIP)
@@ -40,7 +40,8 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
                         choose_facts_dialog, svc_dialog, ssc_dialog,
-                        network_settings_dialog, Settings_Dialog,
+                        tcsc_dialog, network_settings_dialog,
+                        Settings_Dialog,
                         connecting_buses_dialog, search_node_dialog,
                         export_dialog)
 from extensions.extension_classes import ExtensionWorker
@@ -72,7 +73,8 @@ allowed_connections = (
     {'BusNode.BusNode', 'XWardNode.XWardNode'},
     {'BusNode.BusNode', 'StorageNode.StorageNode'},
     {'BusNode.BusNode', 'SVCNode.SVCNode'},
-    {'BusNode.BusNode', 'SSCNode.SSCNode'}
+    {'BusNode.BusNode', 'SSCNode.SSCNode'},
+    {'BusNode.BusNode', 'TCSCNode.TCSCNode'}
         )
 
 
@@ -103,7 +105,7 @@ class ElectricalGraph(NodeGraph):
                              SGenNode, ASGenNode, ExtGridNode,
                              LoadNode, ALoadNode, ShuntNode, MotorNode,
                              WardNode, XWardNode, StorageNode,
-                             SwitchNode, SVCNode, SSCNode])
+                             SwitchNode, SVCNode, SSCNode, TCSCNode])
 
         settings = self.config['network']
         self.net = pp.create_empty_network(settings['name'],
@@ -1677,10 +1679,14 @@ class ElectricalGraph(NodeGraph):
         """
         dialog = choose_facts_dialog()
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        if dialog.exec():
-            center_coordinates = self.viewer().scene_center()
 
-            if dialog.radioSVC.isChecked():
+        pos = kwargs.get('pos')
+        option = kwargs.get('option')
+
+        if pos is not None or dialog.exec():
+            center_coordinates = pos if pos is not None else self.viewer().scene_center()
+
+            if option is None and dialog.radioSVC.isChecked():
                 node = self.create_node('SVCNode.SVCNode', name='SVC 0',
                                         pos=center_coordinates,
                                         push_undo=False)
@@ -1692,23 +1698,29 @@ class ElectricalGraph(NodeGraph):
                         node.set_property(name, False, push_undo=False)  # bool
                     else:
                         node.set_property(name, float(value), push_undo=False)  # float
+                
+                self.set_vertical_layout_prop(node)
+                node.set_layout_direction(1)
 
-            elif dialog.radioTCSC.isChecked():
-                # node = self.create_node('ALoadNode.ALoadNode',
-                #                         name='Asymmetric Load 0',
-                #                         pos=center_coordinates,
-                #                         push_undo=False)
-                # settings = self.config['asymmetric_load']
-                # for name, value in settings.items():
-                #     if name=='type':
-                #         node.set_property(name, value, push_undo=False)  # str
-                #     else:
-                #         node.set_property(name, float(value), push_undo=False)  # float
-                self.show_notification(title='Not yet implemented',
-                                       message='TCSC component is not yet implemented.',
-                                       duration=5000, type_='ERROR')
+            elif option=='tcsc' or dialog.radioTCSC.isChecked():
+                node = self.create_node('TCSCNode.TCSCNode', name='TCSC 0',
+                                        pos=center_coordinates,
+                                        push_undo=False)
+                settings = self.config['tcsc']
+                for name, value in settings.items():
+                    if name=='controllable' and value=='True':
+                        node.set_property(name, True, push_undo=False)  # bool
+                    elif name=='controllable' and value=='False':
+                        node.set_property(name, False, push_undo=False)  # bool
+                    else:
+                        node.set_property(name, float(value), push_undo=False)  # float
+                # self.show_notification(title='Not yet implemented',
+                #                        message='TCSC component is not yet implemented.',
+                #                        duration=5000, type_='ERROR')
+                
+                self.set_horizontal_layout_prop(node)
 
-            elif dialog.radioSSC.isChecked():
+            elif option is None and dialog.radioSSC.isChecked():
                 node = self.create_node('SSCNode.SSCNode', name='SSC 0',
                                         pos=center_coordinates,
                                         push_undo=False)
@@ -1720,15 +1732,25 @@ class ElectricalGraph(NodeGraph):
                         node.set_property(name, False, push_undo=False)  # bool
                     else:
                         node.set_property(name, float(value), push_undo=False)  # float
-                
 
-            if 'node' in locals():
                 self.set_vertical_layout_prop(node)
                 node.set_layout_direction(1)
-                theme = self.config['general']['theme']
-                if theme=='light':
-                    node.model.set_property('text_color', (0, 0, 0, 255))  # black
-                    node.update()
+                
+
+            # if 'node' in locals():
+            # self.set_vertical_layout_prop(node)
+            # node.set_layout_direction(1)
+            theme = self.config['general']['theme']
+            if theme=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                node.update()
+
+        if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
+            i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
+            i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
+            node.set_input(0, node_from.output(i_port_from), push_undo=False)  # node.set_input(0, node_from.output(0), push_undo=False)
+            node.set_output(0, node_to.input(i_port_to), push_undo=False)  # node.set_output(0, node_to.input(0), push_undo=False)
+            return node
 
         self.update_bus_ports()
 
@@ -1869,6 +1891,8 @@ class ElectricalGraph(NodeGraph):
                     self.remove_svc(node)
                 elif node.type_=='SSCNode.SSCNode':
                     self.remove_ssc(node)
+                elif node.type_=='TCSCNode.TCSCNode':
+                    self.remove_tcsc(node)
 
         for pipe in connected:
             # print('Connected:', pipe)
@@ -2137,6 +2161,45 @@ class ElectricalGraph(NodeGraph):
                                 except errors.NodePropertyError:
                                     node_from.set_property('impedance_index', impedance_index, push_undo=False)
                                 # print(self.net.impedance)
+
+                    elif dialog.option=='tcsc':
+                        pos0 = node_from.pos()
+                        pos1 = node_to.pos()
+                        pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        node_from = self.add_facts(pos=pos,
+                                                   option='tcsc',
+                                                   node_from=node_from,
+                                                   node_to=node_to,
+                                                   port_from=port_from,
+                                                   port_to=port_to)
+                        
+                        inputs_connected = node_from.connected_input_nodes()
+                        # print(inputs_connected)
+                        if len(inputs_connected)==1:
+                            list_of_connected_nodes = list(inputs_connected.values())[0]
+                            if not list_of_connected_nodes:
+                                return
+                            n = list_of_connected_nodes[0]
+                            type_ = n.type_
+                            bus_index_from = n.get_property('bus_index')
+                            bus_index_to = node_to.get_property('bus_index')
+                            if type_=='BusNode.BusNode':
+                                tcsc_index = pp.create.create_tcsc(self.net, from_bus=bus_index_from,
+                                                           to_bus=bus_index_to,
+                                                           x_l_ohm=node_from.get_property('x_l_ohm'),
+                                                           x_cvar_ohm=node_from.get_property('x_cvar_ohm'),
+                                                           set_p_to_mw=node_from.get_property('set_p_to_mw'),
+                                                           thyristor_firing_angle_degree=node_from.get_property('thyristor_firing_angle_degree'),
+                                                           name=node_from.name(),
+                                                           controllable=node_from.get_property('controllable'),
+                                                           in_service=not node_from.disabled(),
+                                                           min_angle_degree=node_from.get_property('min_angle_degree'),
+                                                           max_angle_degree=node_from.get_property('max_angle_degree'))
+                                try:
+                                    node_from.create_property('tcsc_index', tcsc_index)
+                                except errors.NodePropertyError:
+                                    node_from.set_property('tcsc_index', tcsc_index, push_undo=False)
+                                # print(self.net.tcsc)
 
                     elif dialog.option=='switch':
                         self.clear_selection()
@@ -3143,6 +3206,65 @@ class ElectricalGraph(NodeGraph):
                     node_to.set_property('ssc_index', ssc_index, push_undo=False)
                 # print(self.net.ssc)
 
+            
+            # Adding a TCSC to pandapower network
+            if node_from.type_=='TCSCNode.TCSCNode' and node_to.type_=='BusNode.BusNode':
+                inputs_connected = node_from.connected_input_nodes()
+                # print(inputs_connected)
+                if len(inputs_connected)==1:
+                    list_of_connected_nodes = list(inputs_connected.values())[0]
+                    if not list_of_connected_nodes:
+                        return
+                    n = list_of_connected_nodes[0]
+                    type_ = n.type_
+                    bus_index_from = n.get_property('bus_index')
+                    bus_index_to = node_to.get_property('bus_index')
+                    if type_=='BusNode.BusNode':
+                        tcsc_index = pp.create.create_tcsc(self.net, from_bus=bus_index_from,
+                                                           to_bus=bus_index_to,
+                                                           x_l_ohm=node_from.get_property('x_l_ohm'),
+                                                           x_cvar_ohm=node_from.get_property('x_cvar_ohm'),
+                                                           set_p_to_mw=node_from.get_property('set_p_to_mw'),
+                                                           thyristor_firing_angle_degree=node_from.get_property('thyristor_firing_angle_degree'),
+                                                           name=node_from.name(),
+                                                           controllable=node_from.get_property('controllable'),
+                                                           in_service=not node_from.disabled(),
+                                                           min_angle_degree=node_from.get_property('min_angle_degree'),
+                                                           max_angle_degree=node_from.get_property('max_angle_degree'))
+                        try:
+                            node_from.create_property('tcsc_index', tcsc_index)
+                        except errors.NodePropertyError:
+                            node_from.set_property('tcsc_index', tcsc_index, push_undo=False)
+                        # print(self.net.tcsc)
+
+            elif node_from.type_=='BusNode.BusNode' and node_to.type_=='TCSCNode.TCSCNode':
+                outputs_connected = node_to.connected_output_nodes()
+                if len(outputs_connected)==1:
+                    list_of_connected_nodes = list(outputs_connected.values())[0]
+                    if not list_of_connected_nodes:
+                        return
+                    n = list_of_connected_nodes[0]
+                    type_ = n.type_
+                    bus_index_to = n.get_property('bus_index')
+                    bus_index_from = node_from.get_property('bus_index')
+                    if type_=='BusNode.BusNode':
+                        tcsc_index = pp.create.create_tcsc(self.net, from_bus=bus_index_from,
+                                                           to_bus=bus_index_to,
+                                                           x_l_ohm=node_to.get_property('x_l_ohm'),
+                                                           x_cvar_ohm=node_to.get_property('x_cvar_ohm'),
+                                                           set_p_to_mw=node_to.get_property('set_p_to_mw'),
+                                                           thyristor_firing_angle_degree=node_to.get_property('thyristor_firing_angle_degree'),
+                                                           name=node_to.name(),
+                                                           controllable=node_to.get_property('controllable'),
+                                                           in_service=not node_to.disabled(),
+                                                           min_angle_degree=node_to.get_property('min_angle_degree'),
+                                                           max_angle_degree=node_to.get_property('max_angle_degree'))
+                        try:
+                            node_to.create_property('tcsc_index', tcsc_index)
+                        except errors.NodePropertyError:
+                            node_to.set_property('tcsc_index', tcsc_index, push_undo=False)
+                        # print(self.net.tcsc)
+
     def open_options_dialog(self, node):
         """
         Executed function when a node is double clicked.
@@ -3193,6 +3315,8 @@ class ElectricalGraph(NodeGraph):
             self.svc_options(node)
         elif node.type_=='SSCNode.SSCNode':
             self.ssc_options(node)
+        elif node.type_=='TCSCNode.TCSCNode':
+            self.tcsc_options(node)
 
     def bus_options(self, node):
         """
@@ -4517,6 +4641,43 @@ class ElectricalGraph(NodeGraph):
 
             self.session_change_warning()
 
+    def tcsc_options(self, node):
+        """
+        Executed function when a TCSC node is double clicked.
+        """
+        dialog = tcsc_dialog()
+        dialog.setWindowTitle(node.get_property('name'))
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+
+        dialog.set_p_to_mw.setValue(node.get_property('set_p_to_mw'))
+        dialog.x_l_ohm.setValue(node.get_property('x_l_ohm'))
+        dialog.x_cvar_ohm.setValue(node.get_property('x_cvar_ohm'))
+        dialog.thyristor_firing_angle_degree.setValue(node.get_property('thyristor_firing_angle_degree'))
+        dialog.min_angle_degree.setValue(node.get_property('min_angle_degree'))
+        dialog.max_angle_degree.setValue(node.get_property('max_angle_degree'))
+
+        dialog.controllable.setChecked(node.get_property('controllable'))
+
+        if dialog.exec():
+            node.set_property('set_p_to_mw', np.round(dialog.set_p_to_mw.value(), 4), push_undo=False)
+            node.set_property('x_l_ohm', np.round(dialog.x_l_ohm.value(), 5), push_undo=False)
+            node.set_property('x_cvar_ohm', np.round(dialog.x_cvar_ohm.value(), 5), push_undo=False)
+            node.set_property('thyristor_firing_angle_degree',
+                              np.round(dialog.thyristor_firing_angle_degree.value(), 2), push_undo=False)
+            node.set_property('min_angle_degree', np.round(dialog.min_angle_degree.value(), 2), push_undo=False)
+            node.set_property('max_angle_degree', np.round(dialog.max_angle_degree.value(), 2), push_undo=False)
+
+            node.set_property('controllable', dialog.controllable.isChecked(), push_undo=False)
+
+            node.p_mw_widget.get_custom_widget().setValue(node.get_property('set_p_to_mw'))
+
+            tcsc_index = node.get_property('tcsc_index')
+            if tcsc_index is not None and node.connected_to_network():
+                for name in node.electrical_properties:
+                    self.net.tcsc.loc[tcsc_index, name] = node.get_property(name)
+
+            self.session_change_warning()
+
     def _on_node_name_changed2(self, node_id, name):
         """
         Executed when a node name is changed.
@@ -4606,6 +4767,10 @@ class ElectricalGraph(NodeGraph):
             ssc_index = node.get_property('ssc_index')
             if ssc_index is not None:
                 self.net.ssc.loc[ssc_index, 'name'] = name
+        elif type_=='TCSCNode.TCSCNode':
+            tcsc_index = node.get_property('tcsc_index')
+            if tcsc_index is not None:
+                self.net.tcsc.loc[tcsc_index, 'name'] = name
         
     def remove_bus(self, node):
         """
@@ -4885,6 +5050,18 @@ class ElectricalGraph(NodeGraph):
             ssc_index = node.get_property('ssc_index')
             if ssc_index is not None:
                 pp.drop_elements_simple(self.net, 'ssc', ssc_index)
+
+    def remove_tcsc(self, node):
+        """
+        Remove an TCSC from the pandapower network when its corresponding
+        node in the graph is removed.
+        """
+        tcsc_name = node.get_property('name')
+        tcsc_row = self.net.tcsc[self.net.tcsc['name'] == tcsc_name]
+        if not tcsc_row.empty:
+            tcsc_index = node.get_property('tcsc_index')
+            if tcsc_index is not None:
+                pp.drop_elements_simple(self.net, 'tcsc', tcsc_index)
 
     def remove_switch(self, node, directly_removed=True):
         """
