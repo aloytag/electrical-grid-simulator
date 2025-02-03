@@ -1722,12 +1722,13 @@ class ElectricalGraph(NodeGraph):
                         node.set_property(name, float(value), push_undo=False)  # float
                 
 
-            self.set_vertical_layout_prop(node)
-            node.set_layout_direction(1)
-            theme = self.config['general']['theme']
-            if theme=='light':
-                node.model.set_property('text_color', (0, 0, 0, 255))  # black
-                node.update()
+            if 'node' in locals():
+                self.set_vertical_layout_prop(node)
+                node.set_layout_direction(1)
+                theme = self.config['general']['theme']
+                if theme=='light':
+                    node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                    node.update()
 
         self.update_bus_ports()
 
