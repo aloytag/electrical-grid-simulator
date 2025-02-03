@@ -2129,7 +2129,7 @@ class SVCNode(BaseNode2):
         self.input_port.port_deletion_allowed = True
         self.output_port = None
         self.set_port_deletion_allowed(True)
-        self.set_color(255, 170, 127)
+        self.set_color(206, 145, 115)
         
         fliped = self.get_property('fliped')
         if fliped is not None:
@@ -2224,7 +2224,7 @@ class SSCNode(BaseNode2):
         self.input_port.port_deletion_allowed = True
         self.output_port = None
         self.set_port_deletion_allowed(True)
-        self.set_color(255, 170, 127)
+        self.set_color(206, 145, 115)
         
         fliped = self.get_property('fliped')
         if fliped is not None:
@@ -2317,7 +2317,7 @@ class TCSCNode(BaseNode2):
         super().__init__()
         self.input_port = self.add_input(name='from')
         self.output_port = self.add_output(name='to', multi_output=False)
-        self.set_color(255, 170, 127)
+        self.set_color(206, 145, 115)
         
         self.electrical_properties = ('x_l_ohm', 'x_cvar_ohm', 'set_p_to_mw',
                                       'thyristor_firing_angle_degree',
@@ -2332,7 +2332,7 @@ class TCSCNode(BaseNode2):
         
         self.image_widget = ImageWrapper(self.view)
         self.image_widget.set_name('image')
-        # icon_path = os.path.join(icons_dir, 'demand.svg')
+        # icon_path = os.path.join(icons_dir, 'tcsc.svg')
         # style = f"image: url('{icon_path}')"
         style = "image: url(:/tcsc.svg);"
         self.image_widget.set_value(style)
