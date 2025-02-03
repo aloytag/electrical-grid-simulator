@@ -166,6 +166,7 @@ def select_all_nodes(graph):
     Select all nodes.
     """
     graph.select_all()
+    graph.update_bus_ports()
 
 
 def clear_node_selection(graph):
