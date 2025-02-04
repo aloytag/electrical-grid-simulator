@@ -261,12 +261,11 @@ If you prefer to use the mouse instead of keyboard shortcuts, just right click o
 </p>
 </br>
 
-<p align = "center">
-<img src="./img/fuzzy_search2.png" alt="Fuzzy search" width="350">
+![Fuzzy search](img/fuzzy_search2.png)
 <p align = "center">
 <i>Fuzzy search</i>
 </p>
-</br>
+</br></br>
 
 ![Context menu](img/14_Context_menu.png)
 <p align = "center">
