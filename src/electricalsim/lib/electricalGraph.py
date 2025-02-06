@@ -5389,7 +5389,7 @@ class ElectricalGraph(NodeGraph):
         if VERSION.find('dev')!=-1:
             self.show_notification(title='Updates',
                                    message='This is a development version.',
-                                   duration=5000, type_='INFORMATION')
+                                   duration=10000, type_='INFORMATION')
             return
         
         self.executor = ThreadPoolExecutor(max_workers=1)
