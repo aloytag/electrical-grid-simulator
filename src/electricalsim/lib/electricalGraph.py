@@ -17,6 +17,7 @@ from NodeGraphQt6.base.commands import PortConnectedCmd
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
 from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 
+from version import VERSION
 from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  ImpedanceNode, TrafoNode, StdTrafoNode,
                                  Trafo3wNode, StdTrafo3wNode, GenNode,
@@ -159,12 +160,13 @@ class ElectricalGraph(NodeGraph):
         self._viewer.setViewportUpdateMode(QtWidgets.QGraphicsView.BoundingRectViewportUpdate)
 
         if self.config['general']['check_for_updates'] == 'True':
-            self.executor = ThreadPoolExecutor(max_workers=1)
-            self.signals = WorkerSignals()
-            self.signals.update_check_done.connect(self.update_check_ended)
-            QtCore.QCoreApplication.processEvents()
-            future = self.executor.submit(check_new_version)  # Check for updates in a secondary thread
-            future.add_done_callback(self._callback_updates_finished)
+            if VERSION.find('dev')==-1:
+                self.executor = ThreadPoolExecutor(max_workers=1)
+                self.signals = WorkerSignals()
+                self.signals.update_check_done.connect(self.update_check_ended)
+                QtCore.QCoreApplication.processEvents()
+                future = self.executor.submit(check_new_version)  # Check for updates in a secondary thread
+                future.add_done_callback(self._callback_updates_finished)
 
     def set_file_name_status(self, file_name=None):
         """
@@ -5384,6 +5386,12 @@ class ElectricalGraph(NodeGraph):
         """
         Check for updates.
         """
+        if VERSION.find('dev')!=-1:
+            self.show_notification(title='Updates',
+                                   message='This is a development version.',
+                                   duration=5000, type_='INFORMATION')
+            return
+        
         self.executor = ThreadPoolExecutor(max_workers=1)
         self.signals = WorkerSignals()
         self.signals.update_check_done.connect(self.update_check_ended)

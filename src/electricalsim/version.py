@@ -1,9 +1,21 @@
+import os
+import tomllib
 from importlib.metadata import version, PackageNotFoundError
 
-try:
-    VERSION = version('electricalsim')
-except PackageNotFoundError:
-    VERSION = 'development version'
+directory = os.path.dirname(__file__)
+root_dir, _ = os.path.split(os.path.split(directory)[0])
+pyproject = os.path.join(root_dir, 'pyproject.toml')
+
+if os.path.exists(pyproject):
+    with open(pyproject, 'rb') as f:
+        data = tomllib.load(f)
+    version_ = data['project']['version']
+    VERSION = version_ + ' (dev version)'
+else:
+    try:
+        VERSION = version('electricalsim')
+    except PackageNotFoundError:
+        VERSION = 'development version'
 
 DATE = '2024-02-06'
 AUTHOR = 'Dr. Ing. Ariel S. Loyarte'
