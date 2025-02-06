@@ -49,6 +49,15 @@ def main():
     qdarktheme.enable_hi_dpi()
     app = QtWidgets.QApplication(sys.argv)
 
+    # Better font for flatpak app:
+    if directory.split(sep='/')[1]=='app':
+        font = QtGui.QFont()
+        font.setWeight(QtGui.QFont.Weight.Normal)
+        font.setFamily('Ubuntu')
+        font.setPixelSize(14)
+        font.setHintingPreference(QtGui.QFont.HintingPreference.PreferVerticalHinting)
+        app.setFont(font)
+
     icon_splash_svg = os.path.join(directory, 'icons', 'splash_screen.svg')
     data_splash = None
     with open(icon_splash_svg, 'r') as banner:
