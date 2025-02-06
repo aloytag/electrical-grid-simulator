@@ -73,7 +73,10 @@ def about_dialog():
     dialog.description.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
     dialog.description.setOpenExternalLinks(True)
     
-    dialog.version.setText(VERSION)
+    add_to_version = ''
+    if directory.split(sep='/')[1]=='app':
+        add_to_version = ' (flatpak)'
+    dialog.version.setText(VERSION + add_to_version)
     dialog.date.setText(DATE)
     dialog.author.setText(f'{AUTHOR} ({CONTACT})')
     
