@@ -867,9 +867,11 @@ def network_settings_dialog():
     return dialog
 
 
-def connecting_buses_dialog():
+def connecting_buses_dialog(parent):
     """
     Returns a dialog to choose which element is connecting between two buses.
+
+    parent: Reference to the main window.
     """
     ui_file = os.path.join(directory, 'connecting_buses_dialog.ui')
     # dialog = QtCompat.loadUi(uifile=ui_file)
@@ -877,6 +879,7 @@ def connecting_buses_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+    dialog.setParent(parent)
     dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.option = None  # Element selected
@@ -972,6 +975,34 @@ def connecting_buses_dialog():
     # dialog.widget_container.setStyleSheet('background-color: #d3d3d3')
     dialog.setStyleSheet('font-size: 16px')
     dialog.label.setStyleSheet('font-size: 16px')
+
+    # Opening animation...
+    t_animation = 400 # ms
+
+    size_final = dialog.size()
+    size_init = size_final * 0.5
+    dialog.anim = QtCore.QPropertyAnimation(dialog, b"size")
+    dialog.anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim.setStartValue(size_init)
+    dialog.anim.setEndValue(size_final)
+    dialog.anim.setDuration(t_animation)
+    # dialog.anim.start()
+
+    main_win_rect = parent.geometry()
+    pos_final = main_win_rect.center() - dialog.rect().center()
+    pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
+                                         (size_final.height() - size_init.height())/2)
+    dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
+    dialog.anim2.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim2.setStartValue(pos_init)
+    dialog.anim2.setEndValue(pos_final)
+    dialog.anim2.setDuration(t_animation)
+    # dialog.anim2.start()
+
+    dialog.anim_group = QtCore.QParallelAnimationGroup()
+    dialog.anim_group.addAnimation(dialog.anim)
+    dialog.anim_group.addAnimation(dialog.anim2)
+    dialog.anim_group.start()
 
     return dialog
 

@@ -1913,11 +1913,11 @@ class ElectricalGraph(NodeGraph):
             if node_from.type_=='BusNode.BusNode' and node_to.type_=='BusNode.BusNode':
                 # port_from.disconnect_from(port_to)
                 # self._on_connection_changed(disconnected=[pipe], connected=[])
-                dialog = connecting_buses_dialog()
+                dialog = connecting_buses_dialog(parent=self.main_window)
                 dialog.setWindowIcon(QtGui.QIcon(icon_path))
-                main_win_rect = self.main_window.geometry()
-                dialog.setParent(self.main_window)
-                dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+                # main_win_rect = self.main_window.geometry()
+                # dialog.setParent(self.main_window)
+                # dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
                 self._on_connection_changed(disconnected=[pipe], connected=[])
 
                 def dialog_closed(result, node_from=node_from, node_to=node_to,
