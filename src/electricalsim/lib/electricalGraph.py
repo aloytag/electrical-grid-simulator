@@ -603,11 +603,11 @@ class ElectricalGraph(NodeGraph):
         """
         dir_path = self.config['general']['default_path']
         
-        dialog = export_dialog()
+        dialog = export_dialog(parent=self.main_window)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        main_win_rect = self.main_window.geometry()
-        dialog.setParent(self.main_window)
-        dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+        # main_win_rect = self.main_window.geometry()
+        # dialog.setParent(self.main_window)
+        # dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
         def dialog_closed(result):
             if not result:
