@@ -5291,11 +5291,11 @@ class ElectricalGraph(NodeGraph):
         """
         all_nodes = self.all_nodes()
 
-        dialog = search_node_dialog(all_nodes)
+        dialog = search_node_dialog(all_nodes, self.main_window)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        main_win_rect = self.main_window.geometry()
-        dialog.setParent(self.main_window)
-        dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
+        # main_win_rect = self.main_window.geometry()
+        # dialog.setParent(self.main_window)
+        # dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
         def dialog_closed(result):
             if result:

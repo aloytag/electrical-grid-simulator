@@ -976,7 +976,7 @@ def connecting_buses_dialog():
     return dialog
 
 
-def search_node_dialog(all_nodes):
+def search_node_dialog(all_nodes, parent):
     """
     all_nodes: List of all nodes in the graph.
 
@@ -998,6 +998,7 @@ def search_node_dialog(all_nodes):
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+    dialog.setParent(parent)
     # dialog.setModal(True)
     dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     dialog.selected_node = None  # Name of the selected element (node)
@@ -1015,6 +1016,35 @@ def search_node_dialog(all_nodes):
     effect.setColor(QtGui.QColor(0, 0, 0, 160))
     effect.setOffset(0)
     dialog.frame.setGraphicsEffect(effect)
+
+    # Opening animation...
+    t_animation = 400 # ms
+
+    size_final = dialog.size()
+    size_init = size_final * 0.5
+    dialog.anim = QtCore.QPropertyAnimation(dialog, b"size")
+    dialog.anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim.setStartValue(size_init)
+    dialog.anim.setEndValue(size_final)
+    dialog.anim.setDuration(t_animation)
+    # dialog.anim.start()
+
+    main_win_rect = parent.geometry()
+    pos_final = main_win_rect.center() - dialog.rect().center()
+    pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
+                                         (size_final.height() - size_init.height())/2)
+    dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
+    dialog.anim2.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim2.setStartValue(pos_init)
+    dialog.anim2.setEndValue(pos_final)
+    dialog.anim2.setDuration(t_animation)
+    # dialog.anim2.start()
+
+    dialog.anim_group = QtCore.QParallelAnimationGroup()
+    dialog.anim_group.addAnimation(dialog.anim)
+    dialog.anim_group.addAnimation(dialog.anim2)
+    dialog.anim_group.start()
+
 
     class SaveNodeName:
         def __init__(self, name):
