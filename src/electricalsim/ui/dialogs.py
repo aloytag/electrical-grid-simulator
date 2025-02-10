@@ -1007,10 +1007,12 @@ def connecting_buses_dialog(parent):
     return dialog
 
 
-def search_node_dialog(all_nodes, parent):
+def search_node_dialog(all_nodes, parent, search_node_button=None):
     """
     all_nodes: List of all nodes in the graph.
+    
     parent: Reference to the main window.
+    search_node_button: Reference to the Search Node Dialog.
 
     Returns a dialog for searching nodes.
     """
@@ -1063,8 +1065,11 @@ def search_node_dialog(all_nodes, parent):
 
     main_win_rect = parent.geometry()
     pos_final = main_win_rect.center() - dialog.rect().center()
-    pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
-                                         (size_final.height() - size_init.height())/2)
+    if search_node_button is None:
+        pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
+                                            (size_final.height() - size_init.height())/2)
+    else:
+        pos_init = search_node_button.pos()
     dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
     dialog.anim2.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
     dialog.anim2.setStartValue(pos_init)
@@ -1160,12 +1165,13 @@ def search_node_dialog(all_nodes, parent):
     return dialog
 
 
-def export_dialog(parent):
+def export_dialog(parent, export_button=None):
     """
     Returns a dialog to export the pandapower network in three possible options:
     JSON, Picke and MS Excel.
 
     parent: Reference to the main window.
+    export_button: Reference to the Export Dialog.
     """
     ui_file = os.path.join(directory, 'export_dialog.ui')
     # dialog = QtCompat.loadUi(uifile=ui_file)
@@ -1232,8 +1238,11 @@ def export_dialog(parent):
 
     main_win_rect = parent.geometry()
     pos_final = main_win_rect.center() - dialog.rect().center()
-    pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
-                                         (size_final.height() - size_init.height())/2)
+    if export_button is None:
+        pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
+                                            (size_final.height() - size_init.height())/2)
+    else:
+        pos_init = export_button.pos()
     dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
     dialog.anim2.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
     dialog.anim2.setStartValue(pos_init)

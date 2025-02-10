@@ -601,9 +601,11 @@ class ElectricalGraph(NodeGraph):
         """
         Export the pandapower network using JSON format.
         """
+        export_button = self.main_window.findChild(QtWidgets.QToolButton, 'exportBtn')
+
         dir_path = self.config['general']['default_path']
         
-        dialog = export_dialog(parent=self.main_window)
+        dialog = export_dialog(parent=self.main_window, export_button=export_button)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         # main_win_rect = self.main_window.geometry()
         # dialog.setParent(self.main_window)
@@ -5291,7 +5293,10 @@ class ElectricalGraph(NodeGraph):
         """
         all_nodes = self.all_nodes()
 
-        dialog = search_node_dialog(all_nodes, self.main_window)
+        search_node_button = self.main_window.findChild(QtWidgets.QToolButton, 'searchNodeBtn')
+
+        dialog = search_node_dialog(all_nodes, parent=self.main_window,
+                                    search_node_button=search_node_button)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         # main_win_rect = self.main_window.geometry()
         # dialog.setParent(self.main_window)

@@ -299,6 +299,7 @@ def main():
     # main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
     
     export_net = QtWidgets.QToolButton(main_window)
+    export_net.setObjectName('exportBtn')
     export_net.setToolTip('Export pandapower network (Ctrl+E)')
     export_net.setIconSize(icon_size)
     export_net.setIcon(qta.icon('mdi6.database-export-outline'))
@@ -317,6 +318,7 @@ def main():
     main_window.layout_upper_toolbar.addStretch()
 
     search_node_btn = QtWidgets.QToolButton(main_window)
+    search_node_btn.setObjectName('searchNodeBtn')
     search_node_btn.setToolTip('Find node (Ctrl+F)')
     search_node_btn.setIconSize(icon_size)
     search_node_btn.setIcon(qta.icon('mdi6.map-search-outline'))
