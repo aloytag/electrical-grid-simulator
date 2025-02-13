@@ -50,7 +50,8 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
 
     # Better font for flatpak app:
-    if directory.split(sep='/')[1]=='app':
+    directory_split = directory.split(sep='/')
+    if ('app' in directory_split) and directory_split.index('app')==1:
         font = QtGui.QFont()
         font.setWeight(QtGui.QFont.Weight.Normal)
         font.setFamily('Ubuntu')

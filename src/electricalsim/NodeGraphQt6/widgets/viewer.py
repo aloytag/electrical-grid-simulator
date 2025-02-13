@@ -1553,7 +1553,6 @@ class NodeViewer(QtWidgets.QGraphicsView):
     def zoom_to_nodes(self, nodes):
         self._scene_range = self._combined_rect(nodes)
         self._update_scene()
-
         if self.get_zoom() > 0.1:
             self.reset_zoom(self._scene_range.center())
 
