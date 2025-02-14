@@ -1038,6 +1038,7 @@ def search_node_dialog(all_nodes, parent, search_node_button=None):
     dialog.selected_node = None  # Name of the selected element (node)
 
     dialog.btn_close.setIcon(qta.icon('mdi6.close'))
+    dialog.label_icon.setPixmap(qta.icon('mdi6.magnify').pixmap(QtCore.QSize(24, 24)))
 
     dialog.setStyleSheet('font-size: 16px')
     dialog.label.setStyleSheet('font-size: 16px')
