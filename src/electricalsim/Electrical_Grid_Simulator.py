@@ -310,7 +310,7 @@ def main():
     main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
     
     run_pf_btn = QtWidgets.QToolButton(main_window)
-    run_pf_btn.setToolTip('Balanced AC power flow')
+    run_pf_btn.setToolTip('Balanced power flow (ACPF / DCPF)')
     run_pf_btn.setIconSize(icon_size)
     run_pf_btn.setIcon(qta.icon('mdi6.play-outline'))
     main_window.layout_upper_toolbar.addWidget(run_pf_btn)

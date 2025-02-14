@@ -30,7 +30,7 @@ EGS is implemented as a Python package uploaded to the [PyPI repository](https:/
 > Starting with version **0.0.8.0**, the EGS package includes a fork of `NodeGraphQt` ported to `Qt6` (using the `PySide6` library). This implementation is renamed to `NodeGraphQt6` in order to avoid conflicts. These changes allow the application to run on recent versions of Python.
 
 ## Simulations and calculations
-With EGS you can build and set up the model of an electrical grid in a graphical way. The application also allows you to perform *AC balanced power flow* calculations (other calculations supported by ```pandapower``` may be added in the future). For other types of simulations and calculations, you can proceed according to two alternatives:
+With EGS you can build and set up the model of an electrical grid in a graphical way. The application also allows you to perform a *balanced power flow* calculations (other calculations supported by ```pandapower``` may be added in the future), including a *Balanced Altern Current Power Flow (ACPF)* and a *Direct Current Power Flow (DCPF)*. For other types of simulations and calculations, you can proceed according to two alternatives:
 
 1. Export the **Data model** and the last power flow results to a JSON, MS Excel or binary file (using the `pickle` module) ready to be imported from a Python script through ```pandapower```. Then, any calculation or processing can be done from the script. The export is done from the graphical interface, while the subsequent import is done as indicated [in the pandapower documentation](https://pandapower.readthedocs.io/en/latest/file_io.html#save-and-load-networks), using one of the fuctions: `pandapower.from_json()`, `pandapower.from_excel()` or `pandapower.from_pickle()`.
 

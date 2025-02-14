@@ -1310,14 +1310,15 @@ class WorkerSignals(QtCore.QObject):
 
 class Power_Flow_Dialog(QtWidgets.QDialog):
     """
-    Balanced AC Power Flow dialog.
-    
-    * net: Pandapower network
-    * settings: Default settings for ACPF calculation
-    * session_change_warning: session_change_warning() funtion from the graph
-    * theme: color theme setting between 'light', 'dark' and 'auto'
+    Balanced Power Flow dialog, including ACPF and DCPF.
     """
     def __init__(self, net, settings, session_change_warning, theme):
+        """   
+        net: Pandapower network
+        settings: Default settings for ACPF calculation
+        session_change_warning: session_change_warning() funtion from the graph
+        theme: color theme setting between 'light', 'dark' and 'auto'
+        """
         self.net = net
         self.settings = settings
         self.session_change_warning = session_change_warning
@@ -1399,6 +1400,9 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.plot_results.clicked.connect(lambda : self.change_page(2))
         
         self.w.layout_upper_toolbar.addStretch()
+
+        # Calculation model:
+        self.w.comboBox_model.currentIndexChanged.connect(self.model_calculation_change)
         
         self.load_dataframes()
         self.build_plots_page()
@@ -1428,6 +1432,29 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.executor = ThreadPoolExecutor(max_workers=1)
         self.signals = WorkerSignals()
         self.signals.calculation_done.connect(self.pf_calculation_ended)
+
+    def model_calculation_change(self, i: int):
+        """
+        Executed when the model calculation is changed from the combobox.
+
+        i = 0 if Balanced AC Power Flow is selected (delfault).
+        i = 1 if DC Power Flow is selected.
+        """
+        enabling = True if i==0 else False
+
+        self.w.algorithm.setEnabled(enabling)
+        self.w.max_iteration.setEnabled(enabling)
+        self.w.tolerance_mva.setEnabled(enabling)
+        self.w.delta_q.setEnabled(enabling)
+        self.w.init.setEnabled(enabling)
+        self.w.neglect_open_switch_branches.setEnabled(enabling)
+        self.w.enforce_q_lims.setEnabled(enabling)
+        self.w.voltage_depend_loads.setEnabled(enabling)
+        self.w.consider_line_temperature.setEnabled(enabling)
+        self.w.distributed_slack.setEnabled(enabling)
+        self.w.tdpf.setEnabled(enabling)
+        self.w.tdpf_delay_s_check.setEnabled(enabling)
+        self.w.tdpf_update_r_theta.setEnabled(enabling)
         
     def load_settings(self):
         """
@@ -1828,7 +1855,7 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         
     def run_pf(self):
         """
-        Run the ACPF calculation.
+        Run an ACPF or DCPF calculation.
         """
         if self.net.ext_grid.empty:
             title = 'No slack bus!'
@@ -1847,25 +1874,34 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
                 tdpf_delay_s = None
             
             try:
-                pp.runpp(self.net,
-                    algorithm=self.methods[self.w.algorithm.currentIndex()],
-                    max_iteration=self.w.max_iteration.value(),
-                    tolerance_mva=self.w.tolerance_mva.value() * 1e-6,
-                    delta_q=self.w.delta_q.value(),
-                    check_connectivity=self.w.check_connectivity.isChecked(),
-                    init=self.w.init.currentText(),
-                    trafo_model=self.w.trafo_model.currentText(),
-                    trafo_loading=self.w.trafo_loading.currentText(),
-                    trafo3w_losses=self.w.trafo3w_losses.currentText(),
-                    switch_rx_ratio=self.w.switch_rx_ratio.value(),
-                    neglect_open_switch_branches=self.w.neglect_open_switch_branches.isChecked(),
-                    enforce_q_lims=self.w.enforce_q_lims.isChecked(),
-                    voltage_depend_loads=self.w.voltage_depend_loads.isChecked(),
-                    consider_line_temperature=self.w.consider_line_temperature.isChecked(),
-                    distributed_slack=self.w.distributed_slack.isChecked(),
-                    tdpf=self.w.tdpf.isChecked(),
-                    tdpf_delay_s=tdpf_delay_s,
-                    tdpf_update_r_theta=self.w.tdpf_update_r_theta.isChecked())
+                if self.w.comboBox_model.currentIndex()==0:
+                    pp.runpp(self.net,
+                        algorithm=self.methods[self.w.algorithm.currentIndex()],
+                        max_iteration=self.w.max_iteration.value(),
+                        tolerance_mva=self.w.tolerance_mva.value() * 1e-6,
+                        delta_q=self.w.delta_q.value(),
+                        check_connectivity=self.w.check_connectivity.isChecked(),
+                        init=self.w.init.currentText(),
+                        trafo_model=self.w.trafo_model.currentText(),
+                        trafo_loading=self.w.trafo_loading.currentText(),
+                        trafo3w_losses=self.w.trafo3w_losses.currentText(),
+                        switch_rx_ratio=self.w.switch_rx_ratio.value(),
+                        neglect_open_switch_branches=self.w.neglect_open_switch_branches.isChecked(),
+                        enforce_q_lims=self.w.enforce_q_lims.isChecked(),
+                        voltage_depend_loads=self.w.voltage_depend_loads.isChecked(),
+                        consider_line_temperature=self.w.consider_line_temperature.isChecked(),
+                        distributed_slack=self.w.distributed_slack.isChecked(),
+                        tdpf=self.w.tdpf.isChecked(),
+                        tdpf_delay_s=tdpf_delay_s,
+                        tdpf_update_r_theta=self.w.tdpf_update_r_theta.isChecked())
+                
+                elif self.w.comboBox_model.currentIndex()==1:
+                    pp.rundcpp(self.net,
+                               trafo_model=self.w.trafo_model.currentText(),
+                               trafo_loading=self.w.trafo_loading.currentText(),
+                               check_connectivity=self.w.check_connectivity.isChecked(),
+                               switch_rx_ratio=self.w.switch_rx_ratio.value(),
+                               trafo3w_losses=self.w.trafo3w_losses.currentText())
 
                 if self.net.converged:
                     return 'success'
@@ -2131,22 +2167,22 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.plot()
 
         
-
 class Settings_Dialog:
     """
-    Returns the settings dialog.
-    
-    * main_window: Main window of the application (parent)
-    * config: Config parser with all the settings
-    * dataframe_line_stds: pandas DataFrame with standard line parameters, obtained
-                    with pp.available_std_types(self.net, 'line')
-    * dataframe_trafo_stds: pandas DataFrame with standard 2W-transformer parameters, obtained
-                    with pp.available_std_types(self.net, 'trafo')
-    * dataframe_trafo3w_stds: pandas DataFrame with standard 2W-transformer parameters, obtained
-                    with pp.available_std_types(self.net, 'trafo3w')
+    The settings dialog.
     """
     def __init__(self, main_window, config, dataframe_line_stds,
                  dataframe_trafo_stds, dataframe_trafo3w_stds):
+        """
+        main_window: Main window of the application (parent)
+        config: Config parser with all the settings
+        dataframe_line_stds: pandas DataFrame with standard line parameters,
+                             obtained with pp.available_std_types(self.net, 'line')
+        dataframe_trafo_stds: pandas DataFrame with standard 2W-transformer parameters,
+                              obtained with pp.available_std_types(self.net, 'trafo')
+        dataframe_trafo3w_stds: pandas DataFrame with standard 2W-transformer parameters,
+                                obtained with pp.available_std_types(self.net, 'trafo3w')
+        """
         self.main_window = main_window
         self.config = config
         self.dataframe_line_stds = dataframe_line_stds
@@ -2210,7 +2246,7 @@ class Settings_Dialog:
         layout_network.addStretch()
         self.dialog.page_network.setLayout(layout_network)
         
-        # Balanced AC Power Flow page--------------------------------------
+        # Balanced Power Flow page-----------------------------------------
         ui_file_pf = os.path.join(directory, 'pf_settings_widget.ui')
         ui_file_ = QtCore.QFile(ui_file_pf)
         ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
@@ -3268,7 +3304,7 @@ class Settings_Dialog:
             self.config['network']['sn_mva'] = str(network.sn_mva.value())
             self.config['network']['f_hz'] = str(network.f_hz.value())
             
-            # Balanced AC Power Flow page--------------------------------------------
+            # Balanced Power Flow page-----------------------------------------------
             self.config['pf']['algorithm'] = methods[pf.algorithm.currentIndex()]
             self.config['pf']['max_iteration'] = str(pf.max_iteration.value())
             self.config['pf']['tolerance_mva'] = str(pf.tolerance_mva.value())
@@ -3605,7 +3641,7 @@ class Settings_Dialog:
         Build the list view panels.
         """
         # First ListView-----------------------------------------------------------
-        list_view1_options = ['General', 'Network (defaults)', 'Balanced AC Power Flow (defaults)']
+        list_view1_options = ['General', 'Network (defaults)', 'Balanced Power Flow (defaults)']
         model_view1 = QtGui.QStandardItemModel()
         self.dialog.listView_main.setModel(model_view1)
         for name in list_view1_options:
