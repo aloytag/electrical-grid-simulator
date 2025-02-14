@@ -743,3 +743,38 @@ def check_new_version():
             return None, VERSION
     except requests.exceptions.ConnectionError:
         return None, VERSION
+    
+
+def open_egs_website():
+    """
+    Open the EGS website in the browser.
+    """
+    QtGui.QDesktopServices.openUrl('https://github.com/aloytag/electrical-grid-simulator')
+
+
+def open_pandapower_documentation():
+    """
+    Open the Pandapower documentation website in the browser.
+    """
+    QtGui.QDesktopServices.openUrl('https://pandapower.readthedocs.io/en/stable/')
+
+
+def open_shortcuts():
+    """
+    Open the list of shortcuts in the EGS website.
+    """
+    QtGui.QDesktopServices.openUrl('https://github.com/aloytag/electrical-grid-simulator/tree/main?tab=readme-ov-file#shortcuts')
+
+
+def open_power_flow_documentation():
+    """
+    Open the Power Flow documentation in the Pandapower online help.
+    """
+    QtGui.QDesktopServices.openUrl('https://pandapower.readthedocs.io/en/stable/powerflow.html')
+
+
+def open_components_documentation():
+    """
+    Open the Pandapower online documentation for the network components.
+    """
+    QtGui.QDesktopServices.openUrl('https://pandapower.readthedocs.io/en/stable/elements.html')

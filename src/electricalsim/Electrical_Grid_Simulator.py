@@ -12,7 +12,9 @@ import qtawesome as qta
 
 from lib.electricalGraph import ElectricalGraph
 from lib.table_widget import TableWidgetWithMenu
-from lib.auxiliary import QVLine, QMainWindow2, return_config
+from lib.auxiliary import QVLine, QMainWindow2, return_config,\
+                          open_egs_website, open_pandapower_documentation,\
+                          open_shortcuts, open_components_documentation
 from lib.calculations import Run_PF
 from icons import rc_icons
 from version import VERSION
@@ -407,6 +409,14 @@ def main():
                          addSwitch_action]
     for component in component_actions:
         component_menu.addAction(component)
+    
+    component_menu.addSeparator()
+
+    component_help = QtGui.QAction('componentHelp')
+    component_help.setText('Components documentation')
+    component_help.triggered.connect(open_components_documentation)
+    component_help.setIcon(qta.icon('ph.question'))
+    component_menu.addAction(component_help)
         
     settings_menu = main_window.menubar.addMenu('Settings')
     net_settings_action = QtGui.QAction('netSettings')
@@ -429,11 +439,33 @@ def main():
     about_action.setIcon(qta.icon('mdi6.information-outline'))
     help_menu.addAction(about_action)
 
+    shortcuts_action = QtGui.QAction('Shortcuts')
+    shortcuts_action.setText('Shortcuts')
+    shortcuts_action.triggered.connect(open_shortcuts)
+    shortcuts_action.setIcon(qta.icon('mdi6.keyboard-outline'))
+    help_menu.addAction(shortcuts_action)
+
     updates_action = QtGui.QAction('Check for updates')
     updates_action.setText('Check for updates')
     updates_action.triggered.connect(graph.check_for_updates)
     updates_action.setIcon(qta.icon('mdi6.update'))
     help_menu.addAction(updates_action)
+
+    help_menu.addSeparator()
+
+    egs_website_action = QtGui.QAction('EGS website')
+    egs_website_action.setText('EGS website')
+    egs_website_action.triggered.connect(open_egs_website)
+    egs_website_action.setIcon(qta.icon('mdi6.web'))
+    egs_website_action.setShortcut(QtGui.QKeySequence('F1'))
+    help_menu.addAction(egs_website_action)
+
+    pandapower_doc_action = QtGui.QAction('Pandapower documentation')
+    pandapower_doc_action.setText('Pandapower documentation')
+    pandapower_doc_action.triggered.connect(open_pandapower_documentation)
+    pandapower_doc_action.setIcon(qta.icon('mdi6.note-text-outline'))
+    pandapower_doc_action.setShortcut(QtGui.QKeySequence('Shift+F1'))
+    help_menu.addAction(pandapower_doc_action)
         
     def page_changed_on_toolbox(index):
         """

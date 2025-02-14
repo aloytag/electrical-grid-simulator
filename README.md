@@ -214,7 +214,7 @@ Settings are classified into four categories:
 | ```Ctrl+O``` | Open session from a **.egs** file |
 | ```Ctrl+S``` | Save session to a **.egs** file |
 | ```Ctrl+Shift+S``` | Save session as... |
-| ```Ctrl+E``` | Export **Data model** to a JSON file |
+| ```Ctrl+E``` | Export **Data model** to a JSON, MS Excel or pickle file |
 | ```Ctrl+Z``` | Undo |
 | ```Ctrl+Shift+Z``` | Redo |
 | ```Del``` | Delete selected components in the **Graph** |
@@ -232,6 +232,8 @@ Settings are classified into four categories:
 | ```Shift+V``` | Apply a vertical alignment to selected nodes |
 | ```Shift+H``` | Apply a horizontal alignment to selected nodes |
 | ```Ctrl+F``` | Find a node by fuzzy search |
+| ```F1``` | Open the EGS website |
+| ```Shift+F1``` | Open the Pandapower documentation (online) |
 
 > __Note__ <br>
 > * ```Undo``` and ```Redo``` only work for simple actions.

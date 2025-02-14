@@ -22,7 +22,7 @@ from matplotlib import rc
 from fuzzysearch import find_near_matches
 
 from lib.table_widget import TableWidget, TableWidgetWithCopy
-from lib.auxiliary import icon_for_type, natsort2
+from lib.auxiliary import icon_for_type, natsort2, open_power_flow_documentation
 from version import VERSION, DATE, AUTHOR, CONTACT
 
 directory = os.path.dirname(__file__)
@@ -1367,17 +1367,6 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.w.layout_upper_toolbar.addWidget(self.settings_and_run)
         self.settings_and_run.clicked.connect(lambda : self.change_page(0))
         
-        # self.logging = QtWidgets.QToolButton(self.w)
-        # self.logging.setToolTip('Output Log')
-        # self.logging.setIconSize(icon_size)
-        # self.logging.setIcon(qta.icon('mdi6.text-box-outline'))
-        # self.logging.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-        # self.logging.setText('Output Log')
-        # self.logging.setCheckable(True)
-        # self.logging.setAutoExclusive(True)
-        # self.w.layout_upper_toolbar.addWidget(self.logging)
-        # self.logging.clicked.connect(lambda : self.change_page(1))
-        
         self.data_results = QtWidgets.QToolButton(self.w)
         self.data_results.setToolTip('Results Data')
         self.data_results.setIconSize(icon_size)
@@ -1401,6 +1390,15 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         self.plot_results.clicked.connect(lambda : self.change_page(2))
         
         self.w.layout_upper_toolbar.addStretch()
+
+        # Go to Power Flow documentation in Pandapower online help.
+        self.pf_help_pp = QtWidgets.QToolButton(self.w)
+        self.pf_help_pp.setToolTip('Power Flow documentation in Pandapower online help')
+        self.pf_help_pp.setIconSize(QtCore.QSize(24, 24))
+        self.pf_help_pp.setIcon(qta.icon('ph.question'))
+        self.pf_help_pp.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.w.layout_upper_toolbar.addWidget(self.pf_help_pp)
+        self.pf_help_pp.clicked.connect(open_power_flow_documentation)
 
         # Calculation model:
         self.w.comboBox_model.currentIndexChanged.connect(self.model_calculation_change)
