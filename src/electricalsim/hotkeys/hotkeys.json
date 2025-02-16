@@ -1,5 +1,15 @@
 [
   {
+    "type":"command",
+    "label":"Add bus here",
+    "file":"./hotkeys/hotkey_functions.py",
+    "function_name":"add_bus_here",
+    "shortcut":"b"
+  },
+  {
+    "type":"separator"
+  },
+  {
     "type":"menu",
     "label":"&Edit",
     "items":[

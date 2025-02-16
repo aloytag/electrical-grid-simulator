@@ -229,6 +229,7 @@ Settings are classified into four categories:
 | ```F``` | Adjust the zoom level according to the selection |
 | ```V``` | Change selected nodes to the vertical layout |
 | ```H``` | Change selected nodes to the horizontal layout |
+| ```B``` | Add a bus at the cursor position |
 | ```Shift+V``` | Apply a vertical alignment to selected nodes |
 | ```Shift+H``` | Apply a horizontal alignment to selected nodes |
 | ```Ctrl+F``` | Find a node by fuzzy search |

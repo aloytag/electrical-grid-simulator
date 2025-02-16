@@ -903,8 +903,14 @@ class ElectricalGraph(NodeGraph):
         """
         Adds a bus to the network and graph.
         """
+        pos = kwargs.get('pos')
         center_coordinates = self.viewer().scene_center()
-        node = self.create_node('BusNode.BusNode', name='Bus 0', pos=center_coordinates,
+
+        if pos is None:
+            position = center_coordinates
+        else:
+            position = pos
+        node = self.create_node('BusNode.BusNode', name='Bus 0', pos=position,
                                 push_undo=False)
         # print(node.view.boundingRect().size().toSize())
         name_assigned = node.get_property('name')

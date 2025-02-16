@@ -293,8 +293,7 @@ def duplicate_nodes(graph):
             # four_ports_on_buses(node_duplicated)
     
     if are_nodes_dupplicated is True:    
-        graph.update_bus_ports()
-            
+        graph.update_bus_ports()           
             
 
 def find_node(graph):
@@ -302,3 +301,10 @@ def find_node(graph):
     Shows the dialog for searching nodes.
     """
     graph.search_node()
+
+
+def add_bus_here(graph):
+    """
+    Add a bus node at the cursor position.
+    """
+    graph.add_bus(pos=graph.cursor_pos())
