@@ -963,7 +963,11 @@ class ElectricalGraph(NodeGraph):
                 for name, value in settings.items():
                     node.set_property(name, float(value), push_undo=False)
 
-            self.set_horizontal_layout_prop(node)
+            if kwargs.get('vert_layout') in (None, False):
+                self.set_horizontal_layout_prop(node)
+            else:
+                node.set_layout_direction(1)
+                self.set_vertical_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -986,7 +990,12 @@ class ElectricalGraph(NodeGraph):
         settings = self.config['impedance']
         for name, value in settings.items():
             node.set_property(name, float(value), push_undo=False)
-        self.set_horizontal_layout_prop(node)
+
+        if kwargs.get('vert_layout') in (None, False):
+            self.set_horizontal_layout_prop(node)
+        else:
+            node.set_layout_direction(1)
+            self.set_vertical_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1057,7 +1066,11 @@ class ElectricalGraph(NodeGraph):
                 tap_max = stds.at[settings['std_type'], 'tap_max']
                 node.tap_pos_widget.get_custom_widget().setMaximum(int(tap_max))
 
-            self.set_horizontal_layout_prop(node)
+            if kwargs.get('vert_layout') in (None, False):
+                self.set_horizontal_layout_prop(node)
+            else:
+                node.set_layout_direction(1)
+                self.set_vertical_layout_prop(node)
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1279,6 +1292,9 @@ class ElectricalGraph(NodeGraph):
         pos0 = node_bus.pos()
         pos1 = node_element.pos()
         coordinates = [ (pos0[0] + pos1[0])*0.5, (pos0[1] + pos1[1])*0.5 ]
+        delta_y = np.abs(pos0[1] - pos1[1])
+        delta_x = np.abs(pos0[0] - pos1[0])
+        vert_layout = True if delta_y > delta_x else False
         node = self.create_node('SwitchNode.SwitchNode', name='Switch 0',
                                 pos=coordinates,
                                 push_undo=False)
@@ -1334,7 +1350,12 @@ class ElectricalGraph(NodeGraph):
                 node.set_input(0, node_element.output(port_number_element), push_undo=False)
             
         node.set_locked(True)
-        self.set_horizontal_layout_prop(node)
+        if vert_layout is False:
+            self.set_horizontal_layout_prop(node)
+        else:
+            node.set_layout_direction(1)
+            self.set_vertical_layout_prop(node)
+
         self.update_bus_ports()
     
     def add_switch(self, **kwargs):
@@ -1722,7 +1743,11 @@ class ElectricalGraph(NodeGraph):
                 #                        message='TCSC component is not yet implemented.',
                 #                        duration=5000, type_='ERROR')
                 
-                self.set_horizontal_layout_prop(node)
+                if kwargs.get('vert_layout') in (None, False):
+                    self.set_horizontal_layout_prop(node)
+                else:
+                    node.set_layout_direction(1)
+                    self.set_vertical_layout_prop(node)
 
             elif option is None and dialog.radioSSC.isChecked():
                 node = self.create_node('SSCNode.SSCNode', name='SSC 0',
@@ -1931,11 +1956,15 @@ class ElectricalGraph(NodeGraph):
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
                         pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        delta_y = np.abs(pos0[1] - pos1[1])
+                        delta_x = np.abs(pos0[0] - pos1[0])
+                        vert_layout = True if delta_y > delta_x else False
                         node_from = self.add_line(pos=pos, option=dialog.option,
                                                 node_from=node_from,
                                                 node_to=node_to,
                                                 port_from=port_from,
-                                                port_to=port_to)
+                                                port_to=port_to,
+                                                vert_layout=vert_layout)
                         if node_from.type_=='LineNode.LineNode':
                             inputs_connected = node_from.connected_input_nodes()
                             # print(inputs_connected)
@@ -2036,11 +2065,15 @@ class ElectricalGraph(NodeGraph):
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
                         pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        delta_y = np.abs(pos0[1] - pos1[1])
+                        delta_x = np.abs(pos0[0] - pos1[0])
+                        vert_layout = True if delta_y > delta_x else False
                         node_from = self.add_trafo(pos=pos, option=dialog.option,
                                                 node_from=node_from,
                                                 node_to=node_to,
                                                 port_from=port_from,
-                                                port_to=port_to)
+                                                port_to=port_to,
+                                                vert_layout=vert_layout)
                         
                         if node_from.type_=='TrafoNode.TrafoNode':
                             inputs_connected = node_from.connected_input_nodes()
@@ -2130,11 +2163,15 @@ class ElectricalGraph(NodeGraph):
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
                         pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        delta_y = np.abs(pos0[1] - pos1[1])
+                        delta_x = np.abs(pos0[0] - pos1[0])
+                        vert_layout = True if delta_y > delta_x else False
                         node_from = self.add_impedance(pos=pos,
                                                     node_from=node_from,
                                                     node_to=node_to,
                                                     port_from=port_from,
-                                                    port_to=port_to)
+                                                    port_to=port_to,
+                                                    vert_layout=vert_layout)
                         
                         inputs_connected = node_from.connected_input_nodes()
                         # print(inputs_connected)
@@ -2170,12 +2207,16 @@ class ElectricalGraph(NodeGraph):
                         pos0 = node_from.pos()
                         pos1 = node_to.pos()
                         pos = [(pos0[0] + pos1[0]) * 0.5, (pos0[1] + pos1[1]) * 0.5]
+                        delta_y = np.abs(pos0[1] - pos1[1])
+                        delta_x = np.abs(pos0[0] - pos1[0])
+                        vert_layout = True if delta_y > delta_x else False
                         node_from = self.add_facts(pos=pos,
                                                    option='tcsc',
                                                    node_from=node_from,
                                                    node_to=node_to,
                                                    port_from=port_from,
-                                                   port_to=port_to)
+                                                   port_to=port_to,
+                                                   vert_layout=vert_layout)
                         
                         inputs_connected = node_from.connected_input_nodes()
                         # print(inputs_connected)
