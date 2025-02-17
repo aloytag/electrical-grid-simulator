@@ -897,7 +897,6 @@ class ElectricalGraph(NodeGraph):
             position = pos
         node = self.create_node('BusNode.BusNode', name='Bus 0', pos=position,
                                 push_undo=False)
-        # print(node.view.boundingRect().size().toSize())
         name_assigned = node.get_property('name')
         settings = self.config['bus']
         bus_index = pp.create_bus(self.net, vn_kv=float(settings['vn_kv']),

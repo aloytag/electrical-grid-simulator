@@ -1083,7 +1083,7 @@ class GenNode(BaseNode2):
             self.input_port = None
             self.output_port = self.add_output(name='', multi_output=False)
             self.output_port.port_deletion_allowed = True
-            self.set_property('fliped', True, push_undo=False)
+            self.set_property('fliped', True, push_undo=False)        
             
     def connected_to_network(self):
         """

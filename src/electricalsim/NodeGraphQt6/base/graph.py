@@ -1563,6 +1563,7 @@ class NodeGraph(QtCore.QObject):
         """
         Clears the selection in the node graph.
         """
+        self._viewer.update()
         self._undo_stack.beginMacro('clear selection')
         [node.set_selected(False) for node in self.all_nodes()]
         self._undo_stack.endMacro()
