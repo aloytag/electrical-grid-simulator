@@ -653,22 +653,7 @@ class ElectricalGraph(NodeGraph):
 
         dialog.finished.connect(dialog_closed)
         dialog.open()
-        
-        
-        
-        
-        
-        
-        # init_file_path = os.path.join(dir_path, f'{self.net.name}.json')
-        # full_file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self.main_window,
-        #                                                           caption='Export Pandapower Network',
-        #                                                           dir=init_file_path,
-        #                                                           filter='JSON Files (*.json)')
-
-        # if full_file_path:
-        #     pp.to_json(self.net, full_file_path)
-        # else:
-        #     simulate_ESC_key()
+        dialog.setFocus()
 
     def save_session(self):
         """
