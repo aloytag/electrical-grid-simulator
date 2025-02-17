@@ -974,6 +974,8 @@ class ElectricalGraph(NodeGraph):
             else:
                 node.set_layout_direction(1)
                 self.set_vertical_layout_prop(node)
+                if self.config['general']['theme']=='light':
+                    node.model.set_property('text_color', (0, 0, 0, 255))  # black
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1002,6 +1004,8 @@ class ElectricalGraph(NodeGraph):
         else:
             node.set_layout_direction(1)
             self.set_vertical_layout_prop(node)
+            if self.config['general']['theme']=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1077,6 +1081,8 @@ class ElectricalGraph(NodeGraph):
             else:
                 node.set_layout_direction(1)
                 self.set_vertical_layout_prop(node)
+                if self.config['general']['theme']=='light':
+                    node.model.set_property('text_color', (0, 0, 0, 255))  # black
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1361,6 +1367,9 @@ class ElectricalGraph(NodeGraph):
         else:
             node.set_layout_direction(1)
             self.set_vertical_layout_prop(node)
+            if self.config['general']['theme']=='light':
+                node.model.set_property('text_color', (0, 0, 0, 255))  # black
+                node.update()
 
         self.update_bus_ports()
     
@@ -1754,6 +1763,8 @@ class ElectricalGraph(NodeGraph):
                 else:
                     node.set_layout_direction(1)
                     self.set_vertical_layout_prop(node)
+                    if self.config['general']['theme']=='light':
+                        node.model.set_property('text_color', (0, 0, 0, 255))  # black
 
             elif option is None and dialog.radioSSC.isChecked():
                 node = self.create_node('SSCNode.SSCNode', name='SSC 0',
