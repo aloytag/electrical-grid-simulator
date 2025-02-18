@@ -417,6 +417,13 @@ class BaseNode2(BaseNode):
         model = self.model
         self.set_model(model)
 
+    @property
+    def single_port_node(self):
+        """
+        Property: True if the node has only one port, False otherwise.
+        """
+        return len(self.input_ports() + self.output_ports())==1
+
 
 # class BusNode(BaseNode2):
 #     __identifier__ = 'BusNode'

@@ -1937,6 +1937,110 @@ class ElectricalGraph(NodeGraph):
             node_from = self.get_node_by_name(port_from.node.name)
             node_to = self.get_node_by_name(port_to.node.name)
 
+            # Smart arrangement for single-port nodes connected to a bus--------------------
+            def layout_node_hor(n):
+                n.set_layout_direction(0)
+                n.model.set_property('text_color', (255, 255, 255, 180))  # default color
+                n.update()
+                n.set_property('layout_vert', False, push_undo=False)
+
+            def layout_node_ver(n):
+                n.set_layout_direction(1)
+                n.set_property('layout_vert', True, push_undo=False)
+                if self.config['general']['theme']=='light':
+                    n.model.set_property('text_color', (0, 0, 0, 255))  # black
+                    n.update()
+            
+            if node_from.type_=='BusNode.BusNode' and node_to.single_port_node:
+                pos1, pos2 = port_from.scenePos(), port_to.scenePos()
+                x1, x2 = pos1.x(), pos2.x()
+                y1, y2 = -1*pos1.y(), -1*pos2.y()
+                delta_x = x2 - x1
+                delta_y = y2 - y1
+                try:
+                    slope = delta_y / delta_x
+                except ZeroDivisionError:
+                    slope = None
+
+                if x2>=x1:
+                    if slope is not None and slope>=-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_hor(node_to)
+                        if len(node_to.inputs())==0:
+                            node_to.flip()
+                        node_to.set_input(0, node_from.output(1))
+                    elif (slope is None and y2<=y1) or slope<-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_to)
+                        if len(node_to.inputs())==0:
+                            node_to.flip()
+                        node_to.set_input(0, node_from.output(0))
+                    else:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_to)
+                        if len(node_to.outputs())==0:
+                            node_to.flip()
+                        node_to.set_output(0, node_from.input(0))
+                else:
+                    if slope>=-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_hor(node_to)
+                        if len(node_to.outputs())==0:
+                            node_to.flip()
+                        node_to.set_output(0, node_from.input(1))
+                    else:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_to)
+                        if len(node_to.outputs())==0:
+                            node_to.flip()
+                        node_to.set_output(0, node_from.input(0))
+
+            elif node_from.single_port_node and node_to.type_=='BusNode.BusNode':
+                pos2, pos1 = port_from.scenePos(), port_to.scenePos()
+                x1, x2 = pos1.x(), pos2.x()
+                y1, y2 = -1*pos1.y(), -1*pos2.y()
+                delta_x = x2 - x1
+                delta_y = y2 - y1
+                try:
+                    slope = delta_y / delta_x
+                except ZeroDivisionError:
+                    slope = None
+
+                if x2>=x1:
+                    if slope is not None and slope>=-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_hor(node_from)
+                        if len(node_from.inputs())==0:
+                            node_from.flip()
+                        node_from.set_input(0, node_to.output(1))
+                    elif (slope is None and y2<=y1) or slope<-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_from)
+                        if len(node_from.inputs())==0:
+                            node_from.flip()
+                        node_from.set_input(0, node_to.output(0))
+                    else:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_from)
+                        if len(node_from.outputs())==0:
+                            node_from.flip()
+                        node_from.set_output(0, node_to.input(0))
+                else:
+                    if slope>=-1:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_hor(node_from)
+                        if len(node_from.outputs())==0:
+                            node_from.flip()
+                        node_from.set_output(0, node_to.input(1))
+                    else:
+                        self._on_connection_changed(disconnected=[pipe], connected=[])
+                        layout_node_ver(node_from)
+                        if len(node_from.outputs())==0:
+                            node_from.flip()
+                        node_from.set_output(0, node_to.input(0))
+            # (END) Smart arrangement for single port nodes connected to a bus--------------
+
+
             # If 2 buses gets connected...
             if node_from.type_=='BusNode.BusNode' and node_to.type_=='BusNode.BusNode':
                 # port_from.disconnect_from(port_to)
