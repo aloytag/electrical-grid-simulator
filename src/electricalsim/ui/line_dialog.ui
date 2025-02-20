@@ -570,6 +570,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="decimals">
+            <number>5</number>
+           </property>
            <property name="minimum">
             <double>0.000000000000000</double>
            </property>
@@ -618,6 +621,9 @@
              <width>150</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="decimals">
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>-500.000000000000000</double>
@@ -668,6 +674,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="decimals">
+            <number>5</number>
+           </property>
            <property name="minimum">
             <double>0.000000000000000</double>
            </property>
@@ -716,6 +725,9 @@
              <width>150</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="decimals">
+            <number>5</number>
            </property>
            <property name="minimum">
             <double>0.000000000000000</double>
