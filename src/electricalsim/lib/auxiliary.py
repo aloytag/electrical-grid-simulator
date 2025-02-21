@@ -644,7 +644,7 @@ def return_config(app_root_dir):
     
     Rertuns the config file path as a second argument.
     
-    * app_root_dir: Root directory of the applications
+    * app_root_dir: Root directory of the application
     
     Returns:
     

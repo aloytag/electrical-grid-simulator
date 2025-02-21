@@ -132,8 +132,13 @@ class ElectricalGraph(NodeGraph):
         elif pipe_style=='angle':
             self.set_pipe_style(PipeLayoutEnum.ANGLE.value)
 
-
-        self.set_context_menu_from_file('./hotkeys/hotkeys.json')
+        if kwargs.get('nogui') is True:
+            self._viewer.connection_changed.connect(self.connection_changed)
+            self.port_disconnected.connect(self.disconnect_component)
+            return
+        
+        hotkeys_file_config = os.path.join(root_directory, 'hotkeys', 'hotkeys.json')
+        self.set_context_menu_from_file(hotkeys_file_config)
         self.page_changed_on_toolbox = None
 
         self.node_double_clicked.connect(self.open_options_dialog)
