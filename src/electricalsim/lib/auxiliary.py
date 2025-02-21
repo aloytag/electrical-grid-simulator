@@ -173,7 +173,8 @@ class NodeMovedCmd(QtGui.QUndoCommand):
         self.node.view.xy_pos = self.prev_pos
         self.node.model.pos = self.prev_pos
         if self.node.type_=='BusNode.BusNode':
-            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = self.prev_pos
+            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = [self.prev_pos[0],
+                                                                          -1*self.prev_pos[1]]
 
     def redo(self):
         if self.pos == self.prev_pos:
@@ -181,7 +182,8 @@ class NodeMovedCmd(QtGui.QUndoCommand):
         self.node.view.xy_pos = self.pos
         self.node.model.pos = self.pos
         if self.node.type_=='BusNode.BusNode':
-            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = self.pos
+            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = [self.pos[0],
+                                                                          -1*self.pos[1]]
 
 
 class StatusMessageUnsaved(QtWidgets.QWidget):
