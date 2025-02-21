@@ -224,32 +224,107 @@ def flip_nodes(graph):
         node.flip()
 
 
-def horizontal_alignment(graph):
+def horizontal_alignment_bottom(graph):
     """
-    Apply a horizontal alignment to selected nodes.
+    Apply a horizontal alignment to selected nodes (respect to the bottom one).
     """
     selected = graph.selected_nodes()
     if selected:
-        last_node = selected[-1]
-        pos = last_node.y_pos()
-        for node in selected[:-1]:
+        pos = max([node.y_pos() for node in selected])
+        for node in selected:
             node.set_y_pos(pos)
+            node.set_selected()
 
         graph.update_bus_ports()
 
 
-def vertical_alignment(graph):
+def horizontal_alignment_top(graph):
     """
-    Apply a vertical alignment to selected nodes.
+    Apply a horizontal alignment to selected nodes (respect to the top one).
     """
     selected = graph.selected_nodes()
     if selected:
-        last_node = selected[-1]
-        pos = last_node.x_pos()
-        for node in selected[:-1]:
-            node.set_x_pos(pos)
+        pos = min([node.y_pos() for node in selected])
+        for node in selected:
+            node.set_y_pos(pos)
+            node.set_selected()
 
         graph.update_bus_ports()
+
+
+def horizontal_alignment_center(graph):
+    """
+    Apply a horizontal alignment to selected nodes (respect to center of the selection).
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        pos_all = [node.y_pos() for node in selected]
+        pos = (min(pos_all) + max(pos_all)) / 2
+        for node in selected:
+            node.set_y_pos(pos)
+            node.set_selected()
+
+        graph.update_bus_ports()
+
+
+def vertical_alignment_left(graph):
+    """
+    Apply a vertical alignment to selected nodes (respect to the leftmost one).
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        pos = min([node.x_pos() for node in selected])
+        for node in selected:
+            node.set_x_pos(pos)
+            node.set_selected()
+
+        graph.update_bus_ports()
+
+
+def vertical_alignment_right(graph):
+    """
+    Apply a vertical alignment to selected nodes (respect to the rightmost one).
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        pos = max([node.x_pos() for node in selected])
+        for node in selected:
+            node.set_x_pos(pos)
+            node.set_selected()
+
+        graph.update_bus_ports()
+
+
+def vertical_alignment_center(graph):
+    """
+    Apply a vertical alignment to selected nodes (respect to the center of the selection).
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        pos_all = [node.x_pos() for node in selected]
+        pos = (min(pos_all) + max(pos_all)) / 2
+        for node in selected:
+            node.set_x_pos(pos)
+            node.set_selected()
+
+        graph.update_bus_ports()
+
+
+def alignment_auto(graph):
+    """
+    Apply an automatic alignment, vertical or horizontal, according to the position
+    of the selected nodes.
+    """
+    selected = graph.selected_nodes()
+    if selected:
+        pos_all_x = [node.x_pos() for node in selected]
+        pos_all_y = [node.y_pos() for node in selected]
+        delta_x = max(pos_all_x) - min(pos_all_x)
+        delta_y = max(pos_all_y) - min(pos_all_y)
+        if delta_x>=delta_y:
+            horizontal_alignment_center(graph)
+        else:
+            vertical_alignment_center(graph)
 
 
 def duplicate_nodes(graph):

@@ -230,8 +230,13 @@ Settings are classified into four categories:
 | ```V``` | Change selected nodes to the vertical layout |
 | ```H``` | Change selected nodes to the horizontal layout |
 | ```B``` | Add a bus at the cursor position |
-| ```Shift+V``` | Apply a vertical alignment to selected nodes |
-| ```Shift+H``` | Apply a horizontal alignment to selected nodes |
+| ```Ctrl+Left``` | Vertical alignment of selected nodes (to the leftmost one) |
+| ```Ctrl+Right``` | Vertical alignment of selected nodes (to the rightmost one) |
+| ```Ctrl+Shift+V``` | Vertical alignment of selected nodes (centering) |
+| ```Ctrl+Down``` | Horizontal alignment of selected nodes (to the bottom one) |
+| ```Ctrl+Up``` | Horizontal alignment of selected nodes (to the top one) |
+| ```Ctrl+Shift+H``` | Horizontal alignment of selected nodes (centering) |
+| ```Ctrl+Shift+C``` | Automatic centering alignment of selected nodes |
 | ```Ctrl+F``` | Find a node by fuzzy search |
 | ```F1``` | Open the EGS website |
 | ```Shift+F1``` | Open the Pandapower documentation (online) |
