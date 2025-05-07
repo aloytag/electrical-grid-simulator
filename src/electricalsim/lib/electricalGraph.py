@@ -740,8 +740,9 @@ class ElectricalGraph(NodeGraph):
             with open(full_file_path, 'rb') as file:
                 data = pickle.load(file)  # data dict
                 self.deserialize_session(data['graph_dict'])
-                # self.net = pp.from_json_string(data['pandapower_net'])
                 self.net = data['pandapower_net']
+                if isinstance(self.net, str):
+                    self.net = pp.from_json_string(data['pandapower_net'])  # Compatibility for older versions
                 self.fit_to_selection()
                 for node in self.all_nodes():
                     if node.type_=='BusNode.BusNode':
