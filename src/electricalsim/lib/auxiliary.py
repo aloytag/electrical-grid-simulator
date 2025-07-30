@@ -182,8 +182,7 @@ class NodeMovedCmd(QtGui.QUndoCommand):
         self.node.view.xy_pos = self.pos
         self.node.model.pos = self.pos
         if self.node.type_=='BusNode.BusNode':
-            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = [self.pos[0],
-                                                                          -1*self.pos[1]]
+            self.graph.net.bus.loc[self.bus_index, 'geo'] = f'{{"coordinates":[{self.pos[0]: .2f},{-1*self.pos[1]: .2f}], "type":"Point"}}'
 
 
 class StatusMessageUnsaved(QtWidgets.QWidget):

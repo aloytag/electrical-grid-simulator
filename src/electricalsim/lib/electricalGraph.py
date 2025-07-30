@@ -909,7 +909,7 @@ class ElectricalGraph(NodeGraph):
                                   name=name_assigned,
                                   min_vm_pu=float(settings['min_vm_pu']),
                                   max_vm_pu=float(settings['max_vm_pu']),
-                                  geodata=[center_coordinates[0], -1*center_coordinates[1]])
+                                  geodata=(center_coordinates[0], -1*center_coordinates[1]))
         # node.create_property('bus_index', bus_index)
         node.set_property('bus_index', bus_index, push_undo=False)
         self.set_horizontal_layout_prop(node)
