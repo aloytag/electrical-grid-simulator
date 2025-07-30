@@ -308,7 +308,7 @@
          <item>
           <widget class="QCheckBox" name="s_sc_min_mva_check">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Can be one of “current_source” (full size converter), “async” (asynchronous generator), or “async_doubly_fed” (doubly fed asynchronous generator, DFIG). Represents the type of the static generator in the context of the short-circuit calculations of wind power station units. If disabled, other short-circuit-related parameters are not set.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>Minimum short circuit power provision (MVA):</string>
@@ -405,7 +405,7 @@
          <item>
           <widget class="QCheckBox" name="rx_max_check">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Relevant if the generator type is “async”.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>Maxium R/X ratio of SC impedance:</string>
@@ -463,7 +463,7 @@
          <item>
           <widget class="QCheckBox" name="rx_min_check">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Relevant if the generator type is “async_doubly_fed”.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>Minimum R/X ratio of SC impedance:</string>
@@ -521,7 +521,7 @@
          <item>
           <widget class="QCheckBox" name="r0x0_max_check">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The factor for the calculation of the peak short-circuit current, referred to the high-voltage side (provided by the manufacturer). Relevant if the generator type is “async_doubly_fed”.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>Maximal R/X ratio to calculate 0-seq. internal impedance:</string>
@@ -579,7 +579,7 @@
          <item>
           <widget class="QCheckBox" name="x0x_max_check">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The factor for the calculation of the peak short-circuit current, referred to the high-voltage side (provided by the manufacturer). Relevant if the generator type is “async_doubly_fed”.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>Maximal X0/X ratio to calculate 0-seq. internal impedance:</string>
