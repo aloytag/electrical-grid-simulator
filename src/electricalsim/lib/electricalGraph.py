@@ -751,6 +751,13 @@ class ElectricalGraph(NodeGraph):
                     if node.type_=='SwitchNode.SwitchNode':
                         node.set_locked(True)
 
+                # Fix for bus_geodata on old-version .egs files
+                if 'bus_geodata' in self.net:
+                    x = self.net['bus_geodata']['x']
+                    y = -1 * self.net['bus_geodata']['y']
+                    for i in self.net.bus.index:
+                        self.net.bus.at[i, 'geo'] = f'{{"coordinates":[{x[i]: .2f},{y[i]: .2f}], "type":"Point"}}'
+
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
             # self.update_tooltips()
