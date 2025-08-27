@@ -173,8 +173,7 @@ class NodeMovedCmd(QtGui.QUndoCommand):
         self.node.view.xy_pos = self.prev_pos
         self.node.model.pos = self.prev_pos
         if self.node.type_=='BusNode.BusNode':
-            self.graph.net.bus_geodata.loc[self.bus_index, ['x', 'y']] = [self.prev_pos[0],
-                                                                          -1*self.prev_pos[1]]
+            self.graph.net.bus.loc[self.bus_index, 'geo'] = f'{{"coordinates":[{self.prev_pos[0]: .2f},{-1*self.prev_pos[1]: .2f}], "type":"Point"}}'
 
     def redo(self):
         if self.pos == self.prev_pos:

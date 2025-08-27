@@ -17,6 +17,6 @@ else:
     except PackageNotFoundError:
         VERSION = 'development version'
 
-DATE = '2025-07-30'
+DATE = '2025-08-27'
 AUTHOR = 'Dr. Ing. Ariel S. Loyarte'
 CONTACT = 'aloyarte@frsf.utn.edu.ar'
