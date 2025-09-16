@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 
 import os
+import json
 from itertools import chain
 
 from PySide6 import QtGui
@@ -235,6 +236,13 @@ def horizontal_alignment_bottom(graph):
             node.set_y_pos(pos)
             node.set_selected()
 
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                x, _ = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{x: .2f},{-1*pos: .2f}], "type":"Point"}}'
+
         graph.update_bus_ports()
 
 
@@ -248,6 +256,13 @@ def horizontal_alignment_top(graph):
         for node in selected:
             node.set_y_pos(pos)
             node.set_selected()
+
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                x, _ = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{x: .2f},{-1*pos: .2f}], "type":"Point"}}'
 
         graph.update_bus_ports()
 
@@ -264,6 +279,13 @@ def horizontal_alignment_center(graph):
             node.set_y_pos(pos)
             node.set_selected()
 
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                x, _ = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{x: .2f},{-1*pos: .2f}], "type":"Point"}}'
+
         graph.update_bus_ports()
 
 
@@ -277,6 +299,13 @@ def vertical_alignment_left(graph):
         for node in selected:
             node.set_x_pos(pos)
             node.set_selected()
+
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                _, y = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{pos: .2f},{y: .2f}], "type":"Point"}}'
 
         graph.update_bus_ports()
 
@@ -292,6 +321,13 @@ def vertical_alignment_right(graph):
             node.set_x_pos(pos)
             node.set_selected()
 
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                _, y = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{pos: .2f},{y: .2f}], "type":"Point"}}'
+
         graph.update_bus_ports()
 
 
@@ -306,6 +342,13 @@ def vertical_alignment_center(graph):
         for node in selected:
             node.set_x_pos(pos)
             node.set_selected()
+
+            if node.type_=='BusNode.BusNode':
+                bus_index = node.get_property('bus_index')
+                coords = graph.net.bus.loc[bus_index, 'geo']
+                coords_dict = json.loads(coords)
+                _, y = coords_dict['coordinates']
+                graph.net.bus.loc[bus_index, 'geo'] = f'{{"coordinates":[{pos: .2f},{y: .2f}], "type":"Point"}}'
 
         graph.update_bus_ports()
 
