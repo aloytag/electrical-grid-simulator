@@ -46,7 +46,7 @@ def natsort(s):
 
     s: List with strings.
     """
-    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
+    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\\d+)', s)]
 
 
 def natsort2(s):
@@ -55,7 +55,7 @@ def natsort2(s):
 
     s: List obtained as enumerate(list with strings).
     """
-    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s[1])]
+    return [int(t) if t.isdigit() else t.lower() for t in re.split('(\\d+)', s[1])]
 
 
 def show_WIP(window_parent):

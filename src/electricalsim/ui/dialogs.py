@@ -11,7 +11,7 @@ import pandapower as pp
 from PySide6.QtUiTools import QUiLoader
 from PySide6 import QtGui, QtCore, QtWidgets
 import qtawesome as qta
-import qdarktheme
+import qdarktheme2
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -1291,13 +1291,13 @@ class Toolbar_Matplotlib_custom(NavigationToolbar):
         
         # Setting the backgroud color and theme:
         if theme in ('light', 'auto'):
-            style_toolbar = qdarktheme.load_stylesheet('light')
+            style_toolbar = qdarktheme2.load_stylesheet('light')
             style_toolbar = style_toolbar.replace(
                 'background:rgba(235, 235, 235, 1.000)',
                 'background:rgba(248, 249, 250, 1.000)'
                                                 )
         elif theme=='dark':
-            style_toolbar = qdarktheme.load_stylesheet('dark')
+            style_toolbar = qdarktheme2.load_stylesheet('dark')
             style_toolbar = style_toolbar.replace(
                 'background:rgba(51, 51, 51, 1.000)',
                 'background:rgba(32, 33, 36, 1.000)'

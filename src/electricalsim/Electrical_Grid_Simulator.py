@@ -7,7 +7,7 @@ import importlib
 
 from PySide6.QtUiTools import QUiLoader
 from PySide6 import QtWidgets, QtGui, QtCore
-import qdarktheme  # Always import after Qt
+import qdarktheme2  # Always import after Qt
 import qtawesome as qta
 
 from lib.electricalGraph import ElectricalGraph
@@ -24,6 +24,8 @@ if sys.version_info < (3, 10):
 else:
     from importlib.metadata import entry_points
 
+APP_ID = 'ar.utnfrsf.egs'
+
 
 def main():
     """
@@ -35,11 +37,11 @@ def main():
     # Reading the config file:
     config, config_file_path = return_config(directory)
     
-    # qdarktheme.enable_hi_dpi()
+    # qdarktheme2.enable_hi_dpi()
     # app = QtWidgets.QApplication(sys.argv)
     # theme = config['general']['theme']
     # if theme in ('dark', 'light', 'auto'):
-    #     qdarktheme.setup_theme(theme)
+    #     qdarktheme2.setup_theme(theme)
     
     ui_file = os.path.join(directory, 'ui', 'main_window.ui')
     ui_file_ = QtCore.QFile(ui_file)
@@ -48,8 +50,9 @@ def main():
     # main_window = loader.load(ui_file_)
     # window = QMainWindow2(main_window)
 
-    qdarktheme.enable_hi_dpi()
+    qdarktheme2.enable_hi_dpi()
     app = QtWidgets.QApplication(sys.argv)
+    app.setDesktopFileName(APP_ID)
 
     # Better font for flatpak app:
     directory_split = directory.split(sep='/')
@@ -78,7 +81,7 @@ def main():
 
     theme = config['general']['theme']
     if theme in ('dark', 'light', 'auto'):
-        qdarktheme.setup_theme(theme, additional_qss="QToolTip { border: 0px; }")
+        qdarktheme2.setup_theme(theme, additional_qss="QToolTip { border: 0px; }")
 
     main_window = loader.load(ui_file_)
     window = QMainWindow2(main_window)
