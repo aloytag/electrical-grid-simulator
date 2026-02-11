@@ -9,7 +9,6 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from PySide6 import QtGui, QtWidgets, QtCore
 import pandapower as pp
-# from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
 from pyqttoast import Toast, ToastPreset, ToastPosition
 
@@ -739,6 +738,16 @@ class ElectricalGraph(NodeGraph):
 
             with open(full_file_path, 'rb') as file:
                 data = pickle.load(file)  # data dict
+                
+                # Fix for loads on old-version .egs files (for old versions of pandapower)
+                for _, d in data['graph_dict']['nodes'].items():
+                    if d.get('type_')=='LoadNode.LoadNode' and d.get('custom').get('const_z_percent') is not None:
+                        d.get('custom')['const_z_p_percent'] = d.get('custom').get('const_z_percent')
+                        d.get('custom')['const_z_q_percent'] = d.get('custom').get('const_z_percent')
+                        d.get('custom')['const_i_p_percent'] = d.get('custom').get('const_i_percent')
+                        d.get('custom')['const_i_q_percent'] = d.get('custom').get('const_i_percent')
+                        del d.get('custom')['const_z_percent']
+                        del d.get('custom')['const_i_percent']
                 self.deserialize_session(data['graph_dict'])
                 self.net = data['pandapower_net']
                 if isinstance(self.net, str):
@@ -751,12 +760,29 @@ class ElectricalGraph(NodeGraph):
                     if node.type_=='SwitchNode.SwitchNode':
                         node.set_locked(True)
 
-                # Fix for bus_geodata on old-version .egs files
+                # Fix for bus_geodata on old-version .egs files (for old versions of pandapower)
                 if 'bus_geodata' in self.net:
                     x = self.net['bus_geodata']['x']
                     y = -1 * self.net['bus_geodata']['y']
                     for i in self.net.bus.index:
                         self.net.bus.at[i, 'geo'] = f'{{"coordinates":[{x[i]: .2f},{y[i]: .2f}], "type":"Point"}}'
+
+                # Fix for loads on old-version .egs files (for old versions of pandapower)
+                if 'const_z_percent' in self.net['load']:
+                    for i in self.net.load.index:
+                        self.net.load.at[i, 'const_z_p_percent'] = self.net.load.at[i, 'const_z_percent']
+                        self.net.load.at[i, 'const_i_p_percent'] = self.net.load.at[i, 'const_i_percent']
+                        self.net.load.at[i, 'const_z_q_percent'] = self.net.load.at[i, 'const_z_percent']
+                        self.net.load.at[i, 'const_i_q_percent'] = self.net.load.at[i, 'const_i_percent']
+                    self.net['load'].drop(columns=['const_z_percent', 'const_i_percent'], inplace=True)
+                
+                # Fix for old versions of *.egs files with recent versions of pandapower
+                empty_net = pp.create_empty_network()
+                attr = dir(empty_net)
+                attr_imported = dir(self.net)
+                for attr_name in attr:
+                    if attr_name not in attr_imported:
+                        setattr(self.net, attr_name, getattr(empty_net, attr_name))
 
             self.saved_file_path = full_file_path
             self.message_unsaved.hide()
