@@ -14,7 +14,7 @@ readme = "README_PyPI.md"
 requires-python = ">=3.10,<3.14"
 dependencies = [
   "PySide6>=6.6.1",
-  "pandapower>=3.1.2",
+  "pandapower>=3.3.2",
   "numba>=0.56.4",
   "qtawesome>=1.3.1",
   "pynput>=1.7.6",

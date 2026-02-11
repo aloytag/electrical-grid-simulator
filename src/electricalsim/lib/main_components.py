@@ -1403,8 +1403,9 @@ class LoadNode(BaseNode2):
         else:
             self.create_property('fliped', False)
         
-        self.electrical_properties = ('p_mw', 'q_mvar', 'const_z_percent',
-                                      'const_i_percent', 'sn_mva', 'scaling',
+        self.electrical_properties = ('p_mw', 'q_mvar', 'const_z_p_percent',
+                                      'const_i_p_percent', 'const_z_q_percent',
+                                      'const_i_q_percent', 'sn_mva', 'scaling',
                                       'type', 'controllable',
                                       'max_p_mw', 'min_p_mw',
                                       'max_q_mvar', 'min_q_mvar')

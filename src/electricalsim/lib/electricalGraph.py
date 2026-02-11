@@ -11,7 +11,7 @@ from PySide6 import QtGui, QtWidgets, QtCore
 import pandapower as pp
 # from pandapower.toolbox import drop_from_groups
 from pandapower.toolbox import drop_elements
-from pyqttoast import Toast, ToastPreset
+from pyqttoast import Toast, ToastPreset, ToastPosition
 
 from NodeGraphQt6.base.commands import PortConnectedCmd
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
@@ -4366,8 +4366,10 @@ class ElectricalGraph(NodeGraph):
 
         dialog.sn_mva.setValue(node.get_property('sn_mva'))
         dialog.scaling.setValue(node.get_property('scaling'))
-        dialog.const_z_percent.setValue(node.get_property('const_z_percent'))
-        dialog.const_i_percent.setValue(node.get_property('const_i_percent'))
+        dialog.const_z_p_percent.setValue(node.get_property('const_z_p_percent'))
+        dialog.const_i_p_percent.setValue(node.get_property('const_i_p_percent'))
+        dialog.const_z_q_percent.setValue(node.get_property('const_z_q_percent'))
+        dialog.const_i_q_percent.setValue(node.get_property('const_i_q_percent'))
 
         types = ('wye', 'delta')
         type_index = types.index(node.get_property('type'))
@@ -4392,8 +4394,10 @@ class ElectricalGraph(NodeGraph):
             node.set_property('q_mvar', np.round(dialog.q_mvar.value(), 5), push_undo=False)
             node.set_property('sn_mva', np.round(dialog.sn_mva.value(), 5), push_undo=False)
             node.set_property('scaling', np.round(dialog.scaling.value(), 5), push_undo=False)
-            node.set_property('const_z_percent', np.round(dialog.const_z_percent.value(), 5), push_undo=False)
-            node.set_property('const_i_percent', np.round(dialog.const_i_percent.value(), 5), push_undo=False)
+            node.set_property('const_z_p_percent', np.round(dialog.const_z_p_percent.value(), 5), push_undo=False)
+            node.set_property('const_i_p_percent', np.round(dialog.const_i_p_percent.value(), 5), push_undo=False)
+            node.set_property('const_z_q_percent', np.round(dialog.const_z_q_percent.value(), 5), push_undo=False)
+            node.set_property('const_i_q_percent', np.round(dialog.const_i_q_percent.value(), 5), push_undo=False)
             node.set_property('type', dialog.type.currentText(), push_undo=False)
 
             node.set_property('max_p_mw', np.round(dialog.max_p_mw.value(), 5), push_undo=False)
@@ -5503,6 +5507,7 @@ class ElectricalGraph(NodeGraph):
         toast = Toast(parent=self.main_window)
         font = QtGui.QFont('Sans', 12)
         toast.setTextFont(font)
+        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
         font_title = QtGui.QFont('Sans', 12, QtGui.QFont.Weight.Bold)
         toast.setTitleFont(font_title)
         toast.setDuration(duration)
