@@ -1591,6 +1591,22 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         # Adding Switch DataFrame from pandapower network:
         df_switch_widget = TableWidgetWithCopy(self.net.res_switch)
         self.w.layout_switch.addWidget(df_switch_widget)
+
+        # Adding SVC DataFrame from pandapower network:
+        df_svc_widget = TableWidgetWithCopy(self.net.res_svc)
+        self.w.layout_svc.addWidget(df_svc_widget)
+
+        # Adding TCSC DataFrame from pandapower network:
+        df_tcsc_widget = TableWidgetWithCopy(self.net.res_tcsc)
+        self.w.layout_tcsc.addWidget(df_tcsc_widget)
+
+        # Adding SSC DataFrame from pandapower network:
+        df_ssc_widget = TableWidgetWithCopy(self.net.res_ssc)
+        self.w.layout_ssc.addWidget(df_ssc_widget)
+
+        # Adding VSC DataFrame from pandapower network:
+        df_vsc_widget = TableWidgetWithCopy(self.net.res_vsc)
+        self.w.layout_vsc.addWidget(df_vsc_widget)
         
     def update_dataframes(self):
         """
@@ -1704,6 +1720,30 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         df_switch_widget = TableWidgetWithCopy(self.net.res_switch)
         self.w.layout_switch.addWidget(df_switch_widget)
 
+        # Adding SVC DataFrame from pandapower network:
+        old_svc_table = self.w.layout_svc.itemAt(0).widget()
+        old_svc_table.setParent(None)
+        df_svc_widget = TableWidgetWithCopy(self.net.res_svc)
+        self.w.layout_svc.addWidget(df_svc_widget)
+
+        # Adding TCSC DataFrame from pandapower network:
+        old_tcsc_table = self.w.layout_tcsc.itemAt(0).widget()
+        old_tcsc_table.setParent(None)
+        df_tcsc_widget = TableWidgetWithCopy(self.net.res_tcsc)
+        self.w.layout_tcsc.addWidget(df_tcsc_widget)
+
+        # Adding SSC DataFrame from pandapower network:
+        old_ssc_table = self.w.layout_ssc.itemAt(0).widget()
+        old_ssc_table.setParent(None)
+        df_ssc_widget = TableWidgetWithCopy(self.net.res_ssc)
+        self.w.layout_ssc.addWidget(df_ssc_widget)
+
+        # Adding VSC DataFrame from pandapower network:
+        old_vsc_table = self.w.layout_vsc.itemAt(0).widget()
+        old_vsc_table.setParent(None)
+        df_vsc_widget = TableWidgetWithCopy(self.net.res_vsc)
+        self.w.layout_vsc.addWidget(df_vsc_widget)
+        
     def build_plots_page(self):
         """
         Build the plot page.

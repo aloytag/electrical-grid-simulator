@@ -267,6 +267,10 @@ def main():
     # Adding SSC DataFrame from pandapower network for the first time:
     df_ssc_widget = TableWidgetWithMenu(graph.net.ssc, graph)
     main_window.layout_ssc.addWidget(df_ssc_widget)
+
+    # Adding VSC DataFrame from pandapower network for the first time:
+    df_vsc_widget = TableWidgetWithMenu(graph.net.vsc, graph)
+    main_window.layout_vsc.addWidget(df_vsc_widget)
     
     main_window.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
     
@@ -609,6 +613,12 @@ def main():
             old_ssc_table.setParent(None)
             df_ssc_widget = TableWidgetWithMenu(graph.net.ssc.copy(deep=True), graph)
             main_window.layout_ssc.addWidget(df_ssc_widget)
+
+            # Adding VSC DataFrame from pandapower network:
+            old_vsc_table = main_window.layout_vsc.itemAt(0).widget()
+            old_vsc_table.setParent(None)
+            df_vsc_widget = TableWidgetWithMenu(graph.net.vsc.copy(deep=True), graph)
+            main_window.layout_vsc.addWidget(df_vsc_widget)
             
     main_window.toolBox.currentChanged.connect(page_changed_on_toolbox)
     graph.page_changed_on_toolbox = page_changed_on_toolbox

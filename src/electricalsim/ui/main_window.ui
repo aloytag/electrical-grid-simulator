@@ -18,7 +18,7 @@
     <item>
      <layout class="QHBoxLayout" name="layout_upper_toolbar">
       <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
+       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
       </property>
      </layout>
     </item>
@@ -27,10 +27,10 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::Shape::NoFrame</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
+         <enum>QFrame::Shadow::Plain</enum>
         </property>
         <property name="lineWidth">
          <number>4</number>
@@ -43,7 +43,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1367</width>
+           <width>1371</width>
            <height>649</height>
           </rect>
          </property>
@@ -61,7 +61,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1367</width>
+           <width>1371</width>
            <height>649</height>
           </rect>
          </property>
@@ -352,6 +352,18 @@
                   </layout>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_14">
+                  <property name="title">
+                   <string>Voltage Source Converter (VSC)</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_25">
+                   <item>
+                    <layout class="QVBoxLayout" name="layout_vsc"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </widget>
@@ -372,14 +384,14 @@
      <x>0</x>
      <y>0</y>
      <width>1399</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="contextMenuPolicy">
-    <enum>Qt::PreventContextMenu</enum>
+    <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
    </property>
    <property name="windowTitle">
     <string>toolBar</string>

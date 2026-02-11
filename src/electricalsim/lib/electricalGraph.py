@@ -26,7 +26,7 @@ from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
                                  SwitchNode, SVCNode, SSCNode, TCSCNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
                            simulate_ESC_key, four_ports_on_buses,
-                           check_new_version)  # , show_WIP)
+                           check_new_version, show_WIP)
 from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         stdline_dialog,
                         dcline_dialog, impedance_dialog,
@@ -1738,7 +1738,8 @@ class ElectricalGraph(NodeGraph):
     def add_facts(self, **kwargs):
         """
         Adds a FACTS device to the graph: static var compensator (SVC), thyristor-controlled
-        series capacitor (TCSC), static sunchronous compensator (SSC, also known as STATCOM).
+        series capacitor (TCSC), static sunchronous compensator (SSC, also known as STATCOM),
+        voltage source converter (VSC).
         """
         dialog = choose_facts_dialog()
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
@@ -1804,6 +1805,10 @@ class ElectricalGraph(NodeGraph):
 
                 self.set_vertical_layout_prop(node)
                 node.set_layout_direction(1)
+
+            elif option is None and dialog.radioVSC.isChecked():
+                show_WIP(self.main_window)
+                return
                 
 
             # if 'node' in locals():
