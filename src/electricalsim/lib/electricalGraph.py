@@ -911,7 +911,7 @@ class ElectricalGraph(NodeGraph):
         dialog.f_hz.setValue(self.net.f_hz)
 
         self.disable_main_window()
-        
+        dialog.setFocus()
         if dialog.exec():
             if (self.net.name!=dialog.name.text() or
                     self.net.sn_mva!=dialog.sn_mva.value() or
