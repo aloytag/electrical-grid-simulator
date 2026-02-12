@@ -1495,6 +1495,7 @@ class ElectricalGraph(NodeGraph):
             dialog = choose_bus_switch_dialog()
             dialog.setWindowIcon(QtGui.QIcon(icon_path))
             dialog.comboBox.addItems((txt0, txt1))
+            self.disable_main_window()
             if dialog.exec():
                 selected_bus = dialog.comboBox.currentIndex()
                 if selected_bus==0:
@@ -1522,7 +1523,8 @@ class ElectricalGraph(NodeGraph):
                 self.includes_switch(bus, node_bus, element, et, node, 0, bus_left,
                                      node_from=node_from, node_to=node_to,
                                      port_from=port_from, port_to=port_to)
-                        
+
+            self.enable_main_window()            
             return
         
         elif len(selected)==1 and (node := selected[0]).type_ in ('TrafoNode.TrafoNode', 'StdTrafoNode.StdTrafoNode'):
