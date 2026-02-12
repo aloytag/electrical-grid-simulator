@@ -119,6 +119,7 @@ def main():
     main_window.toolBar.addAction(addBus_action)
     
     addLine_action = QtGui.QAction('addLine')
+    addLine_action.setObjectName('addLine')
     addLine_action.setText('Line')
     addLine_action.setToolTip('Add a line')
     addLine_action.triggered.connect(graph.add_line)
@@ -133,6 +134,7 @@ def main():
     main_window.toolBar.addAction(addImpedance_action)
     
     addTrafo_action = QtGui.QAction('addTrafo')
+    addTrafo_action.setObjectName('addTrafo')
     addTrafo_action.setText('Transformer')
     addTrafo_action.setToolTip('Add a transformer')
     addTrafo_action.triggered.connect(graph.add_trafo)
@@ -140,6 +142,7 @@ def main():
     main_window.toolBar.addAction(addTrafo_action)
     
     addGenerator_action = QtGui.QAction('addGenerator')
+    addGenerator_action.setObjectName('addGenerator')
     addGenerator_action.setText('Generator')
     addGenerator_action.setToolTip('Add a generator')
     addGenerator_action.triggered.connect(graph.add_generator)
@@ -154,6 +157,7 @@ def main():
     main_window.toolBar.addAction(addGrid_action)
     
     addLoad_action = QtGui.QAction('addLoad')
+    addLoad_action.setObjectName('addLoad')
     addLoad_action.setText('Load')
     addLoad_action.setToolTip('Add a load')
     addLoad_action.triggered.connect(graph.add_load)
@@ -168,6 +172,7 @@ def main():
     main_window.toolBar.addAction(addStorage_action)
 
     addFACTS_action = QtGui.QAction('addFACTS')
+    addFACTS_action.setObjectName('addFACTS')
     addFACTS_action.setText('FACTS')
     addFACTS_action.setToolTip('Add a FACTS device')
     addFACTS_action.triggered.connect(graph.add_facts)
@@ -359,6 +364,7 @@ def main():
     
     net_settings = QtWidgets.QToolButton(main_window)
     net_settings.setToolTip('Basic network settings')
+    net_settings.setObjectName('netSettings')
     net_settings.setIconSize(icon_size)
     net_settings.setIcon(qta.icon('mdi6.grid'))
     main_window.layout_upper_toolbar.addWidget(net_settings)

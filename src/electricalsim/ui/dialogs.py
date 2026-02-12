@@ -22,7 +22,7 @@ from matplotlib import rc
 from fuzzysearch import find_near_matches
 
 from lib.table_widget import TableWidget, TableWidgetWithCopy
-from lib.auxiliary import icon_for_type, natsort2, open_power_flow_documentation
+from lib.auxiliary import icon_for_type, natsort2, open_power_flow_documentation, add_diag_animation
 from version import VERSION, DATE, AUTHOR, CONTACT
 
 directory = os.path.dirname(__file__)
@@ -233,7 +233,7 @@ def impedance_dialog():
     return dialog
 
 
-def choose_transformer_dialog():
+def choose_transformer_dialog(parent=None, clicked_pos=None):
     """
     Returns the dialog for selecting the transformer type to add.
     """
@@ -243,10 +243,10 @@ def choose_transformer_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     # return QtCompat.loadUi(uifile=ui_file)
-    return dialog
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
-def choose_line_dialog():
+def choose_line_dialog(parent=None, clicked_pos=None):
     """
     Returns the dialog for selecting the line type to add (AC or DC line).
     """
@@ -256,10 +256,11 @@ def choose_line_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     # return QtCompat.loadUi(uifile=ui_file)
-    return dialog
+    
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
-def choose_generator_dialog():
+def choose_generator_dialog(parent=None, clicked_pos=None):
     """
     Returns the dialog for selecting the generator type to add
     (voltage-controlled gen., static gen. or asymmetric static gen.).
@@ -270,7 +271,7 @@ def choose_generator_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     # return QtCompat.loadUi(uifile=ui_file)
-    return dialog
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
 def choose_bus_switch_dialog():
@@ -594,7 +595,7 @@ def ext_grid_dialog():
     return dialog
 
 
-def choose_load_dialog():
+def choose_load_dialog(parent=None, clicked_pos=None):
     """
     Returns a dialog to choose: symmetric load, asymmetric load, shunt element, motor,
     ward or extended ward.
@@ -605,7 +606,8 @@ def choose_load_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     # return QtCompat.loadUi(uifile=ui_file)
-    return dialog
+
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
 def load_dialog():
@@ -761,7 +763,7 @@ def storage_dialog():
     return dialog
 
 
-def choose_facts_dialog():
+def choose_facts_dialog(parent=None, clicked_pos=None):
     """
     Returns a dialog to choose: static var compensator (SVC), thyristor-controlled
     series capacitor (TCSC), static synchronous compensator (SSC, also known as STATCOM).
@@ -772,7 +774,8 @@ def choose_facts_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     # return QtCompat.loadUi(uifile=ui_file)
-    return dialog
+
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
 def switch_dialog():
@@ -853,7 +856,7 @@ def tcsc_dialog():
     return dialog
 
 
-def network_settings_dialog():
+def network_settings_dialog(parent=None, clicked_pos=None):
     """
     Returns the network settings dialog.
     """
@@ -864,7 +867,7 @@ def network_settings_dialog():
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
     
-    return dialog
+    return add_diag_animation(dialog, parent, clicked_pos)
 
 
 def connecting_buses_dialog(parent):

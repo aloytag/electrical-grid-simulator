@@ -616,6 +616,8 @@ class ElectricalGraph(NodeGraph):
         # dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
         def dialog_closed(result):
+            self.enable_main_window()
+            
             if not result:
                 return
 
@@ -655,7 +657,9 @@ class ElectricalGraph(NodeGraph):
                 else:
                     simulate_ESC_key()
 
+        
         dialog.finished.connect(dialog_closed)
+        self.disable_main_window()
         dialog.open()
         dialog.setFocus()
 
@@ -855,7 +859,6 @@ class ElectricalGraph(NodeGraph):
         """
         Show the dialog to edit settings.
         """
-        # show_WIP(self.main_window)
         dataframe_line_stds = pp.available_std_types(self.net, 'line')
         dataframe_trafo_stds = pp.available_std_types(self.net, 'trafo')
         dataframe_trafo3w_stds = pp.available_std_types(self.net, 'trafo3w')
@@ -865,7 +868,10 @@ class ElectricalGraph(NodeGraph):
                                  dataframe_line_stds,
                                  dataframe_trafo_stds,
                                  dataframe_trafo3w_stds)
+        
+        self.disable_main_window()
         self.config = dialog.exec()
+        self.enable_main_window()
         
         pipe_style = self.config['general']['pipe_style']
         if pipe_style=='curved':
@@ -898,12 +904,15 @@ class ElectricalGraph(NodeGraph):
         * nominal frequency (f_hz)
         * base power (sn_mva)
         """
-        dialog = network_settings_dialog()
+        net_settings_button = self.main_window.findChild(QtWidgets.QToolButton, 'netSettings')
+        dialog = network_settings_dialog(parent=self.main_window, clicked_pos=net_settings_button.pos())
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
-        
+
         dialog.name.setText(self.net.name)
         dialog.sn_mva.setValue(self.net.sn_mva)
         dialog.f_hz.setValue(self.net.f_hz)
+
+        self.disable_main_window()
         
         if dialog.exec():
             if (self.net.name!=dialog.name.text() or
@@ -914,6 +923,8 @@ class ElectricalGraph(NodeGraph):
             self.net.name = dialog.name.text()
             self.net.sn_mva = dialog.sn_mva.value()
             self.net.f_hz = dialog.f_hz.value()
+
+        self.enable_main_window()
         
     def about(self):
         """
@@ -957,8 +968,13 @@ class ElectricalGraph(NodeGraph):
         pos = kwargs.get('pos')
         option = kwargs.get('option')
 
-        dialog = choose_line_dialog()
+        action = [act for act in self.main_window.toolBar.actions() if act.objectName()=='addLine'][0]
+        w = self.main_window.toolBar.widgetForAction(action)
+        pos_btn = w.rect().center()  # w.mapToGlobal(w.rect().center())
+
+        dialog = choose_line_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        self.disable_main_window()
         if pos is not None or dialog.exec():
             center_coordinates = pos if pos is not None else self.viewer().scene_center()
             if option=='line' or (dialog.radioAC.isChecked() and option is None):  # AC line
@@ -999,6 +1015,8 @@ class ElectricalGraph(NodeGraph):
                 self.set_vertical_layout_prop(node)
                 if self.config['general']['theme']=='light':
                     node.model.set_property('text_color', (0, 0, 0, 255))  # black
+
+        self.enable_main_window()
 
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
@@ -1046,8 +1064,14 @@ class ElectricalGraph(NodeGraph):
         pos = kwargs.get('pos')
         option = kwargs.get('option')
 
-        dialog = choose_transformer_dialog()
+        action = [act for act in self.main_window.toolBar.actions() if act.objectName()=='addTrafo'][0]
+        w = self.main_window.toolBar.widgetForAction(action)
+        # pos_btn = w.rect().center()  # w.mapToGlobal(w.rect().center())
+        pos_btn = w.pos()
+
+        dialog = choose_transformer_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        self.disable_main_window()
         if pos is not None or dialog.exec():
             center_coordinates = pos if pos is not None else self.viewer().scene_center()
             if option=='trafo' or (dialog.radio2w.isChecked() and option is None):  # 2W-Trafo
@@ -1107,6 +1131,7 @@ class ElectricalGraph(NodeGraph):
                 if self.config['general']['theme']=='light':
                     node.model.set_property('text_color', (0, 0, 0, 255))  # black
 
+        self.enable_main_window()
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
             i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
@@ -1116,13 +1141,20 @@ class ElectricalGraph(NodeGraph):
 
         self.update_bus_ports()
 
+
     def add_generator(self, **kwargs):
         """
         Adds a generator to the graph: voltage-controlled gen.,
         static gen. or asymmetric static generator.
         """
-        dialog = choose_generator_dialog()
+        action = [act for act in self.main_window.toolBar.actions() if act.objectName()=='addGenerator'][0]
+        w = self.main_window.toolBar.widgetForAction(action)
+        # pos_btn = w.rect().center()  # w.mapToGlobal(w.rect().center())
+        pos_btn = w.pos()
+        
+        dialog = choose_generator_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        self.disable_main_window()
         if dialog.exec():
             center_coordinates = self.viewer().scene_center()
 
@@ -1185,6 +1217,7 @@ class ElectricalGraph(NodeGraph):
                 node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 node.update()
 
+        self.enable_main_window()
         self.update_bus_ports()
 
     def add_external_grid(self, **kwargs):
@@ -1220,8 +1253,15 @@ class ElectricalGraph(NodeGraph):
         Adds a load to the graph: load, asymmetric load, shunt element,
         motor, ward or extended ward.
         """
-        dialog = choose_load_dialog()
+        action = [act for act in self.main_window.toolBar.actions() if act.objectName()=='addLoad'][0]
+        w = self.main_window.toolBar.widgetForAction(action)
+        # pos_btn = w.rect().center()  # w.mapToGlobal(w.rect().center())
+        pos_btn = w.pos()
+        
+        dialog = choose_load_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        self.disable_main_window()
+        
         if dialog.exec():
             center_coordinates = self.viewer().scene_center()
 
@@ -1302,7 +1342,8 @@ class ElectricalGraph(NodeGraph):
             if theme=='light':
                 node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 node.update()
-
+        
+        self.enable_main_window()
         self.update_bus_ports()
 
     def includes_switch(self, bus, node_bus, element, et, node_element,
@@ -1741,8 +1782,15 @@ class ElectricalGraph(NodeGraph):
         series capacitor (TCSC), static sunchronous compensator (SSC, also known as STATCOM),
         voltage source converter (VSC).
         """
-        dialog = choose_facts_dialog()
+        action = [act for act in self.main_window.toolBar.actions() if act.objectName()=='addFACTS'][0]
+        w = self.main_window.toolBar.widgetForAction(action)
+        # pos_btn = w.rect().center()  # w.mapToGlobal(w.rect().center())
+        # pos_btn = w.mapToGlobal(w.rect().center())
+        pos_btn = w.pos()
+        
+        dialog = choose_facts_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
+        self.disable_main_window()
 
         pos = kwargs.get('pos')
         option = kwargs.get('option')
@@ -1808,6 +1856,7 @@ class ElectricalGraph(NodeGraph):
 
             elif option is None and dialog.radioVSC.isChecked():
                 show_WIP(self.main_window)
+                self.enable_main_window()
                 return
                 
 
@@ -1819,6 +1868,7 @@ class ElectricalGraph(NodeGraph):
                 node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 node.update()
 
+        self.enable_main_window()
         if (node_from := kwargs.get('node_from')) is not None and (node_to := kwargs.get('node_to')):
             i_port_from = 0 if kwargs.get('port_from')._name=='output' else 1
             i_port_to = 0 if kwargs.get('port_to')._name=='input' else 1
@@ -2098,6 +2148,7 @@ class ElectricalGraph(NodeGraph):
 
                 def dialog_closed(result, node_from=node_from, node_to=node_to,
                                   port_from=port_from, port_to=port_to):
+                    self.enable_main_window()
                     if not result:
                         return
 
@@ -2405,6 +2456,7 @@ class ElectricalGraph(NodeGraph):
                                         port_to=port_to)
 
                 dialog.finished.connect(dialog_closed)
+                self.disable_main_window()
                 dialog.open()
                 dialog.setFocus()
 
@@ -5498,6 +5550,7 @@ class ElectricalGraph(NodeGraph):
         # dialog.move(main_win_rect.center() - dialog.rect().center())  # centering in the main window
 
         def dialog_closed(result):
+            self.enable_main_window()
             if result:
                 node = self.get_node_by_name(dialog.selected_node)
                 if node is not None:
@@ -5514,6 +5567,7 @@ class ElectricalGraph(NodeGraph):
             simulate_ESC_key()
         
         dialog.finished.connect(dialog_closed)
+        self.disable_main_window()
         dialog.open()
         dialog.input_search.setFocus()
 
@@ -5599,3 +5653,19 @@ class ElectricalGraph(NodeGraph):
         QtCore.QCoreApplication.processEvents()
         future = self.executor.submit(check_new_version)  # Check for updates in a secondary thread
         future.add_done_callback(self._callback_updates_finished)
+
+    def disable_main_window(self):
+        """
+        Disable the main window (e.g., when a dialog is open).
+        """
+        self.main_window.toolBar.setEnabled(False)
+        self.main_window.menubar.setEnabled(False)
+        self.main_window.layout_upper_toolbar.parentWidget().setEnabled(False)
+
+    def enable_main_window(self):
+        """
+        Enable the main window (e.g., when a dialog is closed).
+        """
+        self.main_window.toolBar.setEnabled(True)
+        self.main_window.menubar.setEnabled(True)
+        self.main_window.layout_upper_toolbar.parentWidget().setEnabled(True)

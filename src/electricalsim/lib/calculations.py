@@ -14,4 +14,6 @@ class Run_PF:
         dialog = Power_Flow_Dialog(self.graph.net, self.graph.config['pf'],
                                    self.graph.session_change_warning,
                                    self.graph.config['general']['theme'])
+        self.graph.disable_main_window()
         dialog.w.exec()
+        self.graph.enable_main_window()

@@ -5,7 +5,7 @@ import configparser
 import re
 
 import requests
-from PySide6 import QtWidgets, QtGui
+from PySide6 import QtWidgets, QtGui, QtCore
 import qtawesome as qta
 from pynput.keyboard import Key, Controller
 from platformdirs import user_config_dir
@@ -778,3 +778,53 @@ def open_components_documentation():
     Open the Pandapower online documentation for the network components.
     """
     QtGui.QDesktopServices.openUrl('https://pandapower.readthedocs.io/en/stable/elements.html')
+
+def add_diag_animation(dialog, parent=None, clicked_pos=None):
+    """
+    Adds an opening animation to a dialog.
+
+    Returns the modified dialog.
+    """
+    dialog.setParent(parent)
+    dialog.setModal(True)
+    dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+    dialog.btn_close.setIcon(qta.icon('mdi6.close'))
+
+    # Adding transparency and shadow...
+    dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+    effect = QtWidgets.QGraphicsDropShadowEffect(parent=dialog)
+    effect.setBlurRadius(30)
+    effect.setColor(QtGui.QColor(0, 0, 0, 160))
+    effect.setOffset(0)
+    dialog.setGraphicsEffect(effect)
+
+    # Opening animation...
+    t_animation = 400 # ms
+
+    size_final = dialog.size()
+    size_init = size_final * 0.4
+    dialog.anim = QtCore.QPropertyAnimation(dialog, b"size")
+    dialog.anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim.setStartValue(size_init)
+    dialog.anim.setEndValue(size_final)
+    dialog.anim.setDuration(t_animation)
+
+    main_win_rect = parent.geometry()
+    pos_final = main_win_rect.center() - dialog.rect().center()
+    if clicked_pos is None:
+        pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
+                                            (size_final.height() - size_init.height())/2)
+    else:
+        pos_init = clicked_pos - QtCore.QPoint(0, size_init.height()/2)
+    dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
+    dialog.anim2.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+    dialog.anim2.setStartValue(pos_init)
+    dialog.anim2.setEndValue(pos_final)
+    dialog.anim2.setDuration(t_animation)
+
+    dialog.anim_group = QtCore.QParallelAnimationGroup()
+    dialog.anim_group.addAnimation(dialog.anim)
+    dialog.anim_group.addAnimation(dialog.anim2)
+    dialog.anim_group.start()
+
+    return dialog
