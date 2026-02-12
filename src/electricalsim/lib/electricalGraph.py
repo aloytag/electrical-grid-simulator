@@ -1141,7 +1141,6 @@ class ElectricalGraph(NodeGraph):
 
         self.update_bus_ports()
 
-
     def add_generator(self, **kwargs):
         """
         Adds a generator to the graph: voltage-controlled gen.,
@@ -3573,25 +3572,40 @@ class ElectricalGraph(NodeGraph):
         """
         bus_index = node.get_property('bus_index')
         if bus_index is not None:
-            dialog = bus_dialog()
+            dialog = bus_dialog(parent=self.main_window)
             dialog.setWindowTitle(node.get_property('name'))
             dialog.setWindowIcon(QtGui.QIcon(icon_path))
             dialog.vn_kv.setValue(self.net.bus.loc[bus_index, 'vn_kv'])
             dialog.max_vm_pu.setValue(self.net.bus.loc[bus_index, 'max_vm_pu'])
             dialog.min_vm_pu.setValue(self.net.bus.loc[bus_index, 'min_vm_pu'])
 
-            if dialog.exec():
+            def dialog_closed(result):
+                # self.enable_main_window()
+                if not result:
+                    return
+                
                 self.net.bus.loc[bus_index, 'vn_kv'] = np.round(dialog.vn_kv.value(), 2)
                 self.net.bus.loc[bus_index, 'max_vm_pu'] = np.round(dialog.max_vm_pu.value(), 2)
                 self.net.bus.loc[bus_index, 'min_vm_pu'] = np.round(dialog.min_vm_pu.value(), 2)
-
                 self.session_change_warning()
+            
+            # if dialog.exec():
+            #     self.net.bus.loc[bus_index, 'vn_kv'] = np.round(dialog.vn_kv.value(), 2)
+            #     self.net.bus.loc[bus_index, 'max_vm_pu'] = np.round(dialog.max_vm_pu.value(), 2)
+            #     self.net.bus.loc[bus_index, 'min_vm_pu'] = np.round(dialog.min_vm_pu.value(), 2)
+
+            #     self.session_change_warning()
+
+            dialog.finished.connect(dialog_closed)
+            # self.disable_main_window()
+            dialog.open()
+            dialog.setFocus()
 
     def line_options(self, node):
         """
         Executed function when a Line node is double clicked.
         """
-        dialog = line_dialog()
+        dialog = line_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.length_km.setValue(node.get_property('length_km'))
@@ -3646,7 +3660,7 @@ class ElectricalGraph(NodeGraph):
         table = pp.available_std_types(self.net, 'line')
         selected_std = node.get_property('std_type')
 
-        dialog = stdline_dialog(table, selected_std)
+        dialog = stdline_dialog(table, selected_std, parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.length_km.setValue(node.get_property('length_km'))
@@ -3679,7 +3693,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a DC Line node is double clicked.
         """
-        dialog = dcline_dialog()
+        dialog = dcline_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.p_mw.setValue(node.get_property('p_mw'))
@@ -3716,7 +3730,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an Impedance node is double clicked.
         """
-        dialog = impedance_dialog()
+        dialog = impedance_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -3770,7 +3784,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a two-winding transformer node is double clicked.
         """
-        dialog = transformer_dialog()
+        dialog = transformer_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -3878,7 +3892,7 @@ class ElectricalGraph(NodeGraph):
         table = pp.available_std_types(self.net, 'trafo')
         selected_std = node.get_property('std_type')
 
-        dialog = stdtransformer_dialog(table, selected_std)
+        dialog = stdtransformer_dialog(table, selected_std, parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.vk0_percent.setValue(node.get_property('vk0_percent'))
@@ -3936,7 +3950,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a three-winding transformer node is double clicked.
         """
-        dialog = transformer3w_dialog()
+        dialog = transformer3w_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4054,7 +4068,7 @@ class ElectricalGraph(NodeGraph):
         table = pp.available_std_types(self.net, 'trafo3w')
         selected_std = node.get_property('std_type')
 
-        dialog = stdtransformer3w_dialog(table, selected_std)
+        dialog = stdtransformer3w_dialog(table, selected_std, parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.max_loading_percent.setValue(node.get_property('max_loading_percent'))
@@ -4104,7 +4118,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Generator node is double clicked.
         """
-        dialog = gen_dialog()
+        dialog = gen_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4167,7 +4181,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Static Generator node is double clicked.
         """
-        dialog = sgen_dialog()
+        dialog = sgen_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4297,7 +4311,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an Asymmetric Static Generator node is double clicked.
         """
-        dialog = asgen_dialog()
+        dialog = asgen_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4336,7 +4350,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an External Grid node is double clicked.
         """
-        dialog = ext_grid_dialog()
+        dialog = ext_grid_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4445,7 +4459,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Symmetric Load node is double clicked.
         """
-        dialog = load_dialog()
+        dialog = load_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4510,7 +4524,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an Asymmetric Load node is double clicked.
         """
-        dialog = aload_dialog()
+        dialog = aload_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4549,7 +4563,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Shunt Element node is double clicked.
         """
-        dialog = shunt_dialog()
+        dialog = shunt_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4591,7 +4605,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Motor node is double clicked.
         """
-        dialog = motor_dialog()
+        dialog = motor_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4673,7 +4687,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Ward node is double clicked.
         """
-        dialog = ward_dialog()
+        dialog = ward_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4699,7 +4713,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an Extended Ward node is double clicked.
         """
-        dialog = xward_dialog()
+        dialog = xward_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4733,7 +4747,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Storage node is double clicked.
         """
-        dialog = storage_dialog()
+        dialog = storage_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         
@@ -4784,7 +4798,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a Switch node is double clicked.
         """
-        dialog = switch_dialog()
+        dialog = switch_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         
@@ -4827,7 +4841,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an SVC node is double clicked.
         """
-        dialog = svc_dialog()
+        dialog = svc_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4864,7 +4878,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when an SSC node is double clicked.
         """
-        dialog = ssc_dialog()
+        dialog = ssc_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 
@@ -4898,7 +4912,7 @@ class ElectricalGraph(NodeGraph):
         """
         Executed function when a TCSC node is double clicked.
         """
-        dialog = tcsc_dialog()
+        dialog = tcsc_dialog(parent=self.main_window)
         dialog.setWindowTitle(node.get_property('name'))
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
 

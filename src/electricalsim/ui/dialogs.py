@@ -83,7 +83,7 @@ def about_dialog():
     return dialog
 
 
-def bus_dialog():
+def bus_dialog(parent=None):
     """
     Returns the bus dialog.
     """
@@ -93,7 +93,11 @@ def bus_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
-    
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
+
     def min_vm_pu_changed(value):
         dialog.max_vm_pu.setMinimum(value)
         
@@ -106,7 +110,7 @@ def bus_dialog():
     return dialog
 
 
-def line_dialog():
+def line_dialog(parent=None):
     """
     Returns the line dialog.
     """
@@ -115,11 +119,16 @@ def line_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
+
     # return QtCompat.loadUi(uifile=ui_file)
     return dialog
 
 
-def stdline_dialog(dataframe_stds, selected_std):
+def stdline_dialog(dataframe_stds, selected_std, parent=None):
     """
     Returns the standard line dialog.
     
@@ -133,6 +142,10 @@ def stdline_dialog(dataframe_stds, selected_std):
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -175,7 +188,7 @@ def stdline_dialog(dataframe_stds, selected_std):
     return dialog
 
 
-def dcline_dialog():
+def dcline_dialog(parent=None):
     """
     Returns the DC line dialog.
     """
@@ -184,11 +197,15 @@ def dcline_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
-    # return QtCompat.loadUi(uifile=ui_file)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
+
     return dialog
 
 
-def impedance_dialog():
+def impedance_dialog(parent=None):
     """
     Returns the impedance dialog.
     """
@@ -198,6 +215,10 @@ def impedance_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def change_state_check1(state):
         dialog.rtf_pu.setEnabled(not state)
@@ -288,7 +309,7 @@ def choose_bus_switch_dialog():
     return dialog
 
 
-def transformer_dialog():
+def transformer_dialog(parent=None):
     """
     Returns the dialog for a two-winding transformer.
     """
@@ -298,6 +319,10 @@ def transformer_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def tap_min_changed(value):
         dialog.tap_pos.setMinimum(value)
@@ -323,7 +348,7 @@ def transformer_dialog():
     return dialog
 
 
-def stdtransformer_dialog(dataframe_stds, selected_std):
+def stdtransformer_dialog(dataframe_stds, selected_std, parent=None):
     """
     Returns the standard 2W-transformer dialog.
     
@@ -337,6 +362,10 @@ def stdtransformer_dialog(dataframe_stds, selected_std):
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -380,7 +409,7 @@ def stdtransformer_dialog(dataframe_stds, selected_std):
     return dialog
 
 
-def transformer3w_dialog():
+def transformer3w_dialog(parent=None):
     """
     Returns the dialog for a three-winding transformer.
     """
@@ -390,6 +419,10 @@ def transformer3w_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def tap_min_changed(value):
         dialog.tap_pos.setMinimum(value)
@@ -415,7 +448,7 @@ def transformer3w_dialog():
     return dialog
 
 
-def stdtransformer3w_dialog(dataframe_stds, selected_std):
+def stdtransformer3w_dialog(dataframe_stds, selected_std, parent=None):
     """
     Returns the standard 3W-transformer dialog.
     
@@ -429,6 +462,10 @@ def stdtransformer3w_dialog(dataframe_stds, selected_std):
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     stds = dataframe_stds.index.tolist()
     dialog.std_type.addItems(stds)
@@ -472,7 +509,7 @@ def stdtransformer3w_dialog(dataframe_stds, selected_std):
     return dialog
 
 
-def gen_dialog():
+def gen_dialog(parent=None):
     """
     Returns the generator dialog.
     """
@@ -482,6 +519,10 @@ def gen_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_vm_pu_changed(value):
         dialog.vm_pu.setMinimum(value)
@@ -507,7 +548,7 @@ def gen_dialog():
     return dialog
 
 
-def sgen_dialog():
+def sgen_dialog(parent=None):
     """
     Returns the static generator dialog.
     """
@@ -517,6 +558,10 @@ def sgen_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
         
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -542,7 +587,7 @@ def sgen_dialog():
     return dialog
 
 
-def asgen_dialog():
+def asgen_dialog(parent=None):
     """
     Returns the asymmetric static generator dialog.
     """
@@ -552,11 +597,15 @@ def asgen_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def ext_grid_dialog():
+def ext_grid_dialog(parent=None):
     """
     Returns the external grid dialog.
     """
@@ -566,6 +615,10 @@ def ext_grid_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_p_mw_changed(value):
         dialog.max_p_mw.setMinimum(value)
@@ -610,7 +663,7 @@ def choose_load_dialog(parent=None, clicked_pos=None):
     return add_diag_animation(dialog, parent, clicked_pos)
 
 
-def load_dialog():
+def load_dialog(parent=None):
     """
     Returns the symmetric load dialog.
     """
@@ -620,6 +673,10 @@ def load_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -645,7 +702,7 @@ def load_dialog():
     return dialog
 
 
-def aload_dialog():
+def aload_dialog(parent=None):
     """
     Returns the asymmetric load dialog.
     """
@@ -655,11 +712,15 @@ def aload_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def shunt_dialog():
+def shunt_dialog(parent=None):
     """
     Returns the shunt element dialog.
     """
@@ -669,6 +730,10 @@ def shunt_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def max_step_changed(value):
         dialog.step.setMaximum(value)
@@ -678,7 +743,7 @@ def shunt_dialog():
     return dialog
 
 
-def motor_dialog():
+def motor_dialog(parent=None):
     """
     Returns the motor dialog.
     """
@@ -688,11 +753,15 @@ def motor_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def ward_dialog():
+def ward_dialog(parent=None):
     """
     Returns the ward dialog.
     """
@@ -702,11 +771,15 @@ def ward_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def xward_dialog():
+def xward_dialog(parent=None):
     """
     Returns the extended ward dialog.
     """
@@ -716,11 +789,15 @@ def xward_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def storage_dialog():
+def storage_dialog(parent=None):
     """
     Returns the storage dialog.
     """
@@ -730,6 +807,10 @@ def storage_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_p_mw_changed(value):
         dialog.p_mw.setMinimum(value)
@@ -778,7 +859,7 @@ def choose_facts_dialog(parent=None, clicked_pos=None):
     return add_diag_animation(dialog, parent, clicked_pos)
 
 
-def switch_dialog():
+def switch_dialog(parent=None):
     """
     Returns the switch dialog.
     """
@@ -788,11 +869,15 @@ def switch_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def svc_dialog():
+def svc_dialog(parent=None):
     """
     Returns the SVC dialog.
     """
@@ -802,6 +887,10 @@ def svc_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_angle_degree_changed(value):
         dialog.thyristor_firing_angle_degree.setMinimum(value)
@@ -817,7 +906,7 @@ def svc_dialog():
     return dialog
 
 
-def ssc_dialog():
+def ssc_dialog(parent=None):
     """
     Returns the SSC dialog.
     """
@@ -827,11 +916,15 @@ def ssc_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     return dialog
 
 
-def tcsc_dialog():
+def tcsc_dialog(parent=None):
     """
     Returns the TCSC dialog.
     """
@@ -841,6 +934,10 @@ def tcsc_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     def min_angle_degree_changed(value):
         dialog.thyristor_firing_angle_degree.setMinimum(value)
