@@ -869,9 +869,7 @@ class ElectricalGraph(NodeGraph):
                                  dataframe_trafo_stds,
                                  dataframe_trafo3w_stds)
         
-        self.disable_main_window()
         self.config = dialog.exec()
-        self.enable_main_window()
         
         pipe_style = self.config['general']['pipe_style']
         if pipe_style=='curved':
@@ -975,6 +973,7 @@ class ElectricalGraph(NodeGraph):
         dialog = choose_line_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         self.disable_main_window()
+        dialog.setFocus()
         if pos is not None or dialog.exec():
             center_coordinates = pos if pos is not None else self.viewer().scene_center()
             if option=='line' or (dialog.radioAC.isChecked() and option is None):  # AC line
@@ -1072,6 +1071,7 @@ class ElectricalGraph(NodeGraph):
         dialog = choose_transformer_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         self.disable_main_window()
+        dialog.setFocus()
         if pos is not None or dialog.exec():
             center_coordinates = pos if pos is not None else self.viewer().scene_center()
             if option=='trafo' or (dialog.radio2w.isChecked() and option is None):  # 2W-Trafo
@@ -1154,6 +1154,7 @@ class ElectricalGraph(NodeGraph):
         dialog = choose_generator_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         self.disable_main_window()
+        dialog.setFocus()
         if dialog.exec():
             center_coordinates = self.viewer().scene_center()
 
@@ -1260,7 +1261,7 @@ class ElectricalGraph(NodeGraph):
         dialog = choose_load_dialog(parent=self.main_window, clicked_pos=pos_btn)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         self.disable_main_window()
-        
+        dialog.setFocus()
         if dialog.exec():
             center_coordinates = self.viewer().scene_center()
 
@@ -1796,6 +1797,7 @@ class ElectricalGraph(NodeGraph):
         pos = kwargs.get('pos')
         option = kwargs.get('option')
 
+        dialog.setFocus()
         if pos is not None or dialog.exec():
             center_coordinates = pos if pos is not None else self.viewer().scene_center()
 
@@ -3580,7 +3582,6 @@ class ElectricalGraph(NodeGraph):
             dialog.min_vm_pu.setValue(self.net.bus.loc[bus_index, 'min_vm_pu'])
 
             def dialog_closed(result):
-                # self.enable_main_window()
                 if not result:
                     return
                 
@@ -3597,7 +3598,6 @@ class ElectricalGraph(NodeGraph):
             #     self.session_change_warning()
 
             dialog.finished.connect(dialog_closed)
-            # self.disable_main_window()
             dialog.open()
             dialog.setFocus()
 

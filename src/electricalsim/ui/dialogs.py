@@ -2338,6 +2338,11 @@ class Settings_Dialog:
         ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
         loader = QUiLoader()
         self.dialog = loader.load(ui_file_)
+
+        self.dialog.setParent(self.main_window)
+        self.dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+        self.dialog.setModal(True)
+
         self.dialog.restore_settings.clicked.connect(self.restore_defaults)
         
         root_dir, _ = os.path.split(directory)
