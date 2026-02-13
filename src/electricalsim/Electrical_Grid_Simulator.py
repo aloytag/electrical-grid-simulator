@@ -76,6 +76,9 @@ def main():
 
         pixmap_splash = QtGui.QPixmap(icon_splash_svg2)
         splash = QtWidgets.QSplashScreen(pixmap_splash)
+        splash.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, True)
+        splash.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, True)
+
         splash.show()
         app.processEvents()
 
@@ -634,10 +637,17 @@ def main():
 
     # Show main window:
     # main_window.show()
-    window.show()
+    # window.show()
+
+    splash.raise_()
+    splash.activateWindow()
+    app.processEvents()
+
     # splash.finish(window)
     if data_splash is not None:
-        QtCore.QTimer.singleShot(2000, splash, splash.close)
+        # QtCore.QTimer.singleShot(2000, splash, splash.close)
+        # QtCore.QTimer.singleShot(5000, lambda: splash.finish(window))
+        QtCore.QTimer.singleShot(2000, lambda: (splash.finish(window), window.show()))
     sys.exit(app.exec())
 
 
