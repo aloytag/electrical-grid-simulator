@@ -928,7 +928,7 @@ class ElectricalGraph(NodeGraph):
         """
         Open the dialog 'About EGS' with version and authors informarion.
         """
-        dialog = about_dialog()
+        dialog = about_dialog(self.main_window)
         dialog.setWindowIcon(QtGui.QIcon(icon_path))
         dialog.exec()
 

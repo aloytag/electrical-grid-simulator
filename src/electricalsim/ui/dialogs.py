@@ -43,7 +43,7 @@ def return_qtwindow(path_ui_file):
     return window
 
 
-def about_dialog():
+def about_dialog(parent=None):
     """
     Returns the about dialog.
     """
@@ -53,6 +53,10 @@ def about_dialog():
     ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
     loader = QUiLoader()
     dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
     
     root_dir, _ = os.path.split(directory)
     
