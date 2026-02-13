@@ -11,6 +11,7 @@ from PySide6 import QtGui, QtWidgets, QtCore
 import pandapower as pp
 from pandapower.toolbox import drop_elements
 from pyqttoast import Toast, ToastPreset, ToastPosition
+import qtawesome as qta
 
 from NodeGraphQt6.base.commands import PortConnectedCmd
 from NodeGraphQt6 import NodeGraph, errors, BaseNode
@@ -5605,6 +5606,26 @@ class ElectricalGraph(NodeGraph):
           - SUCCESS
           - WARNING
         """
+        # In case of Wayland session (on Linux), workaround:
+        session_type = os.environ.get("XDG_SESSION_TYPE")
+        if session_type and session_type.lower() == "wayland":
+            if type_=='INFORMATION':
+                QtWidgets.QMessageBox.information(self.main_window, title, message)
+            elif type_=='ERROR':
+                QtWidgets.QMessageBox.critical(self.main_window, title, message)
+            elif type_=='SUCCESS':
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(qta.icon('mdi6.check-circle-outline')) # Success icon
+                msg.setText(message)
+                msg.setWindowTitle(title)
+                msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+                msg.exec()
+            elif type_=='WARNING':
+                QtWidgets.QMessageBox.warning(self.main_window, title, message)
+            
+            return
+            
+
         toast = Toast(parent=self.main_window)
         font = QtGui.QFont('Sans', 12)
         toast.setTextFont(font)
@@ -5637,21 +5658,26 @@ class ElectricalGraph(NodeGraph):
         """
         Executed after checking for updates.
         """
+        session_type = os.environ.get("XDG_SESSION_TYPE")  # detecting wayland session
+
         if result[0] is True:
             self.show_notification('Updates',
                                    f'A new version of EGS is available for download (v{result[1]}).',
                                    duration=20000,
                                    type_='INFORMATION')
+        elif result[0] is False and session_type and session_type.lower() == "wayland":
+            pass
         elif result[0] is False:
             self.show_notification('Updates',
                                    'EGS is up to date.',
                                    duration=10000,
                                    type_='INFORMATION')
         else:
-            self.show_notification('Updates',
-                                    'ERROR: No Internet connection to check for updates.',
-                                    duration=10000,
-                                    type_='ERROR')
+            if not (session_type and session_type.lower() == "wayland"):
+                self.show_notification('Updates',
+                                        'ERROR: No Internet connection to check for updates.',
+                                        duration=10000,
+                                        type_='ERROR')
             
     def check_for_updates(self):
         """
