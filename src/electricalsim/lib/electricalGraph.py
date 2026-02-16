@@ -5,12 +5,14 @@ import warnings
 from math import isnan, nan
 import pickle
 from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 import numpy as np
 from PySide6 import QtGui, QtWidgets, QtCore
 import pandapower as pp
 from pandapower.toolbox import drop_elements
-from pyqttoast import Toast, ToastPreset, ToastPosition
+from desktop_notifier import Icon, Urgency, DesktopNotifierSync
+
 import qtawesome as qta
 
 from NodeGraphQt6.base.commands import PortConnectedCmd
@@ -52,6 +54,10 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 directory = os.path.dirname(__file__)
 root_directory, _ = os.path.split(directory)
 icon_path = os.path.join(root_directory, 'icons', 'app_icon.png')
+
+icon_notifications = Icon(uri=icon_path)
+notifier = DesktopNotifierSync(app_name='Electrical Grid Simulator',
+                               app_icon=icon_notifications)
 
 allowed_connections = (
     {'BusNode.BusNode', 'LineNode.LineNode'},
@@ -1830,9 +1836,6 @@ class ElectricalGraph(NodeGraph):
                         node.set_property(name, False, push_undo=False)  # bool
                     else:
                         node.set_property(name, float(value), push_undo=False)  # float
-                # self.show_notification(title='Not yet implemented',
-                #                        message='TCSC component is not yet implemented.',
-                #                        duration=5000, type_='ERROR')
                 
                 if kwargs.get('vert_layout') in (None, False):
                     self.set_horizontal_layout_prop(node)
@@ -5606,50 +5609,12 @@ class ElectricalGraph(NodeGraph):
           - SUCCESS
           - WARNING
         """
-        # In case of Wayland session (on Linux), workaround:
-        session_type = os.environ.get("XDG_SESSION_TYPE")
-        if session_type and session_type.lower() == "wayland":
-            if type_=='INFORMATION':
-                QtWidgets.QMessageBox.information(self.main_window, title, message)
-            elif type_=='ERROR':
-                QtWidgets.QMessageBox.critical(self.main_window, title, message)
-            elif type_=='SUCCESS':
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(qta.icon('mdi6.check-circle-outline')) # Success icon
-                msg.setText(message)
-                msg.setWindowTitle(title)
-                msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
-                msg.exec()
-            elif type_=='WARNING':
-                QtWidgets.QMessageBox.warning(self.main_window, title, message)
-            
-            return
-            
-
-        toast = Toast(parent=self.main_window)
-        font = QtGui.QFont('Sans', 12)
-        toast.setTextFont(font)
-        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
-        font_title = QtGui.QFont('Sans', 12, QtGui.QFont.Weight.Bold)
-        toast.setTitleFont(font_title)
-        toast.setDuration(duration)
-        toast.setTitle(title)
-        toast.setText(f'{message}  ')
-        toast.setBorderRadius(6)
-        toast.setIconSize(QtCore.QSize(24, 24))
-
-        theme = self.config['general']['theme']
-        if type_=='INFORMATION':
-            preset = ToastPreset.INFORMATION if theme=='light' else ToastPreset.INFORMATION_DARK
-        elif type_=='ERROR':
-            preset = ToastPreset.ERROR if theme=='light' else ToastPreset.ERROR_DARK
-        elif type_=='SUCCESS':
-            preset = ToastPreset.SUCCESS if theme=='light' else ToastPreset.SUCCESS_DARK
-        elif type_=='WARNING':
-            preset = ToastPreset.WARNING if theme=='light' else ToastPreset.WARNING_DARK
-        
-        toast.applyPreset(preset)  # Apply style preset
-        toast.show()
+        if type_ in ('WARNING', 'ERROR'):
+            notifier.send(title=title, message=message,
+                          urgency=Urgency.Critical, timeout=duration)
+        else:
+            notifier.send(title=title, message=message,
+                          urgency=Urgency.Normal, timeout=duration)
 
     def _callback_updates_finished(self, future):
         self.signals.update_check_done.emit(future.result())
@@ -5658,26 +5623,21 @@ class ElectricalGraph(NodeGraph):
         """
         Executed after checking for updates.
         """
-        session_type = os.environ.get("XDG_SESSION_TYPE")  # detecting wayland session
-
         if result[0] is True:
             self.show_notification('Updates',
                                    f'A new version of EGS is available for download (v{result[1]}).',
                                    duration=20000,
                                    type_='INFORMATION')
-        elif result[0] is False and session_type and session_type.lower() == "wayland":
-            pass
         elif result[0] is False:
             self.show_notification('Updates',
                                    'EGS is up to date.',
                                    duration=10000,
                                    type_='INFORMATION')
         else:
-            if not (session_type and session_type.lower() == "wayland"):
-                self.show_notification('Updates',
-                                        'ERROR: No Internet connection to check for updates.',
-                                        duration=10000,
-                                        type_='ERROR')
+            self.show_notification('Updates',
+                                    'ERROR: No Internet connection to check for updates.',
+                                    duration=10000,
+                                    type_='ERROR')
             
     def check_for_updates(self):
         """
