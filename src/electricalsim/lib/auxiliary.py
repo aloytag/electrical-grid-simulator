@@ -111,19 +111,30 @@ class QMainWindow2(QtWidgets.QMainWindow):
     """
     def __init__(self, main_window, **kwargs):
         super().__init__(**kwargs)
-        self.main_window = main_window
+        # self.main_window = main_window
+
+        # Copio los atributos de main_window a self para que sean accesibles desde esta clase
+        for nombre, valor in vars(main_window).items():
+            setattr(self, nombre, valor)
+
+        self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolBar)
+        
+        
         self.resize(1399, 790)
-        self.setCentralWidget(self.main_window)
+        # self.setCentralWidget(self.main_window)
+        self.setCentralWidget(self.centralwidget)
         
     def closeEvent(self, event):
-        status_msg = self.main_window.statusbar.findChild(QtWidgets.QWidget, 'unsaved_message')
+        # status_msg = self.main_window.statusbar.findChild(QtWidgets.QWidget, 'unsaved_message')
+        status_msg = self.statusbar.findChild(QtWidgets.QWidget, 'unsaved_message')
         if not status_msg.isVisible():
             event.accept()
             return
         
         event.ignore()
         
-        box = QtWidgets.QMessageBox(parent=self.main_window)
+        # box = QtWidgets.QMessageBox(parent=self.main_window)
+        box = QtWidgets.QMessageBox(parent=self)
         box.setIcon(QtWidgets.QMessageBox.Question)
         box.setWindowTitle('Exit the application')
         box.setText('Session is unsaved. All the data will be lost when closing the application. '+
@@ -809,8 +820,8 @@ def add_diag_animation(dialog, parent=None, clicked_pos=None):
     dialog.anim.setEndValue(size_final)
     dialog.anim.setDuration(t_animation)
 
-    main_win_rect = parent.geometry()
-    pos_final = main_win_rect.center() - dialog.rect().center()
+    # main_win_rect = parent.geometry()
+    pos_final = parent.centralwidget.geometry().center() - dialog.rect().center()  # main_win_rect.center() - dialog.rect().center()
     if clicked_pos is None:
         pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
                                             (size_final.height() - size_init.height())/2)

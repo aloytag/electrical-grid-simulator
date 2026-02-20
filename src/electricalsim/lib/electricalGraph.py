@@ -156,6 +156,8 @@ class ElectricalGraph(NodeGraph):
         self.main_window = kwargs.get('main_window')  # QMainWindow2 reference to the main window
         self.extensions_dict = kwargs.get('extensions_dict', dict())
 
+        self.main_window.statusbar = self.main_window.statusBar()
+
         # When something in the graph changed:
         self.property_changed.connect(self.session_change_warning)
         self.message_unsaved = StatusMessageUnsaved()

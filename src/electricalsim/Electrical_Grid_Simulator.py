@@ -101,7 +101,7 @@ def main():
         extensions_dict[ex.name] = extension_module
     
     graph = ElectricalGraph(config, config_file_path,
-                            main_window=main_window,
+                            main_window=window,
                             extensions_dict=extensions_dict)
     graph.viewer().setRenderHints(QtGui.QPainter.Antialiasing |
                                   QtGui.QPainter.SmoothPixmapTransform |
@@ -112,14 +112,14 @@ def main():
 
     # Toolbar settings------------------------------
     icon_size_toobar = QtCore.QSize(32, 32)
-    main_window.toolBar.setIconSize(icon_size_toobar)
+    graph.main_window.toolBar.setIconSize(icon_size_toobar)
 
     addBus_action = QtGui.QAction('addBus')
     addBus_action.setText('Bus')
     addBus_action.setToolTip('Add a bus')
     addBus_action.triggered.connect(graph.add_bus)
     addBus_action.setIcon(qta.icon('ph.git-commit'))
-    main_window.toolBar.addAction(addBus_action)
+    graph.main_window.toolBar.addAction(addBus_action)
     
     addLine_action = QtGui.QAction('addLine')
     addLine_action.setObjectName('addLine')
@@ -127,14 +127,14 @@ def main():
     addLine_action.setToolTip('Add a line')
     addLine_action.triggered.connect(graph.add_line)
     addLine_action.setIcon(qta.icon('ph.line-segment'))
-    main_window.toolBar.addAction(addLine_action)
+    graph.main_window.toolBar.addAction(addLine_action)
     
     addImpedance_action = QtGui.QAction('addImpedance')
     addImpedance_action.setText('Impedance')
     addImpedance_action.setToolTip('Add an impedance')
     addImpedance_action.triggered.connect(graph.add_impedance)
     addImpedance_action.setIcon(qta.icon('mdi6.alpha-z-box-outline'))
-    main_window.toolBar.addAction(addImpedance_action)
+    graph.main_window.toolBar.addAction(addImpedance_action)
     
     addTrafo_action = QtGui.QAction('addTrafo')
     addTrafo_action.setObjectName('addTrafo')
@@ -142,7 +142,7 @@ def main():
     addTrafo_action.setToolTip('Add a transformer')
     addTrafo_action.triggered.connect(graph.add_trafo)
     addTrafo_action.setIcon(qta.icon('ph.intersect'))
-    main_window.toolBar.addAction(addTrafo_action)
+    graph.main_window.toolBar.addAction(addTrafo_action)
     
     addGenerator_action = QtGui.QAction('addGenerator')
     addGenerator_action.setObjectName('addGenerator')
@@ -150,14 +150,14 @@ def main():
     addGenerator_action.setToolTip('Add a generator')
     addGenerator_action.triggered.connect(graph.add_generator)
     addGenerator_action.setIcon(qta.icon('mdi6.alpha-g-circle-outline'))
-    main_window.toolBar.addAction(addGenerator_action)
+    graph.main_window.toolBar.addAction(addGenerator_action)
     
     addGrid_action = QtGui.QAction('addGrid')
     addGrid_action.setText('External Grid')
     addGrid_action.setToolTip('Add an external grid')
     addGrid_action.triggered.connect(graph.add_external_grid)
     addGrid_action.setIcon(qta.icon('mdi6.grid'))
-    main_window.toolBar.addAction(addGrid_action)
+    graph.main_window.toolBar.addAction(addGrid_action)
     
     addLoad_action = QtGui.QAction('addLoad')
     addLoad_action.setObjectName('addLoad')
@@ -165,14 +165,14 @@ def main():
     addLoad_action.setToolTip('Add a load')
     addLoad_action.triggered.connect(graph.add_load)
     addLoad_action.setIcon(qta.icon('mdi6.download-circle-outline'))
-    main_window.toolBar.addAction(addLoad_action)
+    graph.main_window.toolBar.addAction(addLoad_action)
     
     addStorage_action = QtGui.QAction('addStorage')
     addStorage_action.setText('Storage')
     addStorage_action.setToolTip('Add a storage system')
     addStorage_action.triggered.connect(graph.add_storage)
     addStorage_action.setIcon(qta.icon('mdi6.battery-medium'))
-    main_window.toolBar.addAction(addStorage_action)
+    graph.main_window.toolBar.addAction(addStorage_action)
 
     addFACTS_action = QtGui.QAction('addFACTS')
     addFACTS_action.setObjectName('addFACTS')
@@ -180,210 +180,211 @@ def main():
     addFACTS_action.setToolTip('Add a FACTS device')
     addFACTS_action.triggered.connect(graph.add_facts)
     addFACTS_action.setIcon(qta.icon('ph.flow-arrow'))
-    main_window.toolBar.addAction(addFACTS_action)
+    graph.main_window.toolBar.addAction(addFACTS_action)
     
     addSwitch_action = QtGui.QAction('addSwitch')
     addSwitch_action.setText('Switch')
     addSwitch_action.setToolTip('Add a switch')
     addSwitch_action.triggered.connect(graph.add_switch)
     addSwitch_action.setIcon(qta.icon('mdi6.electric-switch'))
-    main_window.toolBar.addAction(addSwitch_action)
+    graph.main_window.toolBar.addAction(addSwitch_action)
     # ----------------------------------------------
     
-    main_window.layout_graph.addWidget(graph.widget)
+    graph.main_window.layout_graph.addWidget(graph.widget)
       
     # Adding Bus DataFrame from pandapower network for the first time:
     df_bus_widget = TableWidgetWithMenu(graph.net.bus, graph)
-    main_window.layout_bus.addWidget(df_bus_widget)
+    graph.main_window.layout_bus.addWidget(df_bus_widget)
     
     # Adding Line DataFrame from pandapower network for the first time:
     df_line_widget = TableWidgetWithMenu(graph.net.line, graph)
-    main_window.layout_line.addWidget(df_line_widget)
+    graph.main_window.layout_line.addWidget(df_line_widget)
     
     # Adding DC Line DataFrame from pandapower network for the first time:
     df_dcline_widget = TableWidgetWithMenu(graph.net.dcline, graph)
-    main_window.layout_dcline.addWidget(df_dcline_widget)
+    graph.main_window.layout_dcline.addWidget(df_dcline_widget)
     
     # Adding Impedance DataFrame from pandapower network for the first time:
     df_impedance_widget = TableWidgetWithMenu(graph.net.impedance, graph)
-    main_window.layout_impedance.addWidget(df_impedance_widget)
+    graph.main_window.layout_impedance.addWidget(df_impedance_widget)
     
     # Adding Two Winding Transformer DataFrame from pandapower network for the first time:
     df_trafo_widget = TableWidgetWithMenu(graph.net.trafo, graph)
-    main_window.layout_trafo.addWidget(df_trafo_widget)
+    graph.main_window.layout_trafo.addWidget(df_trafo_widget)
     
     # Adding Three Winding Transformer DataFrame from pandapower network for the first time:
     df_trafo3w_widget = TableWidgetWithMenu(graph.net.trafo3w, graph)
-    main_window.layout_trafo3w.addWidget(df_trafo3w_widget)
+    graph.main_window.layout_trafo3w.addWidget(df_trafo3w_widget)
     
     # Adding Generator DataFrame from pandapower network for the first time:
     df_gen_widget = TableWidgetWithMenu(graph.net.gen, graph)
-    main_window.layout_gen.addWidget(df_gen_widget)
+    graph.main_window.layout_gen.addWidget(df_gen_widget)
     
     # Adding Static Generator DataFrame from pandapower network for the first time:
     df_sgen_widget = TableWidgetWithMenu(graph.net.sgen, graph)
-    main_window.layout_sgen.addWidget(df_sgen_widget)
+    graph.main_window.layout_sgen.addWidget(df_sgen_widget)
     
     # Adding Asymmetric Static Generator DataFrame from pandapower network for the first time:
     df_asgen_widget = TableWidgetWithMenu(graph.net.asymmetric_sgen, graph)
-    main_window.layout_asgen.addWidget(df_asgen_widget)
+    graph.main_window.layout_asgen.addWidget(df_asgen_widget)
     
     # Adding External Grid DataFrame from pandapower network for the first time:
     df_ext_grid_widget = TableWidgetWithMenu(graph.net.ext_grid, graph)
-    main_window.layout_ext_grid.addWidget(df_ext_grid_widget)
+    graph.main_window.layout_ext_grid.addWidget(df_ext_grid_widget)
     
     # Adding Symmetric Load DataFrame from pandapower network for the first time:
     df_load_widget = TableWidgetWithMenu(graph.net.load, graph)
-    main_window.layout_load.addWidget(df_load_widget)
+    graph.main_window.layout_load.addWidget(df_load_widget)
     
     # Adding Asymmetric Load DataFrame from pandapower network for the first time:
     df_aload_widget = TableWidgetWithMenu(graph.net.asymmetric_load, graph)
-    main_window.layout_aload.addWidget(df_aload_widget)
+    graph.main_window.layout_aload.addWidget(df_aload_widget)
     
     # Adding Shunt DataFrame from pandapower network for the first time:
     df_shunt_widget = TableWidgetWithMenu(graph.net.shunt, graph)
-    main_window.layout_shunt.addWidget(df_shunt_widget)
+    graph.main_window.layout_shunt.addWidget(df_shunt_widget)
     
     # Adding Motor DataFrame from pandapower network for the first time:
     df_motor_widget = TableWidgetWithMenu(graph.net.motor, graph)
-    main_window.layout_motor.addWidget(df_motor_widget)
+    graph.main_window.layout_motor.addWidget(df_motor_widget)
     
     # Adding Ward DataFrame from pandapower network for the first time:
     df_ward_widget = TableWidgetWithMenu(graph.net.ward, graph)
-    main_window.layout_ward.addWidget(df_ward_widget)
+    graph.main_window.layout_ward.addWidget(df_ward_widget)
     
     # Adding Extended Ward DataFrame from pandapower network for the first time:
     df_xward_widget = TableWidgetWithMenu(graph.net.xward, graph)
-    main_window.layout_xward.addWidget(df_xward_widget)
+    graph.main_window.layout_xward.addWidget(df_xward_widget)
     
     # Adding Storage DataFrame from pandapower network for the first time:
     df_storage_widget = TableWidgetWithMenu(graph.net.storage, graph)
-    main_window.layout_storage.addWidget(df_storage_widget)
+    graph.main_window.layout_storage.addWidget(df_storage_widget)
     
     # Adding Switch DataFrame from pandapower network for the first time:
     df_switch_widget = TableWidgetWithMenu(graph.net.switch, graph)
-    main_window.layout_switch.addWidget(df_switch_widget)
+    graph.main_window.layout_switch.addWidget(df_switch_widget)
 
     # Adding SVC DataFrame from pandapower network for the first time:
     df_svc_widget = TableWidgetWithMenu(graph.net.svc, graph)
-    main_window.layout_svc.addWidget(df_svc_widget)
+    graph.main_window.layout_svc.addWidget(df_svc_widget)
 
     # Adding TCSC DataFrame from pandapower network for the first time:
     df_tcsc_widget = TableWidgetWithMenu(graph.net.tcsc, graph)
-    main_window.layout_tcsc.addWidget(df_tcsc_widget)
+    graph.main_window.layout_tcsc.addWidget(df_tcsc_widget)
 
     # Adding SSC DataFrame from pandapower network for the first time:
     df_ssc_widget = TableWidgetWithMenu(graph.net.ssc, graph)
-    main_window.layout_ssc.addWidget(df_ssc_widget)
+    graph.main_window.layout_ssc.addWidget(df_ssc_widget)
 
     # Adding VSC DataFrame from pandapower network for the first time:
     df_vsc_widget = TableWidgetWithMenu(graph.net.vsc, graph)
-    main_window.layout_vsc.addWidget(df_vsc_widget)
+    graph.main_window.layout_vsc.addWidget(df_vsc_widget)
     
-    main_window.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+    graph.main_window.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
     
     # Icons for diferent sections on the main window:
-    main_window.toolBox.setItemIcon(0, qta.icon('ph.share-network'))  # Graph section
-    main_window.toolBox.setItemIcon(1, qta.icon('ph.table'))  # Model data section
+    graph.main_window.toolBox.setItemIcon(0, qta.icon('ph.share-network'))  # Graph section
+    graph.main_window.toolBox.setItemIcon(1, qta.icon('ph.table'))  # Model data section
     
     # Upper toolbar:
     icon_size = QtCore.QSize(24, 24)
     
-    new_session = QtWidgets.QToolButton(main_window)
+    new_session = QtWidgets.QToolButton(graph.main_window)
     new_session.setToolTip('New session (Ctrl+N)')
     new_session.setIconSize(icon_size)
     new_session.setIcon(qta.icon('mdi6.file-plus-outline'))
-    main_window.layout_upper_toolbar.addWidget(new_session)
+    graph.main_window.layout_upper_toolbar.addWidget(new_session)
     new_session.clicked.connect(graph.new_session)
     
-    open_session = QtWidgets.QToolButton(main_window)
+    open_session = QtWidgets.QToolButton(graph.main_window)
     open_session.setToolTip('Open session (Ctrl+O)')
     open_session.setIconSize(icon_size)
     open_session.setIcon(qta.icon('mdi6.folder-outline'))
-    main_window.layout_upper_toolbar.addWidget(open_session)
+    graph.main_window.layout_upper_toolbar.addWidget(open_session)
     open_session.clicked.connect(graph.open_session)
     
-    save_session = QtWidgets.QToolButton(main_window)
+    save_session = QtWidgets.QToolButton(graph.main_window)
     save_session.setToolTip('Save session (Ctrl+S)')
     save_session.setIconSize(icon_size)
     save_session.setIcon(qta.icon('mdi6.content-save-outline'))
-    main_window.layout_upper_toolbar.addWidget(save_session)
+    graph.main_window.layout_upper_toolbar.addWidget(save_session)
     save_session.clicked.connect(graph.save_session)
     
-    save_session_as = QtWidgets.QToolButton(main_window)
+    save_session_as = QtWidgets.QToolButton(graph.main_window)
     save_session_as.setToolTip('Save session as... (Ctrl+W)')
     save_session_as.setIconSize(icon_size)
     save_session_as.setIcon(qta.icon('mdi6.content-save-edit-outline'))
-    main_window.layout_upper_toolbar.addWidget(save_session_as)
+    graph.main_window.layout_upper_toolbar.addWidget(save_session_as)
     save_session_as.clicked.connect(graph.save_session_as)
     
-    # main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
+    # graph.main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
     
-    export_net = QtWidgets.QToolButton(main_window)
+    export_net = QtWidgets.QToolButton(graph.main_window)
     export_net.setObjectName('exportBtn')
     export_net.setToolTip('Export pandapower network (Ctrl+E)')
     export_net.setIconSize(icon_size)
     export_net.setIcon(qta.icon('mdi6.database-export-outline'))
-    main_window.layout_upper_toolbar.addWidget(export_net)
+    graph.main_window.layout_upper_toolbar.addWidget(export_net)
     export_net.clicked.connect(graph.export_net)
     
-    main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
+    graph.main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
     
-    run_pf_btn = QtWidgets.QToolButton(main_window)
+    run_pf_btn = QtWidgets.QToolButton(graph.main_window)
     run_pf_btn.setToolTip('Balanced power flow (ACPF / DCPF)')
     run_pf_btn.setIconSize(icon_size)
     run_pf_btn.setIcon(qta.icon('mdi6.play-outline'))
-    main_window.layout_upper_toolbar.addWidget(run_pf_btn)
+    graph.main_window.layout_upper_toolbar.addWidget(run_pf_btn)
     run_pf_btn.clicked.connect(Run_PF(graph))
 
-    main_window.layout_upper_toolbar.addStretch()
+    graph.main_window.layout_upper_toolbar.addStretch()
 
-    search_node_btn = QtWidgets.QToolButton(main_window)
+    search_node_btn = QtWidgets.QToolButton(graph.main_window)
     search_node_btn.setObjectName('searchNodeBtn')
     search_node_btn.setToolTip('Find node (Ctrl+F)')
     search_node_btn.setIconSize(icon_size)
     search_node_btn.setIcon(qta.icon('mdi6.map-search-outline'))
-    main_window.layout_upper_toolbar.addWidget(search_node_btn)
+    graph.main_window.layout_upper_toolbar.addWidget(search_node_btn)
     search_node_btn.clicked.connect(graph.search_node)
 
-    main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
+    graph.main_window.layout_upper_toolbar.addWidget(QVLine())  # separator
 
-    extensions_label = QtWidgets.QLabel(main_window)
+    extensions_label = QtWidgets.QLabel(graph.main_window)
     extensions_label.setText('Extensions:')
-    extensions_combobox = QtWidgets.QComboBox(main_window)
+    extensions_combobox = QtWidgets.QComboBox(graph.main_window)
     extensions_combobox.setObjectName('extension_selector')
     extensions_combobox.setMinimumSize(250, 0)
-    extension_run_btn = QtWidgets.QToolButton(main_window)
+    extension_run_btn = QtWidgets.QToolButton(graph.main_window)
     extension_run_btn.setObjectName('extension_run_btn')
     extension_run_btn.setToolTip('Execute the selected extension')
     extension_run_btn.setIconSize(icon_size)
     extension_run_btn.setIcon(qta.icon('mdi6.puzzle-outline'))
-    main_window.layout_upper_toolbar.addWidget(extensions_label)
-    main_window.layout_upper_toolbar.addWidget(extensions_combobox)
-    main_window.layout_upper_toolbar.addWidget(extension_run_btn)
+    graph.main_window.layout_upper_toolbar.addWidget(extensions_label)
+    graph.main_window.layout_upper_toolbar.addWidget(extensions_combobox)
+    graph.main_window.layout_upper_toolbar.addWidget(extension_run_btn)
     extension_run_btn.clicked.connect(graph.execute_extension)
     
-    main_window.layout_upper_toolbar.addStretch()
+    graph.main_window.layout_upper_toolbar.addStretch()
     
-    net_settings = QtWidgets.QToolButton(main_window)
+    net_settings = QtWidgets.QToolButton(graph.main_window)
     net_settings.setToolTip('Basic network settings')
     net_settings.setObjectName('netSettings')
     net_settings.setIconSize(icon_size)
     net_settings.setIcon(qta.icon('mdi6.grid'))
-    main_window.layout_upper_toolbar.addWidget(net_settings)
+    graph.main_window.layout_upper_toolbar.addWidget(net_settings)
     net_settings.clicked.connect(graph.net_settings)
     
-    edit_settings = QtWidgets.QToolButton(main_window)
+    edit_settings = QtWidgets.QToolButton(graph.main_window)
     edit_settings.setToolTip('Settings and default parameters')
     edit_settings.setIconSize(icon_size)
     edit_settings.setIcon(qta.icon('mdi6.cog-outline'))
-    main_window.layout_upper_toolbar.addWidget(edit_settings)
+    graph.main_window.layout_upper_toolbar.addWidget(edit_settings)
     edit_settings.clicked.connect(graph.edit_settings)
 
-    main_window.menubar.setStyleSheet('border: 1px solid #d3d3d3')
+    graph.main_window.menubar.setStyleSheet('border: 1px solid #d3d3d3')
 
     # Menubar:
-    file_menu = main_window.menubar.addMenu('File')
+    graph.main_window.menubar = graph.main_window.menuBar()
+    file_menu = graph.main_window.menubar.addMenu('File')
     
     new_session_action = QtGui.QAction('newSession')
     new_session_action.setText('New session')
@@ -421,7 +422,7 @@ def main():
     export_net_action.setShortcut(QtGui.QKeySequence('Ctrl+E'))
     file_menu.addAction(export_net_action)
     
-    component_menu = main_window.menubar.addMenu('Add component')
+    component_menu = graph.main_window.menubar.addMenu('Add component')
     component_actions = [addBus_action, addLine_action, addImpedance_action,
                          addTrafo_action, addGenerator_action, addGrid_action,
                          addLoad_action, addStorage_action, addFACTS_action,
@@ -437,7 +438,7 @@ def main():
     component_help.setIcon(qta.icon('ph.question'))
     component_menu.addAction(component_help)
         
-    settings_menu = main_window.menubar.addMenu('Settings')
+    settings_menu = graph.main_window.menubar.addMenu('Settings')
     net_settings_action = QtGui.QAction('netSettings')
     net_settings_action.setText('Basic network settings')
     net_settings_action.triggered.connect(graph.net_settings)
@@ -451,7 +452,7 @@ def main():
     settings_action.setIcon(qta.icon('mdi6.cog-outline'))
     settings_menu.addAction(settings_action)
     
-    help_menu = main_window.menubar.addMenu('Help')
+    help_menu = graph.main_window.menubar.addMenu('Help')
     about_action = QtGui.QAction('About')
     about_action.setText('About this application')
     about_action.triggered.connect(graph.about)
@@ -647,7 +648,7 @@ def main():
     if data_splash is not None:
         # QtCore.QTimer.singleShot(2000, splash, splash.close)
         # QtCore.QTimer.singleShot(5000, lambda: splash.finish(window))
-        QtCore.QTimer.singleShot(2000, lambda: (splash.finish(window), window.show()))
+        QtCore.QTimer.singleShot(2000, lambda: (splash.finish(graph.main_window), graph.main_window.show()))
     sys.exit(app.exec())
 
 

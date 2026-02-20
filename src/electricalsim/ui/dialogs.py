@@ -1092,8 +1092,8 @@ def connecting_buses_dialog(parent):
     dialog.anim.setDuration(t_animation)
     # dialog.anim.start()
 
-    main_win_rect = parent.geometry()
-    pos_final = main_win_rect.center() - dialog.rect().center()
+    # main_win_rect = parent.geometry()
+    pos_final = parent.centralwidget.geometry().center() - dialog.rect().center()  # main_win_rect.center() - dialog.rect().center()
     pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
                                          (size_final.height() - size_init.height())/2)
     dialog.anim2 = QtCore.QPropertyAnimation(dialog, b"pos")
@@ -1168,8 +1168,8 @@ def search_node_dialog(all_nodes, parent, search_node_button=None):
     dialog.anim.setDuration(t_animation)
     # dialog.anim.start()
 
-    main_win_rect = parent.geometry()
-    pos_final = main_win_rect.center() - dialog.rect().center()
+    # main_win_rect = parent.geometry()
+    pos_final = parent.centralwidget.geometry().center() - dialog.rect().center()  # main_win_rect.center() - dialog.rect().center()
     if search_node_button is None:
         pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
                                             (size_final.height() - size_init.height())/2)
@@ -1341,8 +1341,8 @@ def export_dialog(parent, export_button=None):
     dialog.anim.setDuration(t_animation)
     # dialog.anim.start()
 
-    main_win_rect = parent.geometry()
-    pos_final = main_win_rect.center() - dialog.rect().center()
+    # main_win_rect = parent.geometry()
+    pos_final = parent.centralwidget.geometry().center() - dialog.rect().center()  # main_win_rect.center() - dialog.rect().center()
     if export_button is None:
         pos_init = pos_final + QtCore.QPoint((size_final.width() - size_init.width())/2,
                                             (size_final.height() - size_init.height())/2)
