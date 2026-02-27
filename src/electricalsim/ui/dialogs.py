@@ -957,6 +957,47 @@ def tcsc_dialog(parent=None):
     return dialog
 
 
+def vsc_dialog(parent=None):
+    """
+    Returns the VSC dialog.
+    """
+    ui_file = os.path.join(directory, 'vsc_dialog.ui')
+    # dialog = QtCompat.loadUi(uifile=ui_file)
+    ui_file_ = QtCore.QFile(ui_file)
+    ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+    loader = QUiLoader()
+    dialog = loader.load(ui_file_)
+
+    dialog.setParent(parent)
+    dialog.setWindowFlag(QtCore.Qt.Dialog, True)
+    dialog.setModal(True)
+    
+    def min_control_value_ac(text):
+        if text in ('vm_pu', 'slack'):
+            dialog.control_value_ac.setMinimum(0)
+            dialog.control_value_ac.setMaximum(2)
+            dialog.control_value_ac.setSingleStep(0.01)
+        elif text == 'q_mvar':
+            dialog.control_value_ac.setMinimum(-10000)
+            dialog.control_value_ac.setMaximum(10000)
+            dialog.control_value_ac.setSingleStep(1)
+        
+    def min_control_value_dc(text):
+        if text == 'vm_pu':
+            dialog.control_value_dc.setMinimum(0)
+            dialog.control_value_dc.setMaximum(2)
+            dialog.control_value_dc.setSingleStep(0.01)
+        elif text == 'p_mw':
+            dialog.control_value_dc.setMinimum(-10000)
+            dialog.control_value_dc.setMaximum(10000)
+            dialog.control_value_dc.setSingleStep(1)
+    
+    dialog.control_mode_ac.currentTextChanged.connect(min_control_value_ac)
+    dialog.control_mode_dc.currentTextChanged.connect(min_control_value_dc)
+    
+    return dialog
+
+
 def network_settings_dialog(parent=None, clicked_pos=None):
     """
     Returns the network settings dialog.
@@ -1627,6 +1668,10 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         # Adding Bus DataFrame from pandapower network:
         df_bus_widget = TableWidgetWithCopy(self.net.res_bus)
         self.w.layout_bus.addWidget(df_bus_widget)
+
+        # Adding Bus DC DataFrame from pandapower network:
+        df_bus_dc_widget = TableWidgetWithCopy(self.net.res_bus_dc)
+        self.w.layout_bus_dc.addWidget(df_bus_dc_widget)
         
         # Adding Line DataFrame from pandapower network:
         df_line_widget = TableWidgetWithCopy(self.net.res_line)
@@ -1721,6 +1766,12 @@ class Power_Flow_Dialog(QtWidgets.QDialog):
         old_bus_table.setParent(None)
         df_bus_widget = TableWidgetWithCopy(self.net.res_bus)
         self.w.layout_bus.addWidget(df_bus_widget)
+
+        # Adding Bus DC DataFrame from pandapower network:
+        old_bus_dc_table = self.w.layout_bus_dc.itemAt(0).widget()
+        old_bus_dc_table.setParent(None)
+        df_bus_dc_widget = TableWidgetWithCopy(self.net.res_bus_dc)
+        self.w.layout_bus_dc.addWidget(df_bus_dc_widget)
         
         # Adding Line DataFrame from pandapower network:
         old_line_table = self.w.layout_line.itemAt(0).widget()
@@ -2489,6 +2540,34 @@ class Settings_Dialog:
         layout_bus.addWidget(bus)
         layout_bus.addStretch()
         self.dialog.page_bus.setLayout(layout_bus)
+
+        # Bus DC page---------------------------------------------------------
+        ui_file_bus_dc = os.path.join(directory, 'bus_dialog.ui')
+        # bus = QtCompat.loadUi(uifile=ui_file_bus)  # dialog
+        ui_file_ = QtCore.QFile(ui_file_bus_dc)
+        ui_file_.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        loader = QUiLoader()
+        bus_dc = loader.load(ui_file_)  # dialog
+        bus_dc.buttonBox.setParent(None)  # remove the button box
+        
+        def bus_dc_min_vm_pu_changed(value):
+            bus_dc.max_vm_pu.setMinimum(value)
+        
+        def bus_dc_max_vm_pu_changed(value):
+            bus_dc.min_vm_pu.setMaximum(value)
+    
+        bus_dc.min_vm_pu.valueChanged.connect(bus_dc_min_vm_pu_changed)
+        bus_dc.max_vm_pu.valueChanged.connect(bus_dc_max_vm_pu_changed)
+        
+        settings = self.config['bus_dc']
+        bus_dc.vn_kv.setValue(float(settings['vn_kv']))
+        bus_dc.min_vm_pu.setValue(float(settings['min_vm_pu']))
+        bus_dc.max_vm_pu.setValue(float(settings['max_vm_pu']))
+        
+        layout_bus_dc = QtWidgets.QVBoxLayout()
+        layout_bus_dc.addWidget(bus_dc)
+        layout_bus_dc.addStretch()
+        self.dialog.page_bus_dc.setLayout(layout_bus_dc)
         
         # AC line page-----------------------------------------------------
         ui_file_line = os.path.join(directory, 'line_dialog.ui')
@@ -3407,6 +3486,50 @@ class Settings_Dialog:
         layout_tcsc.addWidget(tcsc)
         layout_tcsc.addStretch()
         self.dialog.page_tcsc.setLayout(layout_tcsc)
+
+        # VSC page--------------------------------------------------------
+        ui_file_vsc = os.path.join(directory, 'vsc_dialog.ui')
+        vsc = return_qtwindow(ui_file_vsc)
+        vsc.buttonBox.setParent(None)  # remove the button box
+
+        def min_control_value_ac(text):
+            if text in ('vm_pu', 'slack'):
+                vsc.control_value_ac.setMinimum(0)
+                vsc.control_value_ac.setMaximum(2)
+                vsc.control_value_ac.setSingleStep(0.01)
+            elif text == 'q_mvar':
+                vsc.control_value_ac.setMinimum(-10000)
+                vsc.control_value_ac.setMaximum(10000)
+                vsc.control_value_ac.setSingleStep(1)
+            
+        def min_control_value_dc(text):
+            if text == 'vm_pu':
+                vsc.control_value_dc.setMinimum(0)
+                vsc.control_value_dc.setMaximum(2)
+                vsc.control_value_dc.setSingleStep(0.01)
+            elif text == 'p_mw':
+                vsc.control_value_dc.setMinimum(-10000)
+                vsc.control_value_dc.setMaximum(10000)
+                vsc.control_value_dc.setSingleStep(1)
+        
+        vsc.control_mode_ac.currentTextChanged.connect(min_control_value_ac)
+        vsc.control_mode_dc.currentTextChanged.connect(min_control_value_dc)
+
+        settings = self.config['vsc']
+        vsc.r_ohm.setValue(float(settings['r_ohm']))
+        vsc.x_ohm.setValue(float(settings['x_ohm']))
+        vsc.r_dc_ohm.setValue(float(settings['r_dc_ohm']))
+        vsc.pl_dc_mw.setValue(float(settings['pl_dc_mw']))
+        vsc.control_value_ac.setValue(float(settings['control_value_ac']))
+        vsc.control_value_dc.setValue(float(settings['control_value_dc']))
+        vsc.control_mode_ac.setCurrentText(settings['control_mode_ac'])
+        vsc.control_mode_dc.setCurrentText(settings['control_mode_dc'])
+        vsc.controllable.setChecked(True if settings['controllable']=='True' else False)
+
+        layout_vsc = QtWidgets.QVBoxLayout()
+        layout_vsc.addWidget(vsc)
+        layout_vsc.addStretch()
+        self.dialog.page_vsc.setLayout(layout_vsc)
         
         # Switch page------------------------------------------------------
         ui_file_switch = os.path.join(directory, 'switch_dialog.ui')
@@ -3777,7 +3900,18 @@ class Settings_Dialog:
             self.config['tcsc']['min_angle_degree'] = str(tcsc.min_angle_degree.value())
             self.config['tcsc']['max_angle_degree'] = str(tcsc.max_angle_degree.value())
             self.config['tcsc']['controllable'] = 'True' if tcsc.controllable.isChecked() else 'False'
-            
+
+            # VSC page--------------------------------------------------------------
+            self.config['vsc']['r_ohm'] = str(vsc.r_ohm.value())
+            self.config['vsc']['x_ohm'] = str(vsc.x_ohm.value())
+            self.config['vsc']['control_value_ac'] = str(vsc.control_value_ac.value())
+            self.config['vsc']['control_value_dc'] = str(vsc.control_value_dc.value())
+            self.config['vsc']['control_mode_ac'] = vsc.control_mode_ac.currentText()
+            self.config['vsc']['control_mode_dc'] = vsc.control_mode_dc.currentText()
+            self.config['vsc']['r_dc_ohm'] = str(vsc.r_dc_ohm.value())
+            self.config['vsc']['pl_dc_mw'] = str(vsc.pl_dc_mw.value())
+            self.config['vsc']['controllable'] = 'True' if vsc.controllable.isChecked() else 'False'
+
             # Switch page------------------------------------------------------------
             self.config['switch']['closed'] = 'True' if switch.closed.isChecked() else 'False'
             self.config['switch']['type'] = switch_type_options[switch.type.currentIndex()]
@@ -3805,7 +3939,7 @@ class Settings_Dialog:
         self.dialog.listView_main.clicked.connect(self.change_page)
         
         # Second ListView-----------------------------------------------------------
-        list_view2_options = ['Bus', 'AC line', 'Standard AC line', 'DC line',
+        list_view2_options = ['Bus', 'Bus DC', 'AC line', 'Standard AC line', 'DC line',
                               'Impedance', 'Two winding transformer',
                               'Standard two winding transformer', 'Three winding transformer',
                               'Standard three winding transformer',
@@ -3815,6 +3949,7 @@ class Settings_Dialog:
                               'Motor', 'Ward equivalent', 'Extended ward equivalent',
                               'Storage', 'Static Var Compensator (SVC)',
                               'Thyristor-Controlled Series Capacitor (TCSC)',
+                              'Voltage Source Converter (VSC)',
                               'Static Synchronous Compensator (SSC)', 'Switch']
         model_view2 = QtGui.QStandardItemModel()
         self.dialog.listView_components.setModel(model_view2)

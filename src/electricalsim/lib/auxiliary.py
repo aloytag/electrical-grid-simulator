@@ -18,6 +18,7 @@ directory = os.path.dirname(__file__)
 root_dir, _ = os.path.split(directory)
 
 icon_for_type = {'BusNode.BusNode': 'ph.git-commit',
+                 'BusDCNode.BusDCNode': 'ph.circle',
                  'LineNode.LineNode': 'ph.line-segment',
                  'StdLineNode.StdLineNode': 'ph.line-segment',
                  'DCLineNode.DCLineNode': 'ph.line-segment',
@@ -37,7 +38,11 @@ icon_for_type = {'BusNode.BusNode': 'ph.git-commit',
                  'WardNode.WardNode': 'mdi6.download-circle-outline',
                  'XWardNode.XWardNode': 'mdi6.download-circle-outline',
                  'StorageNode.StorageNode': 'mdi6.battery-medium',
-                 'SwitchNode.SwitchNode': 'mdi6.electric-switch'}
+                 'SwitchNode.SwitchNode': 'mdi6.electric-switch',
+                 'SVCNode.SVCNode': 'ph.flow-arrow',
+                 'TCSCNode.TCSCNode': 'ph.flow-arrow',
+                 'VSCNode.VSCNode': 'ph.flow-arrow',
+                 'SSCNode.SSCNode': 'ph.flow-arrow'}
 
 
 def natsort(s):
@@ -530,6 +535,9 @@ class PropertyChangedCmd(QtGui.QUndoCommand):
         if self.node.type_=='BusNode.BusNode' and self.name=='disabled':
             bus_index = self.node.get_property('bus_index')
             self.graph.net.bus.loc[bus_index, 'in_service'] ^= True
+        elif self.node.type_=='BusDCNode.BusDCNode' and self.name=='disabled':
+            bus_index = self.node.get_property('bus_index')
+            self.graph.net.bus_dc.loc[bus_index, 'in_service'] ^= True
         elif self.node.type_=='LineNode.LineNode' and self.name=='disabled':
             line_row = self.graph.net.line[self.graph.net.line['name']==self.node.name()]
             if not line_row.empty:
@@ -640,6 +648,11 @@ class PropertyChangedCmd(QtGui.QUndoCommand):
             if not tcsc_row.empty:
                 tcsc_index = tcsc_row.index[0]
                 self.graph.net.tcsc.loc[tcsc_index, 'in_service'] ^= True
+        elif self.node.type_=='VSCNode.VSCNode' and self.name=='disabled':
+            vsc_row = self.graph.net.vsc[self.graph.net.vsc['name']==self.node.name()]
+            if not vsc_row.empty:
+                vsc_index = vsc_row.index[0]
+                self.graph.net.vsc.loc[vsc_index, 'in_service'] ^= True
 
 
 def return_config(app_root_dir):

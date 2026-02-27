@@ -20,7 +20,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="settings">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1067,9 +1067,30 @@
             <attribute name="title">
              <string>Buses</string>
             </attribute>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout_16">
              <item>
-              <layout class="QVBoxLayout" name="layout_bus"/>
+              <widget class="QGroupBox" name="groupBox_18">
+               <property name="title">
+                <string>Buses AC</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_46">
+                <item>
+                 <layout class="QVBoxLayout" name="layout_bus"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_19">
+               <property name="title">
+                <string>Buses DC</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <layout class="QVBoxLayout" name="layout_bus_dc"/>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>

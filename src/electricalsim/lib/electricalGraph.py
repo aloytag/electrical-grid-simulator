@@ -20,13 +20,14 @@ from NodeGraphQt6 import NodeGraph, errors, BaseNode
 from NodeGraphQt6.constants import PortTypeEnum, PipeLayoutEnum
 
 from version import VERSION
-from lib.main_components import (BusNode, LineNode, StdLineNode, DCLineNode,
+from lib.main_components import (BusNode, BusDCNode, LineNode, StdLineNode, DCLineNode,
                                  ImpedanceNode, TrafoNode, StdTrafoNode,
                                  Trafo3wNode, StdTrafo3wNode, GenNode,
                                  SGenNode, ASGenNode, ExtGridNode,
                                  LoadNode, ALoadNode, ShuntNode, MotorNode,
                                  WardNode, XWardNode, StorageNode,
-                                 SwitchNode, SVCNode, SSCNode, TCSCNode)
+                                 SwitchNode, SVCNode, SSCNode, TCSCNode,
+                                 VSCNode)
 from lib.auxiliary import (NodeMovedCmd, StatusMessageUnsaved,StatusFileName,
                            simulate_ESC_key, four_ports_on_buses,
                            check_new_version, show_WIP)
@@ -43,7 +44,7 @@ from ui.dialogs import (bus_dialog, choose_line_dialog, line_dialog,
                         ward_dialog, xward_dialog, storage_dialog,
                         choose_bus_switch_dialog, switch_dialog,
                         choose_facts_dialog, svc_dialog, ssc_dialog,
-                        tcsc_dialog, network_settings_dialog,
+                        tcsc_dialog, vsc_dialog, network_settings_dialog,
                         Settings_Dialog,
                         connecting_buses_dialog, search_node_dialog,
                         export_dialog)
@@ -81,7 +82,9 @@ allowed_connections = (
     {'BusNode.BusNode', 'StorageNode.StorageNode'},
     {'BusNode.BusNode', 'SVCNode.SVCNode'},
     {'BusNode.BusNode', 'SSCNode.SSCNode'},
-    {'BusNode.BusNode', 'TCSCNode.TCSCNode'}
+    {'BusNode.BusNode', 'TCSCNode.TCSCNode'},
+    {'BusNode.BusNode', 'VSCNode.VSCNode'},
+    {'BusDCNode.BusDCNode', 'VSCNode.VSCNode'}
         )
 
 
@@ -106,13 +109,14 @@ class ElectricalGraph(NodeGraph):
         
         self._viewer.node_name_changed.connect(self._on_node_name_changed2)
 
-        self.register_nodes([BusNode, LineNode, StdLineNode, DCLineNode,
+        self.register_nodes([BusNode, BusDCNode, LineNode, StdLineNode, DCLineNode,
                              ImpedanceNode, TrafoNode, StdTrafoNode,
                              Trafo3wNode, StdTrafo3wNode, GenNode,
                              SGenNode, ASGenNode, ExtGridNode,
                              LoadNode, ALoadNode, ShuntNode, MotorNode,
                              WardNode, XWardNode, StorageNode,
-                             SwitchNode, SVCNode, SSCNode, TCSCNode])
+                             SwitchNode, SVCNode, SSCNode, TCSCNode,
+                             VSCNode])
 
         settings = self.config['network']
         self.net = pp.create_empty_network(settings['name'],
@@ -957,6 +961,33 @@ class ElectricalGraph(NodeGraph):
         name_assigned = node.get_property('name')
         settings = self.config['bus']
         bus_index = pp.create_bus(self.net, vn_kv=float(settings['vn_kv']),
+                                  name=name_assigned,
+                                  min_vm_pu=float(settings['min_vm_pu']),
+                                  max_vm_pu=float(settings['max_vm_pu']),
+                                  geodata=(np.round(position[0], 2), -1*np.round(position[1], 2)))
+        # node.create_property('bus_index', bus_index)
+        node.set_property('bus_index', bus_index, push_undo=False)
+        self.set_horizontal_layout_prop(node)
+        # four_ports_on_buses(node)
+        self.update_bus_ports()
+        # print(self.net.bus)
+
+    def add_bus_dc(self, **kwargs):
+        """
+        Adds a DC bus to the network and graph.
+        """
+        pos = kwargs.get('pos')
+        center_coordinates = self.viewer().scene_center()
+
+        if pos is None:
+            position = center_coordinates
+        else:
+            position = pos
+        node = self.create_node('BusDCNode.BusDCNode', name='DC Bus 0', pos=position,
+                                push_undo=False)
+        name_assigned = node.get_property('name')
+        settings = self.config['bus_dc']
+        bus_index = pp.create_bus_dc(self.net, vn_kv=float(settings['vn_kv']),
                                   name=name_assigned,
                                   min_vm_pu=float(settings['min_vm_pu']),
                                   max_vm_pu=float(settings['max_vm_pu']),
@@ -1863,10 +1894,28 @@ class ElectricalGraph(NodeGraph):
                 self.set_vertical_layout_prop(node)
                 node.set_layout_direction(1)
 
-            elif option is None and dialog.radioVSC.isChecked():
-                show_WIP(self.main_window)
-                self.enable_main_window()
-                return
+            elif option=='vsc' or dialog.radioVSC.isChecked():
+                node = self.create_node('VSCNode.VSCNode', name='VSC 0',
+                                        pos=center_coordinates,
+                                        push_undo=False)
+                settings = self.config['vsc']
+                for name, value in settings.items():
+                    if name=='controllable' and value=='True':
+                        node.set_property(name, True, push_undo=False)  # bool
+                    elif name=='controllable' and value=='False':
+                        node.set_property(name, False, push_undo=False)  # bool
+                    elif name in ('control_mode_ac', 'control_mode_dc'):
+                        node.set_property(name, value, push_undo=False)  # str
+                    else:
+                        node.set_property(name, float(value), push_undo=False)  # float
+                
+                if kwargs.get('vert_layout') in (None, False):
+                    self.set_horizontal_layout_prop(node)
+                else:
+                    node.set_layout_direction(1)
+                    self.set_vertical_layout_prop(node)
+                    if self.config['general']['theme']=='light':
+                        node.model.set_property('text_color', (0, 0, 0, 255))  # black
                 
 
             # if 'node' in locals():
@@ -2026,6 +2075,8 @@ class ElectricalGraph(NodeGraph):
                     self.remove_ssc(node)
                 elif node.type_=='TCSCNode.TCSCNode':
                     self.remove_tcsc(node)
+                elif node.type_=='VSCNode.VSCNode':
+                    self.remove_vsc(node)
 
         for pipe in connected:
             # print('Connected:', pipe)
@@ -2607,7 +2658,7 @@ class ElectricalGraph(NodeGraph):
 
 
             # Adding DC line to pandapower network
-            if node_from.type_=='DCLineNode.DCLineNode' and node_to.type_=='BusNode.BusNode':
+            if node_from.type_=='DCLineNode.DCLineNode' and node_to.type_=='BusDCNode.BusDCNode':
                 inputs_connected = node_from.connected_input_nodes()
                 # print(inputs_connected)
                 if len(inputs_connected)==1:
@@ -3521,12 +3572,85 @@ class ElectricalGraph(NodeGraph):
                             node_to.set_property('tcsc_index', tcsc_index, push_undo=False)
                         # print(self.net.tcsc)
 
+
+            # Adding a VSC to pandapower network
+            if node_from.type_=='VSCNode.VSCNode' and node_to.type_=='BusDCNode.BusDCNode':
+                inputs_connected = node_from.connected_input_nodes()
+                # print(inputs_connected)
+                if len(inputs_connected)==1:
+                    list_of_connected_nodes = list(inputs_connected.values())[0]
+                    if not list_of_connected_nodes:
+                        return
+                    n = list_of_connected_nodes[0]
+                    type_ = n.type_
+                    bus_index_from = n.get_property('bus_index')
+                    bus_index_to = node_to.get_property('bus_index')
+                    if type_=='BusNode.BusNode':
+                        vsc_index = pp.create.create_vsc(self.net, bus=bus_index_from,
+                                                           bus_dc=bus_index_to,
+                                                           r_ohm=node_from.get_property('r_ohm'),
+                                                           x_ohm=node_from.get_property('x_ohm'),
+                                                           r_dc_ohm=node_from.get_property('r_dc_ohm'),
+                                                           pl_dc_mw=node_from.get_property('pl_dc_mw'),
+                                                           control_mode_ac=node_from.get_property('control_mode_ac'),
+                                                           control_value_ac=node_from.get_property('control_value_ac'),
+                                                           control_mode_dc=node_from.get_property('control_mode_dc'),
+                                                           control_value_dc=node_from.get_property('control_value_dc'),
+                                                           name=node_from.name(),
+                                                           controllable=node_from.get_property('controllable'),
+                                                           in_service=not node_from.disabled())
+                        try:
+                            node_from.create_property('vsc_index', vsc_index)
+                        except errors.NodePropertyError:
+                            node_from.set_property('vsc_index', vsc_index, push_undo=False)
+                        # print(self.net.vsc)
+
+            elif node_from.type_=='BusNode.BusNode' and node_to.type_=='VSCNode.VSCNode':
+                outputs_connected = node_to.connected_output_nodes()
+                if len(outputs_connected)==1:
+                    list_of_connected_nodes = list(outputs_connected.values())[0]
+                    if not list_of_connected_nodes:
+                        return
+                    n = list_of_connected_nodes[0]
+                    type_ = n.type_
+                    bus_index_to = n.get_property('bus_index')
+                    bus_index_from = node_from.get_property('bus_index')
+                    if type_=='BusDCNode.BusDCNode':
+                        vsc_index = pp.create.create_vsc(self.net, bus=bus_index_from,
+                                                           bus_dc=bus_index_to,
+                                                           r_ohm=node_to.get_property('r_ohm'),
+                                                           x_ohm=node_to.get_property('x_ohm'),
+                                                           r_dc_ohm=node_to.get_property('r_dc_ohm'),
+                                                           pl_dc_mw=node_to.get_property('pl_dc_mw'),
+                                                           control_mode_ac=node_to.get_property('control_mode_ac'),
+                                                           control_value_ac=node_to.get_property('control_value_ac'),
+                                                           control_mode_dc=node_to.get_property('control_mode_dc'),
+                                                           control_value_dc=node_to.get_property('control_value_dc'),
+                                                           name=node_to.name(),
+                                                           controllable=node_to.get_property('controllable'),
+                                                           in_service=not node_to.disabled())
+                        try:
+                            node_to.create_property('vsc_index', vsc_index)
+                        except errors.NodePropertyError:
+                            node_to.set_property('vsc_index', vsc_index, push_undo=False)
+                        # print(self.net.vsc)
+
+            elif node_from.type_=='VSCNode.VSCNode' and node_to.type_=='BusNode.BusNode':
+                self._on_connection_changed(disconnected=[pipe], connected=[])
+                return
+
+            elif node_from.type_=='BusDCNode.BusDCNode' and node_to.type_=='VSCNode.VSCNode':
+                self._on_connection_changed(disconnected=[pipe], connected=[])
+                return
+
     def open_options_dialog(self, node):
         """
         Executed function when a node is double clicked.
         """
         if node.type_=='BusNode.BusNode':
             self.bus_options(node)
+        elif node.type_=='BusDCNode.BusDCNode':
+            self.bus_dc_options(node)
         elif node.type_=='LineNode.LineNode':
             self.line_options(node)
         elif node.type_=='StdLineNode.StdLineNode':
@@ -3573,6 +3697,8 @@ class ElectricalGraph(NodeGraph):
             self.ssc_options(node)
         elif node.type_=='TCSCNode.TCSCNode':
             self.tcsc_options(node)
+        elif node.type_=='VSCNode.VSCNode':
+            self.vsc_options(node)
 
     def bus_options(self, node):
         """
@@ -3602,6 +3728,32 @@ class ElectricalGraph(NodeGraph):
             #     self.net.bus.loc[bus_index, 'min_vm_pu'] = np.round(dialog.min_vm_pu.value(), 2)
 
             #     self.session_change_warning()
+
+            dialog.finished.connect(dialog_closed)
+            dialog.open()
+            dialog.setFocus()
+
+    def bus_dc_options(self, node):
+        """
+        Executed function when a DC Bus node is double clicked.
+        """
+        bus_index = node.get_property('bus_index')
+        if bus_index is not None:
+            dialog = bus_dialog(parent=self.main_window)
+            dialog.setWindowTitle(node.get_property('name'))
+            dialog.setWindowIcon(QtGui.QIcon(icon_path))
+            dialog.vn_kv.setValue(self.net.bus_dc.loc[bus_index, 'vn_kv'])
+            dialog.max_vm_pu.setValue(self.net.bus_dc.loc[bus_index, 'max_vm_pu'])
+            dialog.min_vm_pu.setValue(self.net.bus_dc.loc[bus_index, 'min_vm_pu'])
+
+            def dialog_closed(result):
+                if not result:
+                    return
+                
+                self.net.bus_dc.loc[bus_index, 'vn_kv'] = np.round(dialog.vn_kv.value(), 2)
+                self.net.bus_dc.loc[bus_index, 'max_vm_pu'] = np.round(dialog.max_vm_pu.value(), 2)
+                self.net.bus_dc.loc[bus_index, 'min_vm_pu'] = np.round(dialog.min_vm_pu.value(), 2)
+                self.session_change_warning()
 
             dialog.finished.connect(dialog_closed)
             dialog.open()
@@ -4951,6 +5103,65 @@ class ElectricalGraph(NodeGraph):
 
             self.session_change_warning()
 
+    def vsc_options(self, node):
+        """
+        Executed function when a VSC node is double clicked.
+        """
+        dialog = vsc_dialog(parent=self.main_window)
+        dialog.setWindowTitle(node.get_property('name'))
+        dialog.setWindowIcon(QtGui.QIcon(icon_path))
+
+        dialog.r_ohm.setValue(node.get_property('r_ohm'))
+        dialog.x_ohm.setValue(node.get_property('x_ohm'))
+        dialog.r_dc_ohm.setValue(node.get_property('r_dc_ohm'))
+        dialog.pl_dc_mw.setValue(node.get_property('pl_dc_mw'))
+        
+        if node.get_property('control_mode_ac') in ('vm_pu', 'slack'):
+            dialog.control_value_ac.setMinimum(0)
+            dialog.control_value_ac.setMaximum(2)
+            dialog.control_value_ac.setSingleStep(0.01)
+        elif node.get_property('control_mode_ac') == 'q_mvar':
+            dialog.control_value_ac.setMinimum(-10000)
+            dialog.control_value_ac.setMaximum(10000)
+            dialog.control_value_ac.setSingleStep(1)
+        
+        dialog.control_mode_ac.setCurrentText(node.get_property('control_mode_ac'))
+        dialog.control_value_ac.setValue(node.get_property('control_value_ac'))
+
+        if node.get_property('control_mode_dc') == 'vm_pu':
+            dialog.control_value_dc.setMinimum(0)
+            dialog.control_value_dc.setMaximum(2)
+            dialog.control_value_dc.setSingleStep(0.01)
+        elif node.get_property('control_mode_dc') == 'p_mw':
+            dialog.control_value_dc.setMinimum(-10000)
+            dialog.control_value_dc.setMaximum(10000)
+            dialog.control_value_dc.setSingleStep(1)
+        
+        dialog.control_mode_dc.setCurrentText(node.get_property('control_mode_dc'))
+        dialog.control_value_dc.setValue(node.get_property('control_value_dc'))
+
+        dialog.controllable.setChecked(node.get_property('controllable'))
+
+        if dialog.exec():
+            node.set_property('r_ohm', np.round(dialog.r_ohm.value(), 5), push_undo=False)
+            node.set_property('x_ohm', np.round(dialog.x_ohm.value(), 5), push_undo=False)
+            node.set_property('r_dc_ohm', np.round(dialog.r_dc_ohm.value(), 5), push_undo=False)
+            node.set_property('pl_dc_mw', np.round(dialog.pl_dc_mw.value(), 5), push_undo=False)
+            
+            node.set_property('control_mode_ac', dialog.control_mode_ac.currentText(), push_undo=False)
+            node.set_property('control_value_ac', np.round(dialog.control_value_ac.value(), 5), push_undo=False)
+            node.set_property('control_mode_dc', dialog.control_mode_dc.currentText(), push_undo=False)
+            node.set_property('control_value_dc', np.round(dialog.control_value_dc.value(), 5), push_undo=False)
+
+            node.set_property('controllable', dialog.controllable.isChecked(), push_undo=False)
+
+            vsc_index = node.get_property('vsc_index')
+            if vsc_index is not None and node.connected_to_network():
+                for name in node.electrical_properties:
+                    self.net.vsc.loc[vsc_index, name] = node.get_property(name)
+
+            self.session_change_warning()
+
     def _on_node_name_changed2(self, node_id, name):
         """
         Executed when a node name is changed.
@@ -5044,6 +5255,10 @@ class ElectricalGraph(NodeGraph):
             tcsc_index = node.get_property('tcsc_index')
             if tcsc_index is not None:
                 self.net.tcsc.loc[tcsc_index, 'name'] = name
+        elif type_=='VSCNode.VSCNode':
+            vsc_index = node.get_property('vsc_index')
+            if vsc_index is not None:
+                self.net.vsc.loc[vsc_index, 'name'] = name
         
     def remove_bus(self, node):
         """
@@ -5057,6 +5272,19 @@ class ElectricalGraph(NodeGraph):
         bus_index = node.get_property('bus_index')
         if bus_index in self.net.bus.index:
             pp.drop_buses(self.net, [bus_index])
+
+    def remove_bus_dc(self, node):
+        """
+        Remove a DC bus from the pandapower network when its corresponding
+        node in the graph is removed.
+        """
+        for sw in node.node_switch_connected():
+            self.remove_switch(sw, directly_removed=False)
+            self.delete_nodes([sw], push_undo=False)
+        
+        bus_index = node.get_property('bus_index')
+        if bus_index in self.net.bus_dc.index:
+            drop_elements(self.net, "bus_dc", [bus_index])
 
     def remove_line(self, node, directly_removed=True):
         """
@@ -5335,6 +5563,18 @@ class ElectricalGraph(NodeGraph):
             tcsc_index = node.get_property('tcsc_index')
             if tcsc_index is not None:
                 pp.drop_elements_simple(self.net, 'tcsc', tcsc_index)
+
+    def remove_vsc(self, node):
+        """
+        Remove an VSC from the pandapower network when its corresponding
+        node in the graph is removed.
+        """
+        vsc_name = node.get_property('name')
+        vsc_row = self.net.vsc[self.net.vsc['name'] == vsc_name]
+        if not vsc_row.empty:
+            vsc_index = node.get_property('vsc_index')
+            if vsc_index is not None:
+                pp.drop_elements_simple(self.net, 'vsc', vsc_index)
 
     def remove_switch(self, node, directly_removed=True):
         """

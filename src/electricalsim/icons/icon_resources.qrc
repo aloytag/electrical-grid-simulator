@@ -17,5 +17,6 @@
         <file>svc.svg</file>
         <file>ssc.svg</file>
         <file>tcsc.svg</file>
+        <file>vsc.svg</file>
     </qresource>
 </RCC>

@@ -121,6 +121,13 @@ def main():
     addBus_action.setIcon(qta.icon('ph.git-commit'))
     graph.main_window.toolBar.addAction(addBus_action)
     
+    addBus_dc_action = QtGui.QAction('addBus_dc')
+    addBus_dc_action.setText('DC Bus')
+    addBus_dc_action.setToolTip('Add a DC bus')
+    addBus_dc_action.triggered.connect(graph.add_bus_dc)
+    addBus_dc_action.setIcon(qta.icon('ph.circle'))
+    graph.main_window.toolBar.addAction(addBus_dc_action)
+    
     addLine_action = QtGui.QAction('addLine')
     addLine_action.setObjectName('addLine')
     addLine_action.setText('Line')
@@ -195,6 +202,10 @@ def main():
     # Adding Bus DataFrame from pandapower network for the first time:
     df_bus_widget = TableWidgetWithMenu(graph.net.bus, graph)
     graph.main_window.layout_bus.addWidget(df_bus_widget)
+
+    # Adding Bus DC DataFrame from pandapower network for the first time:
+    df_bus_dc_widget = TableWidgetWithMenu(graph.net.bus_dc, graph)
+    graph.main_window.layout_bus_dc.addWidget(df_bus_dc_widget)
     
     # Adding Line DataFrame from pandapower network for the first time:
     df_line_widget = TableWidgetWithMenu(graph.net.line, graph)
@@ -423,7 +434,7 @@ def main():
     file_menu.addAction(export_net_action)
     
     component_menu = graph.main_window.menubar.addMenu('Add component')
-    component_actions = [addBus_action, addLine_action, addImpedance_action,
+    component_actions = [addBus_action, addBus_dc_action, addLine_action, addImpedance_action,
                          addTrafo_action, addGenerator_action, addGrid_action,
                          addLoad_action, addStorage_action, addFACTS_action,
                          addSwitch_action]
@@ -503,6 +514,12 @@ def main():
             old_bus_table.setParent(None)
             df_bus_widget = TableWidgetWithMenu(graph.net.bus.copy(deep=True), graph)
             main_window.layout_bus.addWidget(df_bus_widget)
+
+            # Adding Bus DC DataFrame from pandapower network:
+            old_bus_dc_table = main_window.layout_bus_dc.itemAt(0).widget()
+            old_bus_dc_table.setParent(None)
+            df_bus_dc_widget = TableWidgetWithMenu(graph.net.bus_dc.copy(deep=True), graph)
+            main_window.layout_bus_dc.addWidget(df_bus_dc_widget)
             
             # Adding Line DataFrame from pandapower network:
             old_line_table = main_window.layout_line.itemAt(0).widget()

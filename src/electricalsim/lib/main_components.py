@@ -489,6 +489,42 @@ class BusNode(BaseNode2):
                 switches.append(node)
         return switches
 
+
+class BusDCNode(BaseNode2):
+    __identifier__ = 'BusDCNode'
+    NODE_NAME = 'BusDCNode'
+    
+    def __init__(self):
+        super().__init__()
+        self.input_port = self.add_input(multi_input=True, display_name=False)
+        self.output_port = self.add_output(display_name=False)
+
+        # self.input_port2 = self.add_input(name='input2', multi_input=True, display_name=False)
+        # self.output_port2 = self.add_output(name='output2', display_name=False)
+
+        self.set_color(117, 117, 117)
+        
+        self.create_property('bus_index', None)
+        
+    def node_switch_connected(self):
+        """
+        Returns a list of SwitchNode connected to the bus.
+        Returns an empty list if no switch is connected.
+        """
+        switches = []
+        in_dict = self.connected_input_nodes()
+        inputs_nodes = in_dict[self.input_port] + in_dict[self.input_port2]
+        for node in inputs_nodes:
+            if node.type_=='SwitchNode.SwitchNode':
+                switches.append(node)
+        out_dict = self.connected_output_nodes()
+        outputs_nodes = out_dict[self.output_port] + out_dict[self.output_port2]
+        for node in outputs_nodes:
+            if node.type_=='SwitchNode.SwitchNode':
+                switches.append(node)
+        return switches
+
+
         
 class LineNode(BaseNode2):
     __identifier__ = 'LineNode'
@@ -2375,6 +2411,47 @@ class TCSCNode(BaseNode2):
     def connected_to_network(self):
         """
         Returns True if the TCSC node is connected to the network (to buses).
+        Returns False otherwise.
+        """
+        inputs_connected = len(self.connected_input_nodes()[self.input_port])
+        outputs_connected = len(self.connected_output_nodes()[self.output_port])
+        
+        return inputs_connected * outputs_connected
+
+
+class VSCNode(BaseNode2):
+    __identifier__ = 'VSCNode'
+    NODE_NAME = 'VSCNode'
+    
+    def __init__(self):
+        super().__init__()
+        self.input_port = self.add_input(name='bus')
+        self.output_port = self.add_output(name='bus_dc', multi_output=False)
+        self.set_color(206, 145, 115)
+        
+        self.electrical_properties = ('r_ohm', 'x_ohm', 'r_dc_ohm',
+                                      'pl_dc_mw', 'control_mode_ac', 'control_value_ac',
+                                      'control_mode_dc', 'control_value_dc',
+                                      'controllable')
+        
+        for name in self.electrical_properties:
+            self.create_property(name, None)
+                
+        self.create_property('vsc_index', None)
+        
+        self.image_widget = ImageWrapper(self.view)
+        self.image_widget.set_name('image')
+        # icon_path = os.path.join(icons_dir, 'vsc.png')
+        # style = f"image: url('{icon_path}')"
+        style = "image: url(:/vsc.svg);"
+        self.image_widget.set_value(style)
+        self.add_custom_widget(self.image_widget, tab=None)
+        model = self.model
+        self.set_model(model)
+            
+    def connected_to_network(self):
+        """
+        Returns True if the VSC node is connected to the network (to buses).
         Returns False otherwise.
         """
         inputs_connected = len(self.connected_input_nodes()[self.input_port])

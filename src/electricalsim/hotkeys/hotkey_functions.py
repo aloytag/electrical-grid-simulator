@@ -85,8 +85,11 @@ def delete_nodes(graph):
     if selected:
         graph.session_change_warning()
     for node in selected:
-        if node.type_=='BusNode.BusNode':
-            graph.remove_bus(node)
+        if node.type_ in ('BusNode.BusNode', 'BusDCNode.BusDCNode'):
+            if node._type=='BusNode.BusNode':
+                graph.remove_bus(node)
+            elif node._type=='BusDCNode.BusDCNode':
+                graph.remove_bus_dc(node)
             inputs = list(node.connected_input_nodes().values())[0]
             outputs = list(node.connected_output_nodes().values())[0]
             for n in inputs + outputs:
@@ -124,6 +127,14 @@ def delete_nodes(graph):
                     graph.remove_storage(node)
                 if n.type_=='SwitchNode.SwitchNode':
                     graph.remove_switch(node)
+                if n.type_=='SVCNode.SVCNode':
+                    graph.remove_svc(node)
+                if n.type_=='SSCNode.SSCNode':
+                    graph.remove_ssc(node)
+                if n.type_=='TCSCNode.TCSCNode':
+                    graph.remove_tcsc(node)
+                if n.type_=='VSCNode.VSCNode':
+                    graph.remove_vsc(node)
         elif node.type_ in ('LineNode.LineNode', 'StdLineNode.StdLineNode'):
             graph.remove_line(node)
         elif node.type_=='DCLineNode.DCLineNode':
@@ -158,6 +169,14 @@ def delete_nodes(graph):
             graph.remove_storage(node)
         elif node.type_=='SwitchNode.SwitchNode':
             graph.remove_switch(node)
+        elif node.type_=='SVCNode.SVCNode':
+            graph.remove_svc(node)
+        elif node.type_=='SSCNode.SSCNode':
+            graph.remove_ssc(node)
+        elif node.type_=='TCSCNode.TCSCNode':
+            graph.remove_tcsc(node)
+        elif node.type_=='VSCNode.VSCNode':
+            graph.remove_vsc(node)
     
     graph.delete_nodes(graph.selected_nodes(), push_undo=False)
     
