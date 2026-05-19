@@ -78,8 +78,11 @@ def about_dialog(parent=None):
     dialog.description.setOpenExternalLinks(True)
     
     add_to_version = ''
-    if directory.split(sep='/')[1]=='app':
-        add_to_version = ' (flatpak)'
+    try:
+        if directory.split(sep='/')[1]=='app':
+                add_to_version = ' (flatpak)'
+    except IndexError:
+        pass
     dialog.version.setText(VERSION + add_to_version)
     dialog.date.setText(DATE)
     dialog.author.setText(f'{AUTHOR} ({CONTACT})')
